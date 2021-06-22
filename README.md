@@ -1,6 +1,6 @@
 # DuxRavel 应用安装器
 
-composer.json
+应用开发请设置 composer.json 基础模板
 ```
 {
     "name": "duxphp/duxravel-appname",
