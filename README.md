@@ -15,11 +15,6 @@
     "require": {
         "php": ">=7.4"
     },
-    "autoload": {
-        "psr-4": {
-            "Modules\\": "src/"
-        }
-    },
     "extra": {
         "duxravel": {
             "type": "app",
