@@ -1,6 +1,6 @@
 <?php
 
-namespace Duxravel\Composer\Install;
+namespace Duxravel\Composer;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;

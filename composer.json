@@ -20,13 +20,14 @@
   },
   "autoload": {
     "psr-4": {
-      "Duxravel\\Composer\\Install\\": "src/"
+      "Duxravel\\Composer\\": "src/composer",
+      "Duxravel\\UI\\": "src/composer"
     }
   },
   "extra": {
     "branch-alias": {
     },
-    "class": "Duxravel\\Composer\\Install\\Plugin"
+    "class": "Duxravel\\Composer\\Plugin"
   },
   "config": {
     "optimize-autoloader": true,
