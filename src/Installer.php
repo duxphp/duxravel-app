@@ -9,27 +9,37 @@ use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Util\Filesystem;
+use Composer\Util\ProcessExecutor;
 
 class Installer extends LibraryInstaller
 {
 
     private $config = [];
+    private $process;
 
     public function __construct(IOInterface $io, Composer $composer, $type = 'library', Filesystem $filesystem = null, BinaryInstaller $binaryInstaller = null)
     {
         parent::__construct($io, $composer, $type, $filesystem, $binaryInstaller);
+        $this->process = new ProcessExecutor($io);
     }
 
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         $config = $this->getAppConfig($package);
         $then = parent::install($repo, $package);
-        $appDir = './modules/' . ucfirst($config['name']);
-
-        /*if (is_dir($appDir . '/database')) {
-            Filesystem::copy($appDir . '/database', './database');
-        }*/
+        if ($config['type'] === 'app') {
+            $this->process->execute('php artisan app:install ' . $config['name']);
+        }
         return $then;
+    }
+
+    public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
+    {
+        $config = $this->getAppConfig($package);
+        if ($config['type'] === 'app') {
+            $this->process->execute('php artisan app:uninstall ' . $config['name']);
+        }
+        return parent::uninstall($repo, $package);
     }
 
     /**

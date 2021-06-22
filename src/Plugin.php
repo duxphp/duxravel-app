@@ -23,5 +23,6 @@ class Plugin implements PluginInterface
 
     public function uninstall(Composer $composer, IOInterface $io)
     {
+        $composer->getInstallationManager()->uninstall($this->installer);
     }
 }
