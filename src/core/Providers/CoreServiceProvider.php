@@ -47,8 +47,14 @@ class CoreServiceProvider extends ServiceProvider
         //$router->aliasMiddleware();
 
         // 别名中间件
-        $router->aliasMiddleware('auth.manage', \Duxravel\Core\Middleware\Manage::class);
-        $router->aliasMiddleware('auth.manage.register', \Duxravel\Core\Middleware\ManageRegister::class);
+        $router->middlewareGroup('auth.manage', [
+            'web',
+            \Duxravel\Core\Middleware\Manage::class,
+        ]);
+        $router->middlewareGroup('auth.manage.register', [
+            'web',
+            \Duxravel\Core\Middleware\ManageRegister::class,
+        ]);
 
         // 增加分组中间件
         $router->pushMiddlewareToGroup('web', \Duxravel\Core\Middleware\Web::class);
