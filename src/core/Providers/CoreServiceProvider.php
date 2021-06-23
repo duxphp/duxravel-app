@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Providers;
 
+use Duxravel\Core\Util\Menu;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
@@ -97,6 +98,9 @@ class CoreServiceProvider extends ServiceProvider
 
         // 注册数据库目录
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
+
+        // 注册菜单组件
+        $this->app->singleton(Menu::class);
 
         // 调用系统扩展
         app_hook('Service', 'App', 'extend');

@@ -76,10 +76,11 @@ class Blade
         \Illuminate\Support\Facades\Blade::directive($name, function ($label) use ($class, $method, $callback) {
             $params = \Duxravel\Core\Util\Blade::label($label);
             $next = is_callable($callback) ? $callback($params) : $callback;
+
             if (!$params['assign']) {
                 return <<<DATA
                 <?php
-                    \$data = $class::$method($label);
+                    \$data = method_exists($class, $method) ? $class::$method($label) : [];
                     $next
                     foreach(\$data as  {$params['key']} => {$params['item']}):
                 ?>
@@ -87,7 +88,7 @@ class Blade
             }
             return <<<DATA
                 <?php
-                    {$params['assign']} = $class::$method($label);
+                    {$params['assign']} = method_exists($class, $method) ? $class::$method($label) : [];
                     $next
                 ?>
                 DATA;
