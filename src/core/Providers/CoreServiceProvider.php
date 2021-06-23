@@ -19,6 +19,13 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // 扩展路由方法
+        \Route::macro('manage', function ($class, $name = '') {
+            return (new \Duxravel\Core\Util\Route($class, $name));
+        });
+
+        // 注册菜单组件
+        $this->app->singleton(Menu::class);
     }
 
     /**
@@ -59,11 +66,6 @@ class CoreServiceProvider extends ServiceProvider
                 $this->commands[] = file_class($file);
             }
         }
-
-        // 扩展路由方法
-        \Route::macro('manage', function ($class, $name = '') {
-            return (new \Duxravel\Core\Util\Route($class, $name));
-        });
 
         // 注册公共路由
         $router->get('/', [\Duxravel\Core\Web\Index::class, 'index'])->middleware('web')->name('web.index');
@@ -119,9 +121,6 @@ class CoreServiceProvider extends ServiceProvider
 
         // 注册数据库目录
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
-
-        // 注册菜单组件
-        $this->app->singleton(Menu::class);
 
         // 调用系统扩展
         app_hook('Service', 'App', 'extend');
