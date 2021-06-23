@@ -45,7 +45,7 @@ class View
             $assign['layout'] = $this->tpl;
         }
         if ($type === 'base') {
-            $list = app(\Duxravel\Core\Util\Menu::class)->getAll($parsing['layer'] ?: '', $this->route);
+            $list = app(\Duxravel\Core\Util\Menu::class)->getManage($parsing['layer'] ?: '', $this->route);
             $list = array_values($list);
             $menuActive = 0;
             foreach ($list as $key => $app) {

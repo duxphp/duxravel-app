@@ -36,11 +36,10 @@ class Menu
 
     /**
      * 获取所有菜单
-     * @param string $layout
-     * @param string $route
+     * @param $layout
      * @return array
      */
-    public function getAll(string $layout = '', string $route = ''): array
+    public function getAll($layout)
     {
         $list = app_hook('Service', 'Menu', 'get' . ucfirst($layout) . 'Menu');
         $extend = $this->get(strtolower($layout));
@@ -49,7 +48,18 @@ class Menu
         foreach ((array)$list as $value) {
             $data = array_merge_recursive((array)$data, (array)$value);
         }
+        return $data;
+    }
 
+    /**
+     * 获取所有菜单
+     * @param string $layout
+     * @param string $route
+     * @return array
+     */
+    public function getManage(string $layout = '', string $route = ''): array
+    {
+        $data = $this->getAll($layout);
         $ruleName = $route ?: request()->path();
         $ruleArr = explode('/', $ruleName);
         $ruleName = $ruleArr[0] . '/' . $ruleArr[1] . ($ruleArr[2] ? '/' . $ruleArr[2] : '') . '/';
