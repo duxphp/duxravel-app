@@ -37,9 +37,9 @@ class CoreServiceProvider extends ServiceProvider
             \Duxravel\Core\Console\Visitor::class,
         ]);
 
-        $router->get('/', [Duxravel\Core\Web\Index::class, 'index'])->name('web.index');
-        $router->get('service/image/placeholder/{w}/{h}/{t}', [Duxravel\Core\Web\Image::class, 'placeholder'])->name('service.image.placeholder');
-        $router->get('service/area', [Duxravel\Core\Web\Area::class, 'index'])->name('service.area');
+        $router->get('/', [\Duxravel\Core\Web\Index::class, 'index'])->name('web.index');
+        $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->name('service.image.placeholder');
+        $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->name('service.area');
 
         \Route::macro('manage', function ($class, $name = '') {
             return (new \Duxravel\Core\Util\Route($class, $name));
