@@ -72,7 +72,7 @@ class CoreServiceProvider extends ServiceProvider
             );
         });
 
-        $this->loadMigrationsFrom(realpath(__DIR__.'/../../database/migrations'));
+        $this->loadMigrationsFrom(realpath(__DIR__.'/../../../database/migrations'));
 
         app_hook('Service', 'App', 'extend');
     }
