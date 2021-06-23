@@ -70,6 +70,27 @@ class CoreServiceProvider extends ServiceProvider
         $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->middleware('web')->name('service.image.placeholder');
         $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->middleware('web')->name('service.area');
 
+        $router->group(['middleware' => ['api']], function () {
+            foreach (glob(base_path('modules') . '/*/Route/Api.php') as $file) {
+                require $file;
+            }
+        });
+        $router->group(['middleware' => ['api', 'auth.api']], function () {
+            foreach (glob(base_path('modules') . '/*/Route/AuthApi.php') as $file) {
+                require $file;
+            }
+        });
+        $router->group(['middleware' => ['web']], function () {
+            foreach (glob(base_path('modules') . '/*/Route/Web.php') as $file) {
+                require $file;
+            }
+        });
+        $router->group(['prefix' => 'service'], function () {
+            foreach (glob(base_path('modules') . '/*/Route/Service.php') as $file) {
+                require $file;
+            }
+        });
+
         // 注册模板组件
         Blade::component('app-loading', \Duxravel\Core\UI\Components\Loading::class);
         Blade::component('app-nodata', \Duxravel\Core\UI\Components\NoData::class);
