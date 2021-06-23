@@ -9,7 +9,7 @@ namespace Duxravel\Core\Model;
 class Area extends \Duxravel\Core\Model\Base
 {
 
-    protected $table = 'tools_area';
+    protected $table = 'area';
 
     protected $primaryKey = 'area_id';
 
