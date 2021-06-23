@@ -80,7 +80,7 @@ class Blade
             if (!$params['assign']) {
                 return <<<DATA
                 <?php
-                    \$data = method_exists($class, $method) ? $class::$method($label) : [];
+                    \$data = method_exists('$class', '$method') ? $class::$method($label) : [];
                     $next
                     foreach(\$data as  {$params['key']} => {$params['item']}):
                 ?>
@@ -88,7 +88,7 @@ class Blade
             }
             return <<<DATA
                 <?php
-                    {$params['assign']} = method_exists($class, $method) ? $class::$method($label) : [];
+                    {$params['assign']} = method_exists('$class', '$method') ? $class::$method($label) : [];
                     $next
                 ?>
                 DATA;
