@@ -42,7 +42,8 @@
   "autoload": {
     "psr-4": {
       "Duxravel\\Composer\\": "src/composer",
-      "Duxravel\\Core\\": "src/core"
+      "Duxravel\\Core\\": "src/core",
+      "Duxravel\\Database\\Seeders\\": "database/seeders"
     },
     "files": [
       "src/core/Util/Function.php"

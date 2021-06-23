@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\System\Model;
+namespace Duxravel\Core\Model;
 
 /**
  * Class ToolsArea
