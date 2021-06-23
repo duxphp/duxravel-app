@@ -77,9 +77,9 @@ class CoreServiceProvider extends ServiceProvider
         $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->middleware('web')->name('service.image.placeholder');
         $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->middleware('web')->name('service.area');
 
-        $router->group(['prefix' => 'service'], ['middleware' => ['web']], function () {
+        $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
             foreach (glob(base_path('modules') . '/*/Route/Service.php') as $file) {
-                require $file;
+                $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api']], function () {

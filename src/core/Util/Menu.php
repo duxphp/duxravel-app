@@ -28,8 +28,8 @@ class Menu
     {
         $data = $this->data[$type] ?: [];
         $list = [];
-        foreach ($data as $vo) {
-            $list = $vo();
+        foreach ($data as $key => $vo) {
+            $list[$key] = $vo();
         }
         return $list ?: [];
     }
@@ -153,4 +153,3 @@ class Menu
     }
 
 }
-

@@ -6,7 +6,7 @@ namespace Duxravel\Core\Model;
  * Class ToolsArea
  * @package Modules\System\Model
  */
-class ToolsArea extends \Duxravel\Core\Model\Base
+class Area extends \Duxravel\Core\Model\Base
 {
 
     protected $table = 'tools_area';
