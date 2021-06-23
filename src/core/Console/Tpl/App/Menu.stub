@@ -1,0 +1,35 @@
+<?php
+
+namespace Modules\{{appDir}}\Service;
+
+/**
+ * 系统菜单接口
+ */
+
+class Menu
+{
+    /**
+     * 获取菜单结构
+     */
+    public function getAdminMenu()
+    {
+        return [
+            '{{name}}' => [
+                'name'  => '{{menu}}',
+                'icon'  => '{{icon}}',
+                'order' => 10,
+                'menu'  => [
+                    [
+                        'name'  => '{{menu}}',
+                        'order' => 0,
+                        'menu'  => [
+                            // Generate Menu Make
+                        ]
+                    ],
+                ],
+            ],
+
+        ];
+    }
+}
+

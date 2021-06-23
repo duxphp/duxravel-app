@@ -1,0 +1,11 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::group([
+    'prefix'   => '{{name}}',
+    'auth_app' => '{{title}}'
+], function () {
+    // Generate Route Make
+});
+

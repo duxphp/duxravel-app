@@ -1,0 +1,16 @@
+<?php
+
+namespace Modules\{{app}}\Model;
+
+/**
+ * class {{modelName}}
+ * @package Modules\{{app}}\Model
+ */
+class {{modelName}} extends \Duxravel\Core\Model\Base
+{
+
+    protected $table = '{{table}}';
+
+    protected $primaryKey = '{{key}}';
+
+}
