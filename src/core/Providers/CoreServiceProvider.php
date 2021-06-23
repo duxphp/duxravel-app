@@ -118,7 +118,7 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         // 注册数据库目录
-        $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
+        $this->loadMigrationsFrom(realpath(__DIR__ . '../../../database/migrations'));
 
         // 注册菜单组件
         $this->app->singleton(Menu::class);
