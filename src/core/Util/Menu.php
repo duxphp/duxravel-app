@@ -12,9 +12,9 @@ class Menu
     /**
      * 增加菜单结构
      * @param string $type
-     * @param array $menu
+     * @param callable $menu
      */
-    public function add(string $type, $menu = [])
+    public function add(string $type, callable $menu)
     {
         $this->data[$type][] = $menu;
     }
