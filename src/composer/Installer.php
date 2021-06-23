@@ -56,10 +56,15 @@ class Installer extends LibraryInstaller
 
         $config = $this->getAppConfig($package);
 
-        if ($config['type'] === 'theme') {
-            return './public/themes/' . ucfirst($config['name']);
+        if ($config['type'] === 'app') {
+            return './modules/' . ucfirst($config['name']);
         }
-        return './modules/' . ucfirst($config['name']);
+        if ($config['type'] === 'theme') {
+            return './public/themes/' . strtolower($config['name']);
+        }
+        if ($config['type'] === 'static') {
+            return './public/static/' . strtolower($config['name']);
+        }
     }
 
     private function getAppConfig($package)
