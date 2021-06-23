@@ -35,6 +35,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
+
         // 全局中间件
         $httpKernel = $this->app->make(HttpKernel::class);
         $httpKernel->pushMiddleware(\Duxravel\Core\Middleware\CheckInstall::class);
@@ -44,6 +45,10 @@ class CoreServiceProvider extends ServiceProvider
 
         // 别名中间件
         //$router->aliasMiddleware();
+
+        // 别名中间件
+        $router->aliasMiddleware('auth.manage', \Duxravel\Core\Middleware\Manage::class);
+        $router->aliasMiddleware('auth.manage.register', \Duxravel\Core\Middleware\ManageRegister::class);
 
         // 增加分组中间件
         $router->pushMiddlewareToGroup('web', \Duxravel\Core\Middleware\Web::class);
@@ -72,6 +77,11 @@ class CoreServiceProvider extends ServiceProvider
         $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->middleware('web')->name('service.image.placeholder');
         $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->middleware('web')->name('service.area');
 
+        $router->group(['prefix' => 'service'], ['middleware' => ['web']], function () {
+            foreach (glob(base_path('modules') . '/*/Route/Service.php') as $file) {
+                require $file;
+            }
+        });
         $router->group(['middleware' => ['api']], function () {
             foreach (glob(base_path('modules') . '/*/Route/Api.php') as $file) {
                 require $file;
@@ -84,11 +94,6 @@ class CoreServiceProvider extends ServiceProvider
         });
         $router->group(['middleware' => ['web']], function () {
             foreach (glob(base_path('modules') . '/*/Route/Web.php') as $file) {
-                require $file;
-            }
-        });
-        $router->group(['prefix' => 'service'], function () {
-            foreach (glob(base_path('modules') . '/*/Route/Service.php') as $file) {
                 require $file;
             }
         });
