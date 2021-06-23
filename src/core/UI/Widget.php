@@ -25,7 +25,7 @@ class Widget
 
     public static function __callStatic($method, $arguments)
     {
-        $class = '\\Modules\\Common\UI\\Widget\\' . ucfirst($method);
+        $class = '\\Duxravel\\Core\\UI\\Widget\\' . ucfirst($method);
         if (!class_exists($class)) {
             if (!self::$extend[$method]) {
                 throw new \RuntimeException('There is no widget method "' . $method . '"');

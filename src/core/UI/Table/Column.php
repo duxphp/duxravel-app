@@ -349,7 +349,7 @@ class Column
      */
     public function __call($method, $arguments)
     {
-        $class = '\\Modules\\Common\UI\\Table\\Column\\' . ucfirst($method);
+        $class = '\\Duxravel\\Core\\UI\\Table\\Column\\' . ucfirst($method);
         if (!class_exists($class)) {
             if (!$this->extend[$method]) {
                 throw new \Exception('There is no form method "' . $method . '"');

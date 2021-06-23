@@ -72,7 +72,7 @@ trait FileManage
             'document' => 'doc,docx,xls,xlsx,pptx,ppt,csv,pdf',
         ];
         if ($dirId) {
-            $data = module('Common.Model.File')->where('has_type', $this->getHasType())->where('dir_id', $dirId);
+            $data = \Duxravel\Core\Model\File::where('has_type', $this->getHasType())->where('dir_id', $dirId);
             if ($query) {
                 $data = $data->where('title', 'like', '%' . $query . '%');
             }
@@ -140,7 +140,7 @@ trait FileManage
      */
     private function getFolder()
     {
-        return module('Common.Model.FileDir')->where('has_type', $this->getHasType())->get()->toArray();
+        return \Duxravel\Core\Model\FileDir::where('has_type', $this->getHasType())->get()->toArray();
     }
 
     /**
@@ -152,7 +152,7 @@ trait FileManage
         if (empty($name)) {
             trigger_error('请输入目录名称');
         }
-        $file = module('Common.Model.FileDir');
+        $file = new \Duxravel\Core\Model\FileDir;
         $file->name = $name;
         $file->has_type = $this->getHasType();
         $file->save();
@@ -172,14 +172,14 @@ trait FileManage
             trigger_error('请选择目录');
         }
 
-        $files = module('Common.Model.File')->where('has_type', $this->getHasType())->where('dir_id', $id)->get([
+        $files = \Duxravel\Core\Model\File::where('has_type', $this->getHasType())->where('dir_id', $id)->get([
             'driver', 'path'
         ]);
         $files->map(function ($vo) {
             Storage::disk($vo->driver)->delete($vo->path);
         });
-        module('Common.Model.File')->where('file_id', $id)->delete();
-        module('Common.Model.FileDir')->where('dir_id', $id)->delete();
+        \Duxravel\Core\Model\File::where('file_id', $id)->delete();
+        \Duxravel\Core\Model\FileDir::where('dir_id', $id)->delete();
         return [];
     }
 
@@ -193,13 +193,13 @@ trait FileManage
         if (empty($ids)) {
             trigger_error('请选择删除文件');
         }
-        $files = module('Common.Model.File')->where('has_type', $this->getHasType())->whereIn('dir_id', $ids)->get([
+        $files = \Duxravel\Core\Model\File::where('has_type', $this->getHasType())->whereIn('dir_id', $ids)->get([
             'driver', 'path'
         ]);
         $files->map(function ($vo) {
             Storage::disk($vo->driver)->delete($vo->path);
         });
-        module('Common.Model.File')->whereIn('file_id', $ids)->delete();
+        \Duxravel\Core\Model\File::whereIn('file_id', $ids)->delete();
         return [];
     }
 

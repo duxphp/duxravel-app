@@ -47,7 +47,7 @@ class VisitorAfter
         if (!$hasId) {
             return false;
         }
-        $model = module('Common.Model.VisitorOperate');
+        $model = new \Duxravel\Core\Model\VisitorOperate();
         // 清理过期日志
         $time = now()->subDays(env('VISIATOR_OPERATE_DAY'))->timestamp;
         $model->where('create_time', '<=', $time)->delete();
@@ -98,10 +98,10 @@ class VisitorAfter
         if (!$data['name']) {
             return;
         }
-        $model = module('Common.Model.VisitorApi');
+        $model = new \Duxravel\Core\Model\VisitorApi;
         $info = $model->where('name', $data['name'])->where('date', $data['date'])->first();
         DB::beginTransaction();
-        //try {
+        try {
             // PV
             if ($info) {
                 $data = [];
@@ -129,12 +129,12 @@ class VisitorAfter
             $key = 'app::api::'.sha1(implode(':', $keys));
             if (!Redis::get($key)) {
                 Redis::setex($key, 86400 - (time() + 8 * 3600) % 86400, 1);
-                module('Common.Model.VisitorApi')->where('api_id', $id)->increment('uv', 1);
+                \Duxravel\Core\Model\VisitorApi::where('api_id', $id)->increment('uv', 1);
             }
             DB::commit();
-        /*} catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
-        }*/
+        }
 
     }
 }

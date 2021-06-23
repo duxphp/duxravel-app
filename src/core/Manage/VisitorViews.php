@@ -39,7 +39,7 @@ class VisitorViews
             return $config;
         });
         $this->assign('appChart', $appChart);
-        return (new View('Common.Views.Manage.VisitorViews.info', $appChart))->render('dialog');
+        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorViews.info', $appChart))->render('dialog');
     }
 
 }

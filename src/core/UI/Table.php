@@ -545,7 +545,7 @@ class Table
 
         $assign = [
             'ajax' => $ajax ? $ajax . ($params ? (strpos($ajax, '?') === false ? '?' : '&') . http_build_query($params) : '') : null, // ajax表格
-            'pages' => $data->lastPage() > 1 ? $data->withQueryString()->links('Common.UI.View.table-pages') : '', // 分页html
+            'pages' => $data->lastPage() > 1 ? $data->withQueryString()->links('vendor.duxphp.duxravel-app.src.core.UI.View.table-pages') : '', // 分页html
             'thead' => $thead, // 表头
             'tbody' => $tbody, // 表数据
             'style' => $style, // 样式
@@ -566,9 +566,9 @@ class Table
         ];
         $assign = array_merge($assign, $this->assign);
         if ($this->dialog) {
-            return (new \Duxravel\Core\Util\View('Common.UI.View.table', $assign))->render('dialog');
+            return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render('dialog');
         }
-        return (new \Duxravel\Core\Util\View('Common.UI.View.table', $assign))->render();
+        return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render();
     }
 
     /**
@@ -612,7 +612,7 @@ class Table
             'batch' => (bool)$this->batch
         ];
         return app_success('ok', [
-            'html' => (new \Duxravel\Core\Util\View('Common.UI.View.table-ajax', $assign))->render(),
+            'html' => (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax', $assign))->render(),
             'totalPage' => $totalPage,
             'page' => $page
         ]);

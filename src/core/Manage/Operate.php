@@ -81,7 +81,7 @@ trait Operate
             ->get(['method', 'name', 'route', 'desc', 'time', 'create_time']);
 
         $this->assign('apiList', $apiList);
-        return $this->dialogView('Common.Views.Manage.VisitorOperate.loadData');
+        return $this->dialogView('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorOperate.loadData');
     }
 
     public function info($id)

@@ -261,7 +261,7 @@ class Form
             ];
         })->sortBy('sort');
 
-        return view('Common.UI.View.Form.layout', ['items' => $forms])->render();
+        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Form.layout', ['items' => $forms])->render();
     }
 
     /**
@@ -382,9 +382,9 @@ class Form
         $assign = array_merge($assign, $this->assign);
 
         if ($this->dialog) {
-            return (new View('Common.UI.View.form', $assign))->render('dialog');
+            return (new View('vendor.duxphp.duxravel-app.src.core.UI.View.form', $assign))->render('dialog');
         }
-        return (new View('Common.UI.View.form', $assign))->render();
+        return (new View('vendor.duxphp.duxravel-app.src.core.UI.View.form', $assign))->render();
     }
 
     /**
@@ -581,7 +581,7 @@ class Form
      */
     public function __call($method, $arguments)
     {
-        $class = '\\Modules\\Common\UI\\Form\\' . ucfirst($method);
+        $class = '\\Duxravel\\Core\\UI\\Form\\' . ucfirst($method);
         if (!class_exists($class)) {
             if (!$this->extend[$method]) {
                 throw new \Exception('There is no form method "' . $method . '"');

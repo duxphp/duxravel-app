@@ -23,12 +23,13 @@ class Api extends \Duxravel\Core\Model\Base
      */
     public static function getPlatformType()
     {
-        $list = app_hook('Service', 'Type', 'getDriverType');
-        $data = [];
-        foreach ((array) $list as $value) {
-            $data = array_merge_recursive((array) $data, (array) $value);
-        }
-        return $data;
+        return [
+            'h5' => 'H5',
+            'wechat' => '微信公众号',
+            'weapp' => '微信小程序',
+            'app' => 'APP',
+            'web' => '电脑'
+        ];
     }
 
 }

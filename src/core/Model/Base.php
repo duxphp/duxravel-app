@@ -27,26 +27,6 @@ class Base extends Eloquent
 
     public function __construct(array $attributes = [])
     {
-        Builder::macro('findInSet', function ($field, $value) {
-            return $this->whereRaw("FIND_IN_SET(?, {$field})", $value);
-        });
-
-        Builder::macro('orderByWith', function ($relation, $column, $direction = 'asc'): Builder {
-                /** @var Builder $this */
-                if (is_string($relation)) {
-                    $relation = $this->getRelationWithoutConstraints($relation);
-                }
-
-                return $this->orderBy(
-                    $relation->getRelationExistenceQuery(
-                        $relation->getRelated()->newQueryWithoutRelationships(),
-                        $this,
-                        $column
-                    ),
-                    $direction
-                );
-            });
-
         parent::__construct($attributes);
     }
 

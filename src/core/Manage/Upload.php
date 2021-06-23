@@ -39,13 +39,13 @@ trait Upload
     public function ajax(Request $request)
     {
         $id = (int)$request->get('id') ?: 0;
-        $dirId = module('Common.Model.FileDir')->where('dir_id', $id)->value('dir_id');
+        $dirId = \Duxravel\Core\Model\FileDir::where('dir_id', $id)->value('dir_id');
         if (empty($dirId)) {
-            $dirId = module('Common.Model.FileDir')->where('has_type', $this->getHasType())->orderBy('dir_id',
+            $dirId = \Duxravel\Core\Model\FileDir::where('has_type', $this->getHasType())->orderBy('dir_id',
                 'desc')->value('dir_id');
         }
         if (empty($dirId)) {
-            $dirId = module('Common.Model.FileDir')->insertGetId([
+            $dirId = \Duxravel\Core\Model\FileDir::insertGetId([
                 'name' => '默认',
                 'has_type' => $this->getHasType()
             ]);
@@ -164,13 +164,13 @@ trait Upload
                         'create_time' => time(),
                         'update_time' => time()
                     ];
-                    $ids[] = module('Common.Model.File')->insertGetId($tmp);
+                    $ids[] = \Duxravel\Core\Model\File::insertGetId($tmp);
                 } else {
                     app_error('上传失败');
                 }
             }
         }
-        $data = module('Common.Model.File')->where('has_type', $this->getHasType())->whereIn('file_id', $ids)->get([
+        $data = \Duxravel\Core\Model\File::where('has_type', $this->getHasType())->whereIn('file_id', $ids)->get([
             'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'create_time'
         ]);
         $data = $data->map(function ($item) {
@@ -198,10 +198,10 @@ trait Upload
             app_error('没有新增远程图片');
         }
 
-        $dirId = module('Common.Model.FileDir')->where('has_type', $this->getHasType())->orderBy('dir_id',
+        $dirId = \Duxravel\Core\Model\FileDir::where('has_type', $this->getHasType())->orderBy('dir_id',
             'desc')->value('dir_id');
         if (empty($dirId)) {
-            $dirId = module('Common.Model.FileDir')->insertGetId([
+            $dirId = \Duxravel\Core\Model\FileDir::insertGetId([
                 'name' => '默认',
                 'has_type' => $this->getHasType()
             ]);
@@ -242,7 +242,7 @@ trait Upload
                 'create_time' => time(),
                 'update_time' => time()
             ];
-            module('Common.Model.File')->insert($upload);
+            \Duxravel\Core\Model\File::insert($upload);
         }
         return app_success('图片获取成功', $data);
     }

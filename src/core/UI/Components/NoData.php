@@ -24,6 +24,6 @@ class NoData extends Component
 
     public function render()
     {
-        return view('Common.UI.View.Components.nodata');
+        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Components.nodata');
     }
 }

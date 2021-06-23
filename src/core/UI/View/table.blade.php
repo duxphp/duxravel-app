@@ -86,7 +86,7 @@
             <div class="overflow-x-scroll">
                 <table class="table-box {{$class}}" style="{!! $style !!}" {!! $attr !!}
                data-table>
-            @include('Common.UI.View.table-ajax') </table>
+            @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax') </table>
             </div>
             @if($batch || $pages)
             <div class="card-footer flex items-center pt-2">

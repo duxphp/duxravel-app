@@ -16,7 +16,7 @@ trait Register
 
     public function index()
     {
-        return (new View('Common.Views.Manage.Register.index'))->render('layout');
+        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.Register.index'))->render('layout');
     }
 
     public function submit(Request $request)

@@ -14,7 +14,7 @@ trait Login
 
     public function index()
     {
-        return (new View('Common.Views.Manage.Login.index'))->render('layout');
+        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.Login.index'))->render('layout');
     }
 
     public function submit(Request $request)

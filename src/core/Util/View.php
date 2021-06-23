@@ -55,15 +55,15 @@ class View
             }
             $assign['menuList'] = $list;
             $assign['menuActive'] = $menuActive;
-            $view = 'Common.UI.View.base';
+            $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.base';
         }
 
         if ($type === 'layout') {
-            $view = 'Common.UI.View.layout';
+            $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.layout';
         }
 
         if ($type === 'dialog') {
-            $view = 'Common.UI.View.dialog';
+            $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.dialog';
         }
 
         if ($type === 'web') {

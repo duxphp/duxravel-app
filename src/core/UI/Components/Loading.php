@@ -22,6 +22,6 @@ class Loading extends Component
 
     public function render()
     {
-        return view('Common.UI.View.Components.loading');
+        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Components.loading');
     }
 }

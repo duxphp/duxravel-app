@@ -20,6 +20,6 @@ class Trend extends Component
 
     public function render()
     {
-        return view('Common.UI.View.Components.trend');
+        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Components.trend');
     }
 }

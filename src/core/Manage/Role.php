@@ -89,7 +89,7 @@ trait Role
         $form->html('角色权限', function () use ($info) {
             $parsing = app_parsing();
             $purview = $info->purview ?: [];
-            $data = module('Common.Service.Auth')->getAuthAll(strtolower($parsing['layer']));
+            $data = $this->getAuthAll(strtolower($parsing['layer']));
             $html = [];
             foreach ($data as $app) {
                 $html[] = '
@@ -112,5 +112,33 @@ trait Role
         return $form;
     }
 
+    public function getAuthAll($has = 'admin'): array
+    {
+        $app = app();
+        $routes = $app->routes->getRoutes();
+        $data = [];
+        foreach ($routes as $vo) {
+            if ($vo->action['auth_has'] <> $has || $vo->action['public']) {
+                continue;
+            }
+            if (!$data[$vo->action['auth_app']]) {
+                $data[$vo->action['auth_app']] = [
+                    'name'  => $vo->action['auth_app'],
+                    'group' => []
+                ];
+            }
+            if (!$data[$vo->action['auth_app']]['group'][$vo->action['auth_group']]) {
+                $data[$vo->action['auth_app']]['group'][$vo->action['auth_group']] = [
+                    'name' => $vo->action['auth_group'],
+                    'list' => []
+                ];
+            }
+            $data[$vo->action['auth_app']]['group'][$vo->action['auth_group']]['list'][] = [
+                'name'  => $vo->action['desc'],
+                'value' => $vo->action['as'],
+            ];
+        }
+        return $data;
+    }
 
 }
