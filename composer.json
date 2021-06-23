@@ -58,7 +58,7 @@
     },
     "laravel": {
       "providers": [
-        "Duxravel\\Core\\Providers\\ServiceProvider"
+        "Duxravel\\Core\\Providers\\CoreServiceProvider"
       ]
     },
     "class": "Duxravel\\Composer\\Plugin"

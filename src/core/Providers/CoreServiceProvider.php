@@ -6,7 +6,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
-class ServiceProvider extends ServiceProvider
+class CoreServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
