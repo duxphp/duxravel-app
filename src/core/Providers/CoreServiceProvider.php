@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Providers;
 
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Router;
@@ -26,42 +27,64 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
+        // 全局中间件
+        $httpKernel = $this->app->make(HttpKernel::class);
+        $httpKernel->pushMiddleware(\Duxravel\Core\Middleware\CheckInstall::class);
+        $httpKernel->pushMiddleware(\Duxravel\Core\Middleware\VisitorBefore::class);
+        $httpKernel->pushMiddleware(\Duxravel\Core\Middleware\VisitorAfter::class);
 
-        $this->commands([
-            \Duxravel\Core\Console\App::class,
-            \Duxravel\Core\Console\AppAdmin::class,
-            \Duxravel\Core\Console\AppModel::class,
-            \Duxravel\Core\Console\Install::class,
-            \Duxravel\Core\Console\Operate::class,
-            \Duxravel\Core\Console\Uninstall::class,
-            \Duxravel\Core\Console\Visitor::class,
-        ]);
 
-        $router->get('/', [\Duxravel\Core\Web\Index::class, 'index'])->name('web.index');
-        $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->name('service.image.placeholder');
-        $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->name('service.area');
+        // 别名中间件
+        //$router->aliasMiddleware();
 
+        // 增加分组中间件
+        $router->pushMiddlewareToGroup('web', \Duxravel\Core\Middleware\Web::class);
+        $router->pushMiddlewareToGroup('api', \Duxravel\Core\Middleware\Api::class);
+        $router->pushMiddlewareToGroup('api', \Duxravel\Core\Middleware\Header::class);
+
+        // 命令行注册
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Duxravel\Core\Console\App::class,
+                \Duxravel\Core\Console\AppAdmin::class,
+                \Duxravel\Core\Console\AppModel::class,
+                \Duxravel\Core\Console\Install::class,
+                \Duxravel\Core\Console\Operate::class,
+                \Duxravel\Core\Console\Uninstall::class,
+                \Duxravel\Core\Console\Visitor::class,
+            ]);
+            $list = glob(base_path('modules') . '/*/Console/*.php');
+            foreach ($list as $file) {
+                $this->commands[] = file_class($file);
+            }
+        }
+
+        // 扩展路由方法
         \Route::macro('manage', function ($class, $name = '') {
             return (new \Duxravel\Core\Util\Route($class, $name));
         });
 
+        // 注册公共路由
+        $router->get('/', [\Duxravel\Core\Web\Index::class, 'index'])->middleware('web')->name('web.index');
+        $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->middleware('web')->name('service.image.placeholder');
+        $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->middleware('web')->name('service.area');
+
+        // 注册模板组件
         Blade::component('app-loading', \Duxravel\Core\UI\Components\Loading::class);
         Blade::component('app-nodata', \Duxravel\Core\UI\Components\NoData::class);
         Blade::component('app-trend', \Duxravel\Core\UI\Components\Trend::class);
         Blade::directive('paginate', function ($label) {
-            return '<?php echo $pageData ? $pageData->links('.$label.') : "" ?>';
+            return '<?php echo $pageData ? $pageData->links(' . $label . ') : "" ?>';
         });
 
-
+        // 扩展数据库方法
         Builder::macro('findInSet', function ($field, $value) {
             return $this->whereRaw("FIND_IN_SET(?, {$field})", $value);
         });
         Builder::macro('orderByWith', function ($relation, $column, $direction = 'asc'): Builder {
-            /** @var Builder $this */
             if (is_string($relation)) {
                 $relation = $this->getRelationWithoutConstraints($relation);
             }
-
             return $this->orderBy(
                 $relation->getRelationExistenceQuery(
                     $relation->getRelated()->newQueryWithoutRelationships(),
@@ -72,8 +95,10 @@ class CoreServiceProvider extends ServiceProvider
             );
         });
 
-        $this->loadMigrationsFrom(realpath(__DIR__.'/../../../database/migrations'));
+        // 注册数据库目录
+        $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
 
+        // 调用系统扩展
         app_hook('Service', 'App', 'extend');
     }
 }
