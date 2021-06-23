@@ -26,7 +26,12 @@ class Menu
      */
     public function get($type = 'admin')
     {
-        return $this->data[$type] ?: [];
+        $data = $this->data[$type] ?: [];
+        $list = [];
+        foreach ($data as $vo) {
+            $list = $vo();
+        }
+        return $list ?: [];
     }
 
     /**
