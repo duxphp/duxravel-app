@@ -47,14 +47,6 @@ class Installer extends LibraryInstaller
             $binaryInstaller->installBinaries($package, $installPath);
             if (!$repo->hasPackage($package)) {
                 $repo->addPackage(clone $package);
-
-                $config = $this->getAppConfig($package);
-                if ($config['type'] === 'app') {
-                    $this->process->execute('php artisan app:install ' . $config['name']);
-                }
-                if ($config['type'] === 'static') {
-                    $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $this->getInstallPath($package));
-                }
             }
         });
     }
