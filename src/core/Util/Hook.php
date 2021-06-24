@@ -63,9 +63,8 @@ class Hook
                 }
                 $class = new $class;
                 if (method_exists($class, $method)) {
-                    $data[] = call_user_func_array([$class, $method], $vars);
+                    $list[] = call_user_func_array([$class, $method], $vars);
                 }
-                $list[] = $class;
             }
         }
         $extend = $this->get($layer, $name, $method);
