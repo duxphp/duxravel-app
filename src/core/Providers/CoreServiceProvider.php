@@ -137,6 +137,13 @@ class CoreServiceProvider extends ServiceProvider
         // 注册数据库目录
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
 
+        // 注册安装数据
+        if (\Request::is('install/*')) {
+            app(Hook::class)->add('service', 'type', 'getInstallData', function () {
+                return \Duxravel\Database\Seeders\DatabaseSeeder::class;
+            });
+        }
+
         // 调用系统扩展
         app_hook('Service', 'App', 'extend');
     }
