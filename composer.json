@@ -17,7 +17,7 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-sockets": "*",
-    "composer-plugin-api": "^1.1||^2.0",
+    "composer-plugin-api": "^2.0",
     "duxphp/duxravel-installer": "^1.0",
     "fideloper/proxy": "^4.4",
     "fruitcake/laravel-cors": "^2.0",
