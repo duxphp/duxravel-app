@@ -68,8 +68,10 @@ class CoreServiceProvider extends ServiceProvider
                 \Duxravel\Core\Console\AppAdmin::class,
                 \Duxravel\Core\Console\AppModel::class,
                 \Duxravel\Core\Console\Install::class,
-                \Duxravel\Core\Console\Operate::class,
                 \Duxravel\Core\Console\Uninstall::class,
+                \Duxravel\Core\Console\InstallStatic::class,
+                \Duxravel\Core\Console\UninstallStatic::class,
+                \Duxravel\Core\Console\Operate::class,
                 \Duxravel\Core\Console\Visitor::class,
             ]);
             $list = glob(base_path('modules') . '/*/Console/*.php');
