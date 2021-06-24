@@ -43,7 +43,7 @@ class Installer extends LibraryInstaller
         $binaryInstaller = $this->binaryInstaller;
         $installPath = $this->getInstallPath($package);
 
-        return $promise->then(function () use ($binaryInstaller, $installPath, $package, $repo, $config) {
+        return $promise->then(function () use ($binaryInstaller, $installPath, $package, $repo) {
             $binaryInstaller->installBinaries($package, $installPath);
             if (!$repo->hasPackage($package)) {
                 $repo->addPackage(clone $package);
