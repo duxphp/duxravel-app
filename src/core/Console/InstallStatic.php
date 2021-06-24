@@ -39,7 +39,9 @@ class InstallStatic extends Command
     {
         $name = $this->argument('name');
         $path = $this->option('path');
-
+        if (!$path) {
+            $path = base_path('vendor/duxphp/duxravel-static');
+        }
         $appDir = strtolower($name);
         $dir = base_path('public/static/' . $appDir);
         \File::deleteDirectory($dir, true);
