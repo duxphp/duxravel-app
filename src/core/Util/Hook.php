@@ -47,27 +47,26 @@ class Hook
     public function getAll(string $layer, string $name, string $method, array $vars = [])
     {
         if (empty($name)) {
-            return null;
+            return [];
         }
         $layer = ucfirst($layer);
         $apiPath = base_path('modules') . '/*/' . $layer . '/' . ucfirst($name) . '.php';
         $apiList = glob($apiPath);
-        if (empty($apiList)) {
-            return [];
-        }
         $list = [];
-        foreach ($apiList as $value) {
-            $path = substr($value, strlen(base_path('modules') . '/'), -4);
-            $path = str_replace('\\', '/', $path);
-            $class = '\\Modules\\' . str_replace('/', '\\', $path);
-            if (!class_exists($class)) {
-                continue;
+        if (!empty($apiList)) {
+            foreach ($apiList as $value) {
+                $path = substr($value, strlen(base_path('modules') . '/'), -4);
+                $path = str_replace('\\', '/', $path);
+                $class = '\\Modules\\' . str_replace('/', '\\', $path);
+                if (!class_exists($class)) {
+                    continue;
+                }
+                $class = new $class;
+                if (method_exists($class, $method)) {
+                    $data[] = call_user_func_array([$class, $method], $vars);
+                }
+                $list[] = $class;
             }
-            $class = new $class;
-            if (method_exists($class, $method)) {
-                $data[] = call_user_func_array([$class, $method], $vars);
-            }
-            $list[] = $class;
         }
         $extend = $this->get($layer, $name, $method);
         return array_filter(array_merge($extend, $list));
