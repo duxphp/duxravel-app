@@ -28,7 +28,8 @@ class Hook
      */
     public function get(string $type, string $name, string $method): array
     {
-        $data = $this->data[$this->getKey($type, $name, $method)] ?: [];
+        $key = $this->getKey($type, $name, $method);
+        $data = $this->data[$key] ?? [];
         $list = [];
         foreach ($data as $key => $vo) {
             $list[$key] = $vo();
@@ -62,17 +63,13 @@ class Hook
             if (!class_exists($class)) {
                 continue;
             }
-            $list[] = $class;
-        }
-        $extend = $this->get($layer, $name, $method);
-        $list = array_filter(array_merge($extend, $list));
-        $data = [];
-        foreach ($list as $class) {
             if (method_exists($class, $method)) {
                 $data[] = call_user_func_array([$class, $method], $vars);
             }
+            $list[] = $class;
         }
-        return $data;
+        $extend = $this->get($layer, $name, $method);
+        return array_filter(array_merge($extend, $list));
 
     }
 
