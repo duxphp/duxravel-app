@@ -15,7 +15,7 @@ class Cache
      */
     public static function globList($rule)
     {
-        $cacheList = \Cache::tags(['duxravel-run'])->get('file-' . $rule);
+        $cacheList = cache()->tags(['duxravel-run'])->get('file-' . $rule);
         if ($cacheList) {
             return $cacheList;
         }
@@ -23,7 +23,7 @@ class Cache
         foreach (glob($rule) as $file) {
             $list[] = $file;
         }
-        \Cache::tags(['duxravel-run'])->put('file-' . $rule, $list);
+        cache()->tags(['duxravel-run'])->put('file-' . $rule, $list);
         return $list;
     }
 

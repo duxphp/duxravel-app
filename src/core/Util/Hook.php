@@ -52,7 +52,7 @@ class Hook
         $layer = ucfirst($layer);
 
         $key = 'hook-' . $this->getKey($layer, $name, $method);
-        $cacheList = \Cache::tags(['duxravel-run'])->get($key);
+        $cacheList = cache()->tags(['duxravel-run'])->get($key);
         $list = [];
         if (!$cacheList) {
             $apiPath = base_path('modules') . '/*/' . $layer . '/' . ucfirst($name) . '.php';
@@ -71,7 +71,7 @@ class Hook
                     }
                 }
             }
-            \Cache::tags(['duxravel-run'])->put($key, $list);
+            cache()->tags(['duxravel-run'])->put($key, $list);
         } else {
             $list = $cacheList;
         }
