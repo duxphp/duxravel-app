@@ -58,7 +58,7 @@ class Hook
         foreach ($apiList as $value) {
             $path = substr($value, strlen(base_path('modules') . '/'), -4);
             $path = str_replace('\\', '/', $path);
-            $class = 'Modules\\' . str_replace('/', '\\', $path);
+            $class = '\\Modules\\' . str_replace('/', '\\', $path);
             if (!class_exists($class)) {
                 continue;
             }
