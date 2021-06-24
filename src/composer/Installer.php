@@ -84,10 +84,10 @@ class Installer extends LibraryInstaller
 
                 $config = $this->getAppConfig($target);
                 if ($config['type'] === 'app') {
-                    $this->process->execute('php artisan app:install ' . $config['name'] . '--update=true');
+                    $this->process->execute('php artisan app:install ' . $config['name'] . ' --update=true');
                 }
                 if ($config['type'] === 'static') {
-                    $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $installPath . '--update=true');
+                    $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $installPath . ' --update=true');
                 }
             }
         });
