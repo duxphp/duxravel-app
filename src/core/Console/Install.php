@@ -11,7 +11,7 @@ class Install extends Command
      *
      * @var string
      */
-    protected $signature = 'app:install {name}';
+    protected $signature = 'app:install {name} {--update=}';
 
     /**
      * The console command description.

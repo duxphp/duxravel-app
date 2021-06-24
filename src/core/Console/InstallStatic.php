@@ -11,7 +11,7 @@ class InstallStatic extends Command
      *
      * @var string
      */
-    protected $signature = 'app:install-static {name} {--path=}';
+    protected $signature = 'app:install-static {name} {--path=} {--update=}';
 
     /**
      * The console command description.

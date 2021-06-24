@@ -10,6 +10,7 @@ use Composer\Installer\LibraryInstaller;
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Util\Filesystem;
 use Composer\Util\ProcessExecutor;
+use React\Promise\PromiseInterface;
 
 class Installer extends LibraryInstaller
 {
@@ -25,15 +26,71 @@ class Installer extends LibraryInstaller
 
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-        $config = $this->getAppConfig($package);
-        $then = parent::install($repo, $package);
-        if ($config['type'] === 'app') {
-            $this->process->execute('php artisan app:install ' . $config['name']);
+
+        $this->initializeVendorDir();
+        $downloadPath = $this->getInstallPath($package);
+
+        // remove the binaries if it appears the package files are missing
+        if (!Filesystem::isReadable($downloadPath) && $repo->hasPackage($package)) {
+            $this->binaryInstaller->removeBinaries($package);
         }
-        if ($config['type'] === 'static') {
-            $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $this->getInstallPath($package));
+
+        $promise = $this->installCode($package);
+        if (!$promise instanceof PromiseInterface) {
+            $promise = \React\Promise\resolve();
         }
-        return $then;
+
+        $binaryInstaller = $this->binaryInstaller;
+        $installPath = $this->getInstallPath($package);
+
+        return $promise->then(function () use ($binaryInstaller, $installPath, $package, $repo, $config) {
+            $binaryInstaller->installBinaries($package, $installPath);
+            if (!$repo->hasPackage($package)) {
+                $repo->addPackage(clone $package);
+
+                $config = $this->getAppConfig($package);
+                if ($config['type'] === 'app') {
+                    $this->process->execute('php artisan app:install ' . $config['name']);
+                }
+                if ($config['type'] === 'static') {
+                    $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $this->getInstallPath($package));
+                }
+            }
+        });
+    }
+
+    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
+    {
+        if (!$repo->hasPackage($initial)) {
+            throw new \InvalidArgumentException('Package is not installed: '.$initial);
+        }
+
+        $this->initializeVendorDir();
+
+        $this->binaryInstaller->removeBinaries($initial);
+        $promise = $this->updateCode($initial, $target);
+        if (!$promise instanceof PromiseInterface) {
+            $promise = \React\Promise\resolve();
+        }
+
+        $binaryInstaller = $this->binaryInstaller;
+        $installPath = $this->getInstallPath($target);
+
+        return $promise->then(function () use ($binaryInstaller, $installPath, $target, $initial, $repo) {
+            $binaryInstaller->installBinaries($target, $installPath);
+            $repo->removePackage($initial);
+            if (!$repo->hasPackage($target)) {
+                $repo->addPackage(clone $target);
+
+                $config = $this->getAppConfig($target);
+                if ($config['type'] === 'app') {
+                    $this->process->execute('php artisan app:install ' . $config['name'] . '--update=true');
+                }
+                if ($config['type'] === 'static') {
+                    $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $this->getInstallPath($package) . '--update=true');
+                }
+            }
+        });
     }
 
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
