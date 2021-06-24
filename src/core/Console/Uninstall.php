@@ -54,6 +54,6 @@ class Uninstall extends Command
                 ]);
             }
         }
-        $this->info('卸载应用成功');
+        $this->info('Application uninstalled successfully');
     }
 }

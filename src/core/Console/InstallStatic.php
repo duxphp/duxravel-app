@@ -45,6 +45,6 @@ class InstallStatic extends Command
         \File::deleteDirectory($dir, true);
         \File::copyDirectory($path . '/dist', $dir);
 
-        $this->info('安装静态资源成功');
+        $this->info('Resource extension installed successfully');
     }
 }

@@ -71,6 +71,6 @@ class Install extends Command
                 }
             }
         }
-        $this->info('安装应用成功');
+        $this->info('Installation and application successful');
     }
 }
