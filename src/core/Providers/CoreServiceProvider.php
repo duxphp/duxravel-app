@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Providers;
 
+use Duxravel\Core\Util\Hook;
 use Duxravel\Core\Util\Menu;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +27,7 @@ class CoreServiceProvider extends ServiceProvider
 
         // 注册菜单组件
         $this->app->singleton(Menu::class);
+        $this->app->singleton(Hook::class);
     }
 
     /**
