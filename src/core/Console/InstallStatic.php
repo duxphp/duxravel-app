@@ -42,7 +42,6 @@ class InstallStatic extends Command
 
         $appDir = strtolower($name);
         $dir = base_path('public/static/' . $appDir);
-        \File::deleteDirectories($dir);
         \File::copyDirectory($path . '/dist', $dir);
 
         $this->info('安装静态资源成功');
