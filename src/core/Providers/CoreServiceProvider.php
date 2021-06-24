@@ -92,17 +92,17 @@ class CoreServiceProvider extends ServiceProvider
         });
         $router->group(['middleware' => ['api']], function () {
             foreach (glob(base_path('modules') . '/*/Route/Api.php') as $file) {
-                require $file;
+                $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api', 'auth.api']], function () {
             foreach (glob(base_path('modules') . '/*/Route/AuthApi.php') as $file) {
-                require $file;
+                $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['web']], function () {
             foreach (glob(base_path('modules') . '/*/Route/Web.php') as $file) {
-                require $file;
+                $this->loadRoutesFrom($file);
             }
         });
 
