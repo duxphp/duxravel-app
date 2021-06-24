@@ -63,6 +63,7 @@ class Hook
             if (!class_exists($class)) {
                 continue;
             }
+            $class = new $class;
             if (method_exists($class, $method)) {
                 $data[] = call_user_func_array([$class, $method], $vars);
             }
