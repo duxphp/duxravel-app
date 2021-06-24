@@ -11,7 +11,7 @@ class InstallStatic extends Command
      *
      * @var string
      */
-    protected $signature = 'app:install-static {name} {--path=} {--update=}';
+    protected $signature = 'app:install-static {name}';
 
     /**
      * The console command description.
@@ -38,15 +38,10 @@ class InstallStatic extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $path = $this->option('path');
-        if (!$path) {
-            $path = base_path('vendor/duxphp/duxravel-static');
-        }
-        $appDir = strtolower($name);
-        $dir = base_path('public/static/' . $appDir);
-        \File::deleteDirectory($dir, true);
-        \File::copyDirectory($path . '/dist', $dir);
-
+        $this->callSilent('vendor:publish', [
+            '--provider' => 'duxravel-' . strtolower($name),
+            '--force' => true,
+        ]);
         $this->info('Resource extension installed successfully');
     }
 }
