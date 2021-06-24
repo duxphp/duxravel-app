@@ -59,6 +59,7 @@ class Menu
      */
     public function getManage(string $layout = '', string $route = ''): array
     {
+        $layout = strtolower($layout);
         $data = $this->getAll($layout);
         $ruleName = $route ?: request()->path();
         $ruleArr = explode('/', $ruleName);
