@@ -39,7 +39,7 @@ class InstallStatic extends Command
     {
         $name = $this->argument('name');
         $this->callSilent('vendor:publish', [
-            '--provider' => 'duxravel-' . strtolower($name),
+            '--tag' => 'duxravel-' . strtolower($name),
             '--force' => true,
         ]);
         $this->info('Resource extension installed successfully');
