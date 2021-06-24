@@ -26,29 +26,7 @@ class Installer extends LibraryInstaller
 
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-
-        $this->initializeVendorDir();
-        $downloadPath = $this->getInstallPath($package);
-
-        // remove the binaries if it appears the package files are missing
-        if (!Filesystem::isReadable($downloadPath) && $repo->hasPackage($package)) {
-            $this->binaryInstaller->removeBinaries($package);
-        }
-
-        $promise = $this->installCode($package);
-        if (!$promise instanceof PromiseInterface) {
-            $promise = \React\Promise\resolve();
-        }
-
-        $binaryInstaller = $this->binaryInstaller;
-        $installPath = $this->getInstallPath($package);
-
-        return $promise->then(function () use ($binaryInstaller, $installPath, $package, $repo) {
-            $binaryInstaller->installBinaries($package, $installPath);
-            if (!$repo->hasPackage($package)) {
-                $repo->addPackage(clone $package);
-            }
-        });
+        return parent::install($repo, $package);
     }
 
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
