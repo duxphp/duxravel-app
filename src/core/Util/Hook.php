@@ -26,7 +26,7 @@ class Hook
      * @param string $method
      * @return array
      */
-    public function get(string $type, string $name, string $method)
+    public function get(string $type, string $name, string $method): array
     {
         $data = $this->data[$this->getKey($type, $name, $method)] ?: [];
         $list = [];
@@ -64,7 +64,7 @@ class Hook
             }
             $list[] = $class;
         }
-        $extend = $this->getKey($layer, $name, $method);
+        $extend = $this->get($layer, $name, $method);
         $list = array_filter(array_merge($extend, $list));
         $data = [];
         foreach ($list as $class) {
