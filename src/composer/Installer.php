@@ -31,7 +31,7 @@ class Installer extends LibraryInstaller
             $this->process->execute('php artisan app:install ' . $config['name']);
         }
         if ($config['type'] === 'static') {
-            $this->process->execute('php artisan app:install-static ' . $config['name'] . $this->getInstallPath($package));
+            $this->process->execute('php artisan app:install-static ' . $config['name']  . ' --path=' . $this->getInstallPath($package));
         }
         return $then;
     }
@@ -68,7 +68,7 @@ class Installer extends LibraryInstaller
         if ($config['type'] === 'theme') {
             return './public/themes/' . strtolower($config['name']);
         }
-        return parent::getInstallPath(PackageInterface $package);
+        return parent::getInstallPath($package);
     }
 
     private function getAppConfig($package)

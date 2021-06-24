@@ -11,7 +11,7 @@ class InstallStatic extends Command
      *
      * @var string
      */
-    protected $signature = 'app:install-static {name} {path}';
+    protected $signature = 'app:install-static {name} {--path=}';
 
     /**
      * The console command description.
@@ -38,7 +38,7 @@ class InstallStatic extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $path = $this->argument('path');
+        $path = $this->option('path');
 
         $appDir = strtolower($name);
         $dir = base_path('public/static/' . $appDir);
