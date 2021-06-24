@@ -12,7 +12,9 @@ class Manage
             if ($request->ajax() || $request->wantsJson()) {
                 app_error('登录失效', 401, route($layer . '.login'));
             } else {
-                $count = auth($layer)->user()->count();
+                $guard = config('auth.guards.'.$layer . '.provider');
+                $model = config('auth.providers.' .$guard . '.model');
+                $count = $model::count();
                 if ($count) {
                     return redirect()->intended(route($layer . '.login'));
                 } else {
