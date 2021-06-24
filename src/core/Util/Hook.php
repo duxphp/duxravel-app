@@ -50,23 +50,35 @@ class Hook
             return [];
         }
         $layer = ucfirst($layer);
-        $apiPath = base_path('modules') . '/*/' . $layer . '/' . ucfirst($name) . '.php';
-        $apiList = glob($apiPath);
+
+        $key = 'hook-' . $this->getKey($layer, $name, $method);
+        $cacheList = \Cache::tags(['duxravel-run'])->get($key);
         $list = [];
-        if (!empty($apiList)) {
-            foreach ($apiList as $value) {
-                $path = substr($value, strlen(base_path('modules') . '/'), -4);
-                $path = str_replace('\\', '/', $path);
-                $class = '\\Modules\\' . str_replace('/', '\\', $path);
-                if (!class_exists($class)) {
-                    continue;
-                }
-                $class = new $class;
-                if (method_exists($class, $method)) {
-                    $list[] = call_user_func_array([$class, $method], $vars);
+        if (!$cacheList) {
+            $apiPath = base_path('modules') . '/*/' . $layer . '/' . ucfirst($name) . '.php';
+            $apiList = glob($apiPath);
+            if (!empty($apiList)) {
+                foreach ($apiList as $value) {
+                    $path = substr($value, strlen(base_path('modules') . '/'), -4);
+                    $path = str_replace('\\', '/', $path);
+                    $class = '\\Modules\\' . str_replace('/', '\\', $path);
+                    if (!class_exists($class)) {
+                        continue;
+                    }
+                    $class = new $class;
+                    if (method_exists($class, $method)) {
+                        $list[] = [$class, $method];
+                    }
                 }
             }
+            \Cache::tags(['duxravel-run'])->put($key, $list);
+        } else {
+            $list = $cacheList;
         }
+        foreach ($list as $vo) {
+            $list[] = call_user_func_array([$vo[0], $vo[1]], $vars);
+        }
+
         $extend = $this->get($layer, $name, $method);
         return array_filter(array_merge($extend, $list));
 

@@ -88,22 +88,26 @@ class CoreServiceProvider extends ServiceProvider
         $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->middleware('web')->name('service.area');
 
         $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
-            foreach (glob(base_path('modules') . '/*/Route/Service.php') as $file) {
+            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Service.php');
+            foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api']], function () {
-            foreach (glob(base_path('modules') . '/*/Route/Api.php') as $file) {
+            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Api.php');
+            foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api', 'auth.api']], function () {
-            foreach (glob(base_path('modules') . '/*/Route/AuthApi.php') as $file) {
+            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/AuthApi.php');
+            foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['web']], function () {
-            foreach (glob(base_path('modules') . '/*/Route/Web.php') as $file) {
+            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Web.php');
+            foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
