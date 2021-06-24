@@ -44,8 +44,8 @@ class Icon extends Widget
     public function render(): string
     {
 
-        if (is_file(resource_path('image/icons/' . $this->content . '.svg'))) {
-            $icon = file_get_contents(resource_path('image/icons/' . $this->content . '.svg'));
+        if (is_file(public_path('static/system/img/svg/' . $this->content . '.svg'))) {
+            $icon = file_get_contents(public_path('static/system/img/svg/' . $this->content . '.svg'));
         } elseif (strpos($this->content, '<svg') !== false) {
             $icon = $this->content;
         } else {
