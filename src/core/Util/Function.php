@@ -100,30 +100,7 @@ if (!function_exists("app_hook")) {
      */
     function app_hook(string $layer, string $name, string $method, array $vars = [])
     {
-        if (empty($name)) {
-            return null;
-        }
-        $layer = ucfirst($layer);
-        $apiPath = base_path('modules') . '/*/' . $layer . '/' . ucfirst($name) . '.php';
-        $apiList = glob($apiPath);
-        if (empty($apiList)) {
-            return [];
-        }
-        $data = [];
-        foreach ($apiList as $value) {
-            $path = substr($value, strlen(base_path('modules') . '/'), -4);
-            $path = str_replace('\\', '/', $path);
-            $appName = explode('/', $path)[0];
-            $class = 'Modules\\' . str_replace('/', '\\', $path);
-            if (!class_exists($class)) {
-                return null;
-            }
-            $class = module($appName . '.' . $layer . '.' . $name);
-            if (method_exists($class, $method)) {
-                $data[$appName] = call_user_func_array([$class, $method], $vars);
-            }
-        }
-        return $data;
+        return app(\Duxravel\Core\Util\Hook::class)->getAll($layer, $name, $method, $vars);
     }
 }
 
