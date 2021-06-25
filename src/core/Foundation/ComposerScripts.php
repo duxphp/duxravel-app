@@ -7,6 +7,11 @@ use Illuminate\Foundation\Application;
 class ComposerScripts
 {
 
+    protected static function postAutoloadDump()
+    {
+        self::clear();
+    }
+
     protected static function clear()
     {
         $laravel = new Application(getcwd());
