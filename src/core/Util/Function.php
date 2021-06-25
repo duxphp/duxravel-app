@@ -92,15 +92,14 @@ if (!function_exists("module")) {
 if (!function_exists("app_hook")) {
     /**
      * 应用钩子
-     * @param string $layer
      * @param string $name
      * @param string $method
      * @param array $vars
      * @return array|null
      */
-    function app_hook(string $layer, string $name, string $method, array $vars = [])
+    function app_hook(string $name, string $method, array $vars = [])
     {
-        return app(\Duxravel\Core\Util\Hook::class)->getAll($layer, $name, $method, $vars);
+        return app(\Duxravel\Core\Util\Hook::class)->getAll($name, $method, $vars);
     }
 }
 

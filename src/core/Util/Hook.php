@@ -13,7 +13,7 @@ class Hook
      * @param array $vars
      * @return array
      */
-    public function getAll(string $name, string $method, array $vars = [])
+    public function getAll(string $name, string $method, array $vars = []): array
     {
         if (empty($name)) {
             return [];

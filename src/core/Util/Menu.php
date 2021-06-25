@@ -7,33 +7,6 @@ namespace Duxravel\Core\Util;
  */
 class Menu
 {
-    private $data = [];
-
-    /**
-     * 增加菜单结构
-     * @param string $type
-     * @param callable $menu
-     */
-    public function add(string $type, callable $menu)
-    {
-        $this->data[$type][] = $menu;
-    }
-
-    /**
-     * 获取菜单结构
-     * @param string $type
-     * @return array|mixed
-     */
-    public function get($type = 'admin')
-    {
-        $data = $this->data[$type] ?: [];
-        $list = [];
-        foreach ($data as $key => $vo) {
-            $list[$key] = $vo();
-        }
-        return $list ?: [];
-    }
-
     /**
      * 获取所有菜单
      * @param $layout
@@ -41,9 +14,7 @@ class Menu
      */
     public function getAll($layout)
     {
-        $list = app_hook('Service', 'Menu', 'get' . ucfirst($layout) . 'Menu');
-        $extend = $this->get(strtolower($layout));
-        $list = array_merge($list, $extend);
+        $list = app_hook('Menu', 'get' . ucfirst($layout) . 'Menu');
         $data = [];
         foreach ((array)$list as $value) {
             $data = array_merge_recursive((array)$data, (array)$value);
