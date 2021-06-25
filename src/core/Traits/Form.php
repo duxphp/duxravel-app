@@ -10,7 +10,7 @@ trait Form
 {
     public function form(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
-        return $this->morphOne(\Modules\Tools\Model\FormData::class, 'has', 'has_type');
+        return $this->morphOne(\Duxravel\Core\Model\FormData::class, 'has', 'has_type');
     }
 
     /**
@@ -25,7 +25,7 @@ trait Form
         if (!$id || !$formId) {
             return false;
         }
-        return \Modules\Tools\Service\Form::saveForm($formId, $data, $id, get_called_class());
+        return \Duxravel\Core\Service\Form::saveForm($formId, $data, $id, get_called_class());
     }
 
     /**
