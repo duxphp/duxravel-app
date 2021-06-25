@@ -54,7 +54,7 @@ class Uninstall extends Command
                 ]);
             }
         }
-        $this->callSilent('app:build');
+        $this->callSilent('app:bulid');
         $this->info('Application uninstalled successfully');
     }
 }
