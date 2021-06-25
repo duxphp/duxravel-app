@@ -499,6 +499,13 @@ class Form
                 }
             }
 
+            // 树形处理
+            if ($data['parent_id']) {
+                if (method_exists($model, 'appendToNode')) {
+                    $model = $model->appendToNode($this->modelElo->find($data['parent_id']));
+                }
+            }
+
             $data->map(function ($item, $key) use ($model) {
                 $has = $item['has'];
                 // 查询关联对象
