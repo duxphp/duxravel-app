@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Providers;
 
+use Duxravel\Core\Util\Build;
 use Duxravel\Core\Util\Hook;
 use Duxravel\Core\Util\Menu;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
@@ -13,6 +14,9 @@ use Illuminate\Support\ServiceProvider;
 
 class CoreServiceProvider extends ServiceProvider
 {
+
+    private $bulidData = [];
+
     /**
      * Register any application services.
      *
@@ -25,9 +29,14 @@ class CoreServiceProvider extends ServiceProvider
             return (new \Duxravel\Core\Util\Route($class, $name));
         });
 
-        // 注册菜单组件
+        // 注册组件
+        $this->app->singleton(Build::class);
         $this->app->singleton(Menu::class);
         $this->app->singleton(Hook::class);
+
+        // 编译包
+        $this->bulidData = app(Build::class)->getBuild();
+
     }
 
     /**
@@ -77,7 +86,7 @@ class CoreServiceProvider extends ServiceProvider
                 \Duxravel\Core\Console\Operate::class,
                 \Duxravel\Core\Console\Visitor::class,
             ]);
-            $list = glob(base_path('modules') . '/*/Console/*.php');
+            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Console/*.php');
             foreach ($list as $file) {
                 $this->commands[] = file_class($file);
             }
@@ -86,24 +95,28 @@ class CoreServiceProvider extends ServiceProvider
         // 注册公共路由
         $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Service.php');
+            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['service']));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Api.php');
+            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['api']));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api', 'auth.api']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/AuthApi.php');
+            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['authApi']));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['web']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Web.php');
+            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['web']));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
