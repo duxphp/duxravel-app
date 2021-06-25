@@ -40,6 +40,7 @@ class UninstallStatic extends Command
         $name = $this->argument('name');
         $dir = public_path('static/' . strtolower($name));
         \File::deleteDirectory($dir);
+        $this->callSilent('app:build');
         $this->info('Resource extension uninstalled successfully');
     }
 }

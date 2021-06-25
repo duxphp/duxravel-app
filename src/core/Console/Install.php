@@ -71,6 +71,7 @@ class Install extends Command
                 }
             }
         }
+        $this->callSilent('app:build');
         $this->info('Installation and application successful');
     }
 }

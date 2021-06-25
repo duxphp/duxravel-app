@@ -42,6 +42,7 @@ class InstallStatic extends Command
             '--tag' => 'duxravel-' . strtolower($name),
             '--force' => true,
         ]);
+        $this->callSilent('app:build');
         $this->info('Resource extension installed successfully');
     }
 }
