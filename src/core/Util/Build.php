@@ -59,8 +59,8 @@ class Build
             if (isset($vo['service']) && $vo['service']) {
                 $vo['service'] = is_array($vo['service']) ? $vo['service'] : [$vo['service']];
                 foreach ($vo['service'] as $v) {
-                    $v = explode('\\', $v);
-                    $name = end($v);
+                    $tmp = explode('\\', $v);
+                    $name = end($tmp);
                     if ($name) {
                         $service[$name][] = $v;
                     }
