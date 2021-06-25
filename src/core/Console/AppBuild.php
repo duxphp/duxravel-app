@@ -9,7 +9,7 @@ class AppBuild extends \Duxravel\Core\Console\Common\Stub
      *
      * @var string
      */
-    protected $signature = 'app:bulid';
+    protected $signature = 'app:build';
 
     /**
      * The console command description.

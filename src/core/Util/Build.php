@@ -41,13 +41,13 @@ class Build
      */
     public function build()
     {
-        $bulidPath = base_path('bootstrap/cache/duxravel.php');
+        $buildPath = base_path('bootstrap/cache/duxravel.php');
 
-        if (!is_writable($dirname = dirname($bulidPath))) {
+        if (!is_writable($dirname = dirname($buildPath))) {
             throw new \Exception("The {$dirname} directory must be present and writable.");
         }
 
-        \File::deleteDirectory($bulidPath, true);
+        \File::deleteDirectory($buildPath, true);
         $files = new Filesystem();
         $vendor = base_path('vendor');
         $packages = [];
@@ -127,7 +127,7 @@ class Build
             'config' => array_filter($config)
         ];
         $files->replace(
-            $bulidPath, '<?php return ' . var_export($manifest, true) . ';'
+            $buildPath, '<?php return ' . var_export($manifest, true) . ';'
         );
     }
 
