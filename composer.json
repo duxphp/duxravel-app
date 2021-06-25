@@ -57,6 +57,14 @@
         "Duxravel\\Core\\Providers\\CoreServiceProvider"
       ]
     },
+    "duxravel": {
+      "service": [
+        "Duxravel\\Core\\Service\\"
+      ],
+      "route": [
+        "src/core/Route/web.php"
+      ]
+    },
     "class": "Duxravel\\Composer\\Plugin"
   },
   "config": {

@@ -84,10 +84,6 @@ class CoreServiceProvider extends ServiceProvider
         }
 
         // 注册公共路由
-        $router->get('/', [\Duxravel\Core\Web\Index::class, 'index'])->middleware('web')->name('web.index');
-        $router->get('service/image/placeholder/{w}/{h}/{t}', [\Duxravel\Core\Web\Image::class, 'placeholder'])->middleware('web')->name('service.image.placeholder');
-        $router->get('service/area', [\Duxravel\Core\Web\Area::class, 'index'])->middleware('web')->name('service.area');
-
         $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Service.php');
             foreach ($list as $file) {

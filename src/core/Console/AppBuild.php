@@ -25,11 +25,10 @@ class AppBuild extends \Duxravel\Core\Console\Common\Stub
      */
     public function handle()
     {
-        $packages = [];
 
+        \Duxravel\Core\Util\Cache::build();
 
-
-        $this->info('创建应用成功');
+        $this->info('编译结构成功');
     }
 
 }
