@@ -2,6 +2,8 @@
 
 namespace Duxravel\Core\Util;
 
+use Jenssegers\Agent\Agent;
+
 
 class View
 {
@@ -67,7 +69,13 @@ class View
         }
 
         if ($type === 'web') {
+            $agent = new Agent();
+
             $theme = config('theme.default');
+            $mobileTheme = config('theme.mobile');
+            if ($mobileTheme && ($agent->isMobile() || $agent->isTablet())) {
+                $theme = $mobileTheme;
+            }
             \View::share('theme', function ($url) use ($theme) {
                 return \URL::asset('themes/' . $theme) . '/' . $url;
             });
@@ -78,8 +86,6 @@ class View
         }
         return view($view, $assign);
     }
-
-
 
 
 }
