@@ -3,6 +3,7 @@
 namespace Duxravel\Core\Util;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 /**
  * 系统缓存
@@ -46,14 +47,26 @@ class Cache
         })->filter()->all();
         $service = [];
         $route = [];
-        foreach ($list as $vo) {
+        foreach ($list as $key => $vo) {
             if (isset($vo['service']) && $vo['service']) {
                 $vo['service'] = is_array($vo['service']) ? $vo['service'] : [$vo['service']];
-                $service = array_merge($service, $vo['service']);
+                foreach ($vo['service'] as $v) {
+                    $v = explode('\\', $v);
+                    $name = end($v);
+                    if ($name) {
+                        $service[$name][] = $v;
+                    }
+                }
             }
             if (isset($vo['route']) && $vo['route']) {
                 $vo['route'] = is_array($vo['route']) ? $vo['route'] : [$vo['route']];
-                $route = array_merge($route, $vo['route']);
+                foreach ($vo['route'] as $v) {
+                    $file = $key . '/' . $v;
+                    $name = basename($file, '.php');
+                    if ($name) {
+                        $route[$name][] = $file;
+                    }
+                }
             }
         }
 
