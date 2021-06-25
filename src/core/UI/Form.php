@@ -500,9 +500,9 @@ class Form
             }
 
             // 树形处理
-            if ($data['parent_id']) {
+            if ($formatData['parent_id']) {
                 if (method_exists($model, 'appendToNode')) {
-                    $model = $model->appendToNode($this->modelElo->find($data['parent_id']));
+                    $model = $model->appendToNode($this->modelElo->find($formatData['parent_id']));
                 }
             }
 
