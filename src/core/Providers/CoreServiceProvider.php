@@ -14,9 +14,6 @@ use Illuminate\Support\ServiceProvider;
 
 class CoreServiceProvider extends ServiceProvider
 {
-
-    private $bulidData = [];
-
     /**
      * Register any application services.
      *
@@ -35,7 +32,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->singleton(Hook::class);
 
         // 编译包
-        $this->bulidData = app(Build::class)->getBuild();
+        app(Build::class)->getBuild();
 
     }
 
@@ -95,28 +92,28 @@ class CoreServiceProvider extends ServiceProvider
         // 注册公共路由
         $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Service.php');
-            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['service']));
+            $list = array_filter(array_merge($list, app(Build::class)->getData('route.Service')));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Api.php');
-            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['api']));
+            $list = array_filter(array_merge($list, app(Build::class)->getData('route.Api')));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api', 'auth.api']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/AuthApi.php');
-            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['authApi']));
+            $list = array_filter(array_merge($list, app(Build::class)->getData('route.authApi')));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['web']], function () {
             $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Web.php');
-            $list = array_filter(array_merge($list, (array) $this->bulidData['route']['web']));
+            $list = array_filter(array_merge($list, (array) app(Build::class)->getData('route.Web')));
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }

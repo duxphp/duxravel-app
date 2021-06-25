@@ -26,7 +26,7 @@ class AppBuild extends \Duxravel\Core\Console\Common\Stub
     public function handle()
     {
 
-        \Duxravel\Core\Util\Cache::build();
+        app(\Duxravel\Core\Util\Cache::class)->build();
 
         $this->info('编译结构成功');
     }

@@ -61,8 +61,8 @@
       "service": [
       ],
       "route": [
-        "src/core/Route/web.php",
-        "src/core/Route/service.php"
+        "src/core/Route/Web.php",
+        "src/core/Route/Service.php"
       ]
     },
     "class": "Duxravel\\Composer\\Plugin"

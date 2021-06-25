@@ -29,6 +29,12 @@ class Build
         return $this->data;
     }
 
+    public function getData($key)
+    {
+        $data = $this->getBuild();
+        return \Arr::get($data, $key, []);
+    }
+
     /**
      * 编译架构
      */
@@ -53,7 +59,7 @@ class Build
                 $vo['service'] = is_array($vo['service']) ? $vo['service'] : [$vo['service']];
                 foreach ($vo['service'] as $v) {
                     $v = explode('\\', $v);
-                    $name = lcfirst(end($v));
+                    $name = end($v);
                     if ($name) {
                         $service[$name][] = $v;
                     }
@@ -63,7 +69,7 @@ class Build
                 $vo['route'] = is_array($vo['route']) ? $vo['route'] : [$vo['route']];
                 foreach ($vo['route'] as $v) {
                     $file = $key . '/' . $v;
-                    $name = lcfirst(basename($file, '.php'));
+                    $name = basename($file, '.php');
                     if ($name) {
                         $route[$name][] = $file;
                     }
