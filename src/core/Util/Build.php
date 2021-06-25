@@ -130,6 +130,7 @@ class Build
 
     protected function globList($rule): array
     {
+        $list = [];
         foreach (glob($rule) as $file) {
             $list[] = $file;
         }
