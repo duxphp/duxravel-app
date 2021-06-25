@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Util;
 
+use Doctrine\DBAL\Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
@@ -66,9 +67,17 @@ class Build
         $serviceList = $this->globList(base_path('modules') . '/*/Service/*.php');
         $roleList = $this->globList(base_path('modules') . '/*/Route/*.php');
         $configList = $this->globList(base_path('modules') . '/*/Config/*.php');
-
-        $list['route'][] = $roleList;
-        $list['config'][] = $configList;
+        $list['modules'] = [
+            'service' => [],
+            'route' => [],
+            'config' => []
+        ];
+        foreach ($roleList as $key => $vo) {
+            $list['modules']['route'][] = str_replace(base_path('modules'), '', $vo);
+        }
+        foreach ($configList as $key => $vo) {
+            $list['modules']['config'][] = str_replace(base_path('modules'), '', $vo);
+        }
         foreach ($serviceList as $value) {
             $path = substr($value, strlen(base_path('modules') . '/'), -4);
             $path = str_replace('\\', '/', $path);
@@ -76,9 +85,8 @@ class Build
             if (!class_exists($class)) {
                 continue;
             }
-            $list['service'][] = $class;
+            $list['modules']['service'][] = $class;
         }
-
 
         foreach ($list as $key => $vo) {
             if (isset($vo['service']) && $vo['service']) {
@@ -94,7 +102,7 @@ class Build
             if (isset($vo['route']) && $vo['route']) {
                 $vo['route'] = is_array($vo['route']) ? $vo['route'] : [$vo['route']];
                 foreach ($vo['route'] as $v) {
-                    $file = $key . '/' . $v;
+                    $file = ($key === 'modules' ? 'modules' : $vendor . '/' . $key) . '/' . $v;
                     $name = basename($file, '.php');
                     if ($name) {
                         $route[$name][] = $file;
@@ -104,7 +112,7 @@ class Build
             if (isset($vo['config']) && $vo['config']) {
                 $vo['config'] = is_array($vo['config']) ? $vo['config'] : [$vo['config']];
                 foreach ($vo['config'] as $v) {
-                    $file = $key . '/' . $v;
+                    $file = ($key === 'modules' ? 'modules' : $vendor . '/' . $key) . '/' . $v;
                     $name = basename($file, '.php');
                     if ($name) {
                         $config[$name][] = $file;

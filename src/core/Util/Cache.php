@@ -33,7 +33,7 @@ class Cache
     public static function routeList(string $name): array
     {
         $serviceList = app(Build::class)->getData('route.' . $name);
-        $vendor = base_path('vendor');
+        $vendor = base_path();
         foreach ($serviceList as $key => $vo) {
             $serviceList[$key] = $vendor . '/' . $vo;
         }
