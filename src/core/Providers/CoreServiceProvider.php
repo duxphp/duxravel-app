@@ -141,6 +141,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
 
         // 调用系统扩展
-        app_hook('Service', 'App', 'extend');
+        app_hook('App', 'extend');
     }
 }
