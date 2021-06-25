@@ -102,7 +102,7 @@ class Build
             if (isset($vo['route']) && $vo['route']) {
                 $vo['route'] = is_array($vo['route']) ? $vo['route'] : [$vo['route']];
                 foreach ($vo['route'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : $vendor . '/' . $key) . '/' . $v;
+                    $file = ($key === 'modules' ? 'modules' : 'vender' . '/' . $key) . '/' . $v;
                     $name = basename($file, '.php');
                     if ($name) {
                         $route[$name][] = $file;
@@ -112,7 +112,7 @@ class Build
             if (isset($vo['config']) && $vo['config']) {
                 $vo['config'] = is_array($vo['config']) ? $vo['config'] : [$vo['config']];
                 foreach ($vo['config'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : $vendor . '/' . $key) . '/' . $v;
+                    $file = ($key === 'modules' ? 'modules' : 'vender' . '/' . $key) . '/' . $v;
                     $name = basename($file, '.php');
                     if ($name) {
                         $config[$name][] = $file;
