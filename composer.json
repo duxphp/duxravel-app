@@ -59,7 +59,6 @@
     },
     "duxravel": {
       "service": [
-        "Duxravel\\Core\\Service\\"
       ],
       "route": [
         "src/core/Route/web.php"
