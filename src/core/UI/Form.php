@@ -490,6 +490,15 @@ class Form
 
         // 保存数据库
         DB::transaction(function () use ($model, $data, $type, $formatData) {
+
+            // 保存前置回调
+            if ($this->flow['front']) {
+                $ret = call_user_func($this->flow['front'], $formatData, $type, $model);
+                if ($ret instanceof Eloquent) {
+                    $model = $ret;
+                }
+            }
+
             $data->map(function ($item, $key) use ($model) {
                 $has = $item['has'];
                 // 查询关联对象
@@ -530,6 +539,17 @@ class Form
     }
 
     /**
+     * 处理数据之前提交
+     * @param $callback
+     * @return $this
+     */
+    public function front($callback): Form
+    {
+        $this->flow['front'] = $callback;
+        return $this;
+    }
+
+    /**
      * 提交之前回调
      * @param $callback
      * @return $this
@@ -537,6 +557,17 @@ class Form
     public function submit($callback): Form
     {
         $this->flow['submit'] = $callback;
+        return $this;
+    }
+
+    /**
+     * 处理之前回调
+     * @param $callback
+     * @return $this
+     */
+    public function save($callback): Form
+    {
+        $this->flow['save'] = $callback;
         return $this;
     }
 
