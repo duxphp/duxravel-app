@@ -91,29 +91,25 @@ class CoreServiceProvider extends ServiceProvider
 
         // 注册公共路由
         $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
-            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Service.php');
-            $list = array_filter(array_merge($list, app(Build::class)->getData('route.Service')));
+            $list = \Duxravel\Core\Util\Cache::routeList('Service');
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api']], function () {
-            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Api.php');
-            $list = array_filter(array_merge($list, app(Build::class)->getData('route.Api')));
+            $list = \Duxravel\Core\Util\Cache::routeList('Api');
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['api', 'auth.api']], function () {
-            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/AuthApi.php');
-            $list = array_filter(array_merge($list, app(Build::class)->getData('route.authApi')));
+            $list = \Duxravel\Core\Util\Cache::routeList('AuthApi');
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }
         });
         $router->group(['middleware' => ['web']], function () {
-            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Route/Web.php');
-            $list = array_filter(array_merge($list, (array) app(Build::class)->getData('route.Web')));
+            $list = \Duxravel\Core\Util\Cache::routeList('Web');
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
             }

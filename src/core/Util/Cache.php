@@ -16,13 +16,29 @@ class Cache
      * @param $rule
      * @return array
      */
-    public static function globList($rule)
+    public static function globList($rule): array
     {
         $list = [];
         foreach (glob($rule) as $file) {
             $list[] = $file;
         }
         return $list;
+    }
+
+    /**
+     * 路由列表
+     * @param string $name
+     * @return array
+     */
+    public static function routeList(string $name): array
+    {
+        $list = self::globList(base_path('modules') . '/*/Route/' . $name . '.php');
+        $serviceList = app(Build::class)->getData('route.' . $name);
+        $vendor = base_path('vendor');
+        foreach ($serviceList as $key => $vo) {
+            $serviceList[$key] = $vendor . '/' . $vo;
+        }
+        return array_filter(array_merge($serviceList, $list));
     }
 
 
