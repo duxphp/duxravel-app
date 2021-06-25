@@ -12,12 +12,13 @@ class Cache
 {
 
     /**
-     * 缓存文件
+     * 全局文件
      * @param $rule
      * @return array
      */
     public static function globList($rule): array
     {
+        $list = [];
         foreach (glob($rule) as $file) {
             $list[] = $file;
         }
@@ -31,14 +32,12 @@ class Cache
      */
     public static function routeList(string $name): array
     {
-
-        $list = self::globList(base_path('modules') . '/*/Route/' . $name . '.php');
         $serviceList = app(Build::class)->getData('route.' . $name);
         $vendor = base_path('vendor');
         foreach ($serviceList as $key => $vo) {
             $serviceList[$key] = $vendor . '/' . $vo;
         }
-        return array_filter(array_merge($serviceList, $list));
+        return array_filter($serviceList);
     }
 
 
