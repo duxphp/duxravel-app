@@ -18,7 +18,6 @@ class Cache
      */
     public static function globList($rule): array
     {
-        $list = [];
         foreach (glob($rule) as $file) {
             $list[] = $file;
         }
@@ -32,6 +31,7 @@ class Cache
      */
     public static function routeList(string $name): array
     {
+
         $list = self::globList(base_path('modules') . '/*/Route/' . $name . '.php');
         $serviceList = app(Build::class)->getData('route.' . $name);
         $vendor = base_path('vendor');
