@@ -66,6 +66,7 @@ class CoreServiceProvider extends ServiceProvider
         // 命令行注册
         if ($this->app->runningInConsole()) {
             $this->commands([
+                \Duxravel\Core\Console\AppBuild::class,
                 \Duxravel\Core\Console\App::class,
                 \Duxravel\Core\Console\AppAdmin::class,
                 \Duxravel\Core\Console\AppModel::class,
