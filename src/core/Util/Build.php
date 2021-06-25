@@ -40,8 +40,9 @@ class Build
      */
     public function build()
     {
-        $files = new Filesystem();
         $bulidPath = base_path('bootstrap/cache/duxravel.php');
+        \File::deleteDirectory($bulidPath, true);
+        $files = new Filesystem();
         $vendor = base_path('vendor');
         $packages = [];
         $path = $vendor . '/composer/installed.json';
