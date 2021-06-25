@@ -3,8 +3,6 @@
 namespace Duxravel\Core\Providers;
 
 use Duxravel\Core\Util\Build;
-use Duxravel\Core\Util\Hook;
-use Duxravel\Core\Util\Menu;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
@@ -28,8 +26,6 @@ class CoreServiceProvider extends ServiceProvider
 
         // 注册组件
         $this->app->singleton(Build::class);
-        $this->app->singleton(Menu::class);
-        $this->app->singleton(Hook::class);
 
         // 编译包
         app(Build::class)->getBuild();
@@ -143,13 +139,6 @@ class CoreServiceProvider extends ServiceProvider
 
         // 注册数据库目录
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
-
-        // 注册安装数据
-        if (\Request::is('install/*')) {
-            app(Hook::class)->add('service', 'type', 'getInstallData', function () {
-                return \Duxravel\Database\Seeders\DatabaseSeeder::class;
-            });
-        }
 
         // 调用系统扩展
         app_hook('Service', 'App', 'extend');
