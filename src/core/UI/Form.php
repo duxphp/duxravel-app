@@ -561,17 +561,6 @@ class Form
     }
 
     /**
-     * 处理之前回调
-     * @param $callback
-     * @return $this
-     */
-    public function save($callback): Form
-    {
-        $this->flow['save'] = $callback;
-        return $this;
-    }
-
-    /**
      * 保存之前回调
      * @param $callback
      * @return $this
