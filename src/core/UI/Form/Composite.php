@@ -19,9 +19,9 @@ class Composite extends Element
     /**
      * @param null $key
      * @param string $item
-     * @return array
+     * @return array|object
      */
-    public function getColumn($key = null, $item = ''): array
+    public function getColumn($key = null, $item = '')
     {
         return $key !== null ? ($item ? $this->column[$key][$item] : $this->column[$key]) : $this->column;
     }
