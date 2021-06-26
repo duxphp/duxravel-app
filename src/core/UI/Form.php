@@ -53,7 +53,7 @@ class Form
     protected array $assign = [];
     protected array $script = [];
     protected bool $dialog = false;
-    protected Collection $element;
+    public Collection $element;
 
     /**
      * Form constructor.
@@ -123,11 +123,12 @@ class Form
 
     /**
      * 获取元素集合
+     * @param null $key
      * @return Collection
      */
-    public function getElement(): Collection
+    public function getElement($key = null): Collection
     {
-        return $this->element;
+        return $key ? $this->element[$key] : $this->element;
     }
 
     /**

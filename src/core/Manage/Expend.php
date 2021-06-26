@@ -25,14 +25,14 @@ trait Expend
     public function index()
     {
         $table = $this->table();
-        app_hook('manage', 'index', ['class' => get_called_class(), 'table' => &$table]);
+        app_hook('manage', 'table', ['class' => get_called_class(), 'table' => &$table]);
         return $table->render();
     }
 
     public function ajax()
     {
         $table = $this->table();
-        app_hook('manage', 'ajax', ['class' => get_called_class(), 'table' => &$table]);
+        app_hook('manage', 'table', ['class' => get_called_class(), 'table' => &$table]);
         return $table->renderAjax();
     }
 
@@ -42,7 +42,7 @@ trait Expend
         if ($id && $form->modelElo()) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
-        app_hook('manage', 'page', ['class' => get_called_class(), 'table' => &$form]);
+        app_hook('manage', 'form', ['class' => get_called_class(), 'table' => &$form]);
         return $form->render();
     }
 
@@ -52,7 +52,7 @@ trait Expend
         if ($id && $form->modelElo) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
-        app_hook('manage', 'save', ['class' => get_called_class(), 'table' => &$form]);
+        app_hook('manage', 'form', ['class' => get_called_class(), 'table' => &$form]);
         $data = $form->save();
         if ($data instanceof Collection && method_exists($this, 'storeData')) {
             $this->storeData($data, $id);

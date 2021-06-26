@@ -11,8 +11,6 @@ use Duxravel\Core\UI\Form;
  */
 class Tab extends Composite implements Component
 {
-    protected array $column;
-
     public function __construct()
     {
         $this->layout = false;

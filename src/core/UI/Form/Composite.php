@@ -12,9 +12,19 @@ use Duxravel\Core\UI\Tools;
 class Composite extends Element
 {
 
-    protected array $column = [];
-    protected bool $component = true;
-    protected object $form;
+    public array $column = [];
+    public bool $component = true;
+    public object $form;
+
+    /**
+     * 获取列数据
+     * @param null $key
+     * @return array
+     */
+    public function getCollumn($key = null): array
+    {
+        return $key ? $this->column[$key] : $this->column;
+    }
 
     /**
      * 获取值
