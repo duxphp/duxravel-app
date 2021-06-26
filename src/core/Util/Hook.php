@@ -18,7 +18,7 @@ class Hook
         if (empty($name)) {
             return [];
         }
-        $list = app(Build::class)->getData('service.' . $name);
+        $list = app(Build::class)->getData('service.' . ucfirst($name));
         $data = [];
         foreach ($list as $class) {
             $class = new $class;
