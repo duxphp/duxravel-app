@@ -27,7 +27,16 @@ if (!function_exists("app_error")) {
      */
     function app_error($msg, int $code = 500, string $url = '')
     {
-        abort($code, $msg, ['x-location' => $url]);
+        if (request()->ajax()) {
+            abort($code, $msg, ['x-location' => $url]);
+        } else {
+            $content = view('vendor.duxphp.duxravel-app.src.core.Views.error', [
+                'code' => $code,
+                'msg' => $msg,
+                'url' => $url
+            ])->render();
+            exit(response($content, $code)->header('Content-Type', 'text/html;charset=utf-8'));
+        }
     }
 }
 
