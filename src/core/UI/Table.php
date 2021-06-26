@@ -463,9 +463,11 @@ class Table
             if ($this->query) {
                 //\DB::enableQueryLog();
                 $data = $this->query;
-                $data = $data->paginate($this->limit)->eloquent();
                 if ($this->tree) {
+                    $data = $data->paginate(99999)->eloquent();
                     $data->setCollection($data->getCollection()->toFlatTree());
+                }else {
+                    $data = $data->paginate($this->limit)->eloquent();
                 }
             } else {
                 foreach ($filters as $vo) {
