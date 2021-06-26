@@ -128,7 +128,7 @@ class Form
      */
     public function getElement($key = null): Collection
     {
-        return $key ? $this->element[$key] : $this->element;
+        return $key !== null ? $this->element[$key] : $this->element;
     }
 
     /**
