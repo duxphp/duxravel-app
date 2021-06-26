@@ -22,6 +22,9 @@ class Blade
         $data = new \Duxravel\Core\Model\FormData();
         $data = $data->where('status', 1);
 
+        if ($params['id']) {
+            $data = $data->where('form_id', $params['id']);
+        }
         if ($params['page']) {
             $data = $data->paginate($params['limit']);
         } else {
