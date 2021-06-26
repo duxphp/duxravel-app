@@ -29,7 +29,7 @@ class Element
     protected bool $component = false;
     protected bool $must = false;
     protected array $group = [];
-    protected int $sort = 0;
+    protected ?int $sort = null;
     protected $value;
     protected $default;
 
