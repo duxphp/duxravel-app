@@ -12,7 +12,7 @@ if (!function_exists("app_success")) {
      */
     function app_success(string $msg = '', array $data = [], string $url = '', int $code = 200)
     {
-        if (request()->ajax()) {
+        if (request()->expectsJson()) {
             return Response::success($data, $msg, $code, ['x-location' => $url]);
         } else {
             return response()->view('vendor.duxphp.duxravel-app.src.core.Views.success', [
@@ -34,7 +34,7 @@ if (!function_exists("app_error")) {
      */
     function app_error($msg, int $code = 500, string $url = '')
     {
-        if (request()->ajax()) {
+        if (request()->expectsJson()) {
             abort($code, $msg, ['x-location' => $url]);
         } else {
             throw new \Duxravel\Core\Exceptions\ErrorException($msg, $code, $url);
