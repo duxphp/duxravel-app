@@ -17,13 +17,13 @@ class Composite extends Element
     public object $form;
 
     /**
-     * 获取列数据
      * @param null $key
+     * @param string $item
      * @return array
      */
-    public function getCollumn($key = null): array
+    public function getColumn($key = null, $item = ''): array
     {
-        return $key ? $this->column[$key] : $this->column;
+        return $key !== null ? ($item ? $this->column[$key][$item] : $this->column[$key]) : $this->column;
     }
 
     /**
