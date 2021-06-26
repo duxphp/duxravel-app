@@ -123,12 +123,22 @@ class Form
 
     /**
      * 获取元素集合
-     * @param null $key
-     * @return Collection
+     * @param null $class
      */
-    public function getElement($key = null): Collection
+    public function getElement($class = null, $num = 0)
     {
-        return $key !== null ? $this->element[$key] : $this->element;
+        if ($class) {
+            $i = 0;
+            foreach ($this->element as $vo) {
+                if ($vo instanceof $class) {
+                    if ($i === $num) {
+                        return $vo;
+                    }
+                    $i++;
+                }
+            }
+        }
+        return $this->element;
     }
 
     /**
