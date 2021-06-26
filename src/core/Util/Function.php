@@ -12,7 +12,14 @@ if (!function_exists("app_success")) {
      */
     function app_success(string $msg = '', array $data = [], string $url = '', int $code = 200)
     {
-        return Response::success($data, $msg, $code, ['x-location' => $url]);
+        if (request()->ajax()) {
+            return Response::success($data, $msg, $code, ['x-location' => $url]);
+        } else {
+            return response()->view('vendor.duxphp.duxravel-app.src.core.Views.success', [
+                'msg' => $msg,
+                'url' => $url
+            ], 200);
+        }
     }
 }
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>{{$msg ?: 'Unknown error'}} - {{config('app.name')}}</title>
+    <title>{{$msg ?: 'success'}} - {{config('app.name')}}</title>
     <meta name="msapplication-TileColor" content="#206bc4"/>
     <meta name="theme-color" content="#206bc4"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -20,13 +20,12 @@
 <div class="flex items-center justify-center flex-auto">
     <div class="max-w-2xl py-6">
         <div class="flex items-center justify-center flex-col">
-            <div class="text-6xl text-gray-500 font-light">{{$code}}</div>
-            <p class="mb-2 mt-4 text-lg">{{$msg ?: 'Unknown error'}}</p>
+            <p class="mb-2 mt-4 text-lg">{{$msg ?: 'success'}}</p>
             <p class="text-gray-500">
-                操作失败，请检查页面信息，<span id="time">4</span>秒后自动跳转页面
+                操作成功，页面将在<span id="time">4</span>秒后自动跳转
             </p>
             <div class="mt-10 flex gap-4 justify-center">
-                <a href="javascript:{{$url ? 'window.location.href=\''.$url.'\'' : 'window.history.back()'}};"
+                <a href="javascript:{{$url ? 'window.location.href=\''.$url.'\'' : 'window.location.href=document.referrer'}};"
                    class="btn-blue flex items-center space-x-3 text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor">
@@ -57,8 +56,8 @@
             num = 4;
             if (url) {
                 window.location.href = url;
-            }else {
-                window.history.back();
+            } else {
+                window.location.href = document.referrer;
             }
         }
     }
