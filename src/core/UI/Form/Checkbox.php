@@ -106,7 +106,7 @@ class Checkbox extends Element implements Component
      * @param $data
      * @return string
      */
-    public function getInputData($data): string
+    public function getInputData($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

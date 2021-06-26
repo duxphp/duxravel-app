@@ -62,6 +62,7 @@ class Form
                 call_user_func($formUI[$vo['type']]['verify'], $vo, $data[$vo['field']]);
             }
         }
+
         $model = new \Duxravel\Core\Model\FormData();
         if ($id) {
             if ($hasType) {
@@ -73,6 +74,13 @@ class Form
                 $model = $info;
             }
         }
+
+        if ($formInfo['manage'] && $formInfo['submit'] && $formInfo['audit']) {
+            $model->status = 0;
+        } else {
+            $model->status = 1;
+        }
+
         if ($hasType) {
             $model->has_type = $hasType;
             $model->has_id = $id;

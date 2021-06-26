@@ -14,17 +14,17 @@ class Radio extends Element implements Component
 {
     protected bool $tip = false;
     protected array $box = [];
-    protected array $data = [];
+    protected $data = [];
     protected string $switch = '';
 
     /**
      * Select constructor.
      * @param string $name
      * @param string $field
-     * @param array $data
+     * @param  null|array|callable  $data
      * @param string $has
      */
-    public function __construct(string $name, string $field, array $data = [], string $has = '')
+    public function __construct(string $name, string $field, $data = [], string $has = '')
     {
         $this->name = $name;
         $this->field = $field;
