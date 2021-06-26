@@ -24,12 +24,16 @@ trait Expend
 
     public function index()
     {
-        return $this->table()->render();
+        $table = $this->table();
+        app_hook('manage', 'index', ['class' => get_called_class(), 'table' => &$table]);
+        return $table->render();
     }
 
     public function ajax()
     {
-        return $this->table()->renderAjax();
+        $table = $this->table();
+        app_hook('manage', 'ajax', ['class' => get_called_class(), 'table' => &$table]);
+        return $table->renderAjax();
     }
 
     public function page($id = 0)
@@ -38,6 +42,7 @@ trait Expend
         if ($id && $form->modelElo()) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
+        app_hook('manage', 'page', ['class' => get_called_class(), 'table' => &$form]);
         return $form->render();
     }
 
@@ -47,6 +52,7 @@ trait Expend
         if ($id && $form->modelElo) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
+        app_hook('manage', 'save', ['class' => get_called_class(), 'table' => &$form]);
         $data = $form->save();
         if ($data instanceof Collection && method_exists($this, 'storeData')) {
             $this->storeData($data, $id);
@@ -72,6 +78,7 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
+        app_hook('manage', 'del', ['class' => get_called_class(), 'id' => $id]);
         if ($this->model) {
             $status = $this->model::find($id)->destroy($id);
         }
@@ -91,6 +98,7 @@ trait Expend
         if (!$id) {
             app_error('参数错误');
         }
+        app_hook('manage', 'recovery', ['class' => get_called_class(), 'id' => $id]);
         if ($this->model) {
             $this->model::withTrashed()->find($id)->restore();
         }
@@ -114,6 +122,7 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
+        app_hook('manage', 'clear', ['class' => get_called_class(), 'id' => $id]);
         if ($this->model) {
             $info->forceDelete();
         }
@@ -137,6 +146,7 @@ trait Expend
         $model = $this->model::find($id);
         $model->{$field} = $value;
         $model->save();
+        app_hook('manage', 'status', ['class' => get_called_class(), 'id' => $id]);
         return app_success('更改状态成功');
     }
 
