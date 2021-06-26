@@ -400,7 +400,9 @@ class Form
 
         // 提交数据处理
         if ($this->flow['submit']) {
-            $data = call_user_func($this->flow['submit'], $data, $time);
+            foreach ($this->flow['submit'] as $item) {
+                $data = $item($data, $time);
+            }
         }
         // 过滤数据
         $collection = Collection::make();
@@ -493,9 +495,11 @@ class Form
 
             // 保存前置回调
             if ($this->flow['front']) {
-                $ret = call_user_func($this->flow['front'], $formatData, $type, $model);
-                if ($ret instanceof Eloquent) {
-                    $model = $ret;
+                foreach ($this->flow['front'] as $item) {
+                    $ret = $item($formatData, $type, $model);
+                    if ($ret instanceof Eloquent) {
+                        $model = $ret;
+                    }
                 }
             }
 
@@ -525,9 +529,11 @@ class Form
 
             // 保存前置回调
             if ($this->flow['before']) {
-                $ret = call_user_func($this->flow['before'], $formatData, $type, $model);
-                if ($ret instanceof Eloquent) {
-                    $model = $ret;
+                foreach ($this->flow['before'] as $item) {
+                    $ret = $item($formatData, $type, $model);
+                    if ($ret instanceof Eloquent) {
+                        $model = $ret;
+                    }
                 }
             }
 
@@ -539,7 +545,9 @@ class Form
             }
             // 保存后置回调
             if ($this->flow['after']) {
-                call_user_func($this->flow['after'], $formatData, $type, $model);
+                foreach ($this->flow['after'] as $item) {
+                    $item($formatData, $type, $model);
+                }
             }
         });
         return $model->getKey();
@@ -552,7 +560,7 @@ class Form
      */
     public function front($callback): Form
     {
-        $this->flow['front'] = $callback;
+        $this->flow['front'][] = $callback;
         return $this;
     }
 
@@ -563,7 +571,7 @@ class Form
      */
     public function submit($callback): Form
     {
-        $this->flow['submit'] = $callback;
+        $this->flow['submit'][] = $callback;
         return $this;
     }
 
@@ -574,7 +582,7 @@ class Form
      */
     public function before($callback): Form
     {
-        $this->flow['before'] = $callback;
+        $this->flow['before'][] = $callback;
         return $this;
     }
 
@@ -585,7 +593,7 @@ class Form
      */
     public function after($callback): Form
     {
-        $this->flow['after'] = $callback;
+        $this->flow['after'][] = $callback;
         return $this;
     }
 
