@@ -30,12 +30,7 @@ if (!function_exists("app_error")) {
         if (request()->ajax()) {
             abort($code, $msg, ['x-location' => $url]);
         } else {
-            $content = view('vendor.duxphp.duxravel-app.src.core.Views.error', [
-                'code' => $code,
-                'msg' => $msg,
-                'url' => $url
-            ])->render();
-            exit(response($content, $code)->header('Content-Type', 'text/html;charset=utf-8'));
+            throw new \Duxravel\Core\Exceptions\ErrorException($msg, $code, $url);
         }
     }
 }
@@ -52,7 +47,9 @@ if (!function_exists("app_error_if")) {
      */
     function app_error_if($boolean, $msg, int $code = 500, string $url = '')
     {
-        abort_if($boolean, $code, $msg, ['x-location' => $url]);
+        if ($boolean) {
+            app_error($code, $msg, ['x-location' => $url]);
+        }
     }
 }
 
