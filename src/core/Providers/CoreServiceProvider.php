@@ -92,7 +92,7 @@ class CoreServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom($file);
             }
         });
-        $router->group(['middleware' => ['api']], function () {
+        $router->group(['middleware' => ['api'], 'statis' => true], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('Api');
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
@@ -104,7 +104,7 @@ class CoreServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom($file);
             }
         });
-        $router->group(['middleware' => ['web']], function () {
+        $router->group(['middleware' => ['web'], 'statis' => true], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('Web');
             foreach ($list as $file) {
                 $this->loadRoutesFrom($file);
