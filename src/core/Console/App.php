@@ -61,6 +61,7 @@ class App extends \Duxravel\Core\Console\Common\Stub
             'title' => '应用名称',
             'name' => $name,
         ]);
+        $this->callSilent('app:build');
         $this->info('创建应用成功');
     }
 
