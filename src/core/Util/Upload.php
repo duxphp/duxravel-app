@@ -133,7 +133,7 @@ class Upload
             }
         }
         $data = \Duxravel\Core\Model\File::where('has_type', $hasType)->whereIn('file_id', $ids)->get([
-            'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'create_time'
+            'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'create_time', 'field'
         ]);
 
         return $data->map(function ($item) {
