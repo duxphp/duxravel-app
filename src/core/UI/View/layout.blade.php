@@ -14,10 +14,10 @@
     <meta name="MobileOptimized" content="320"/>
     <meta name="robots" content="noindex,nofollow,noarchive"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ public_path('static/system/css/base.css') }}"/>
-    <link rel="stylesheet" href="{{ public_path('static/system/css/fontawesome.min.css') }}"/>
-    <script src="{{ public_path('static/system/js/jquery.min.js') }}"></script>
-    <script src="{{ public_path('static/system/js/app.min.js') }}"></script>
+    <link rel="stylesheet" href="/static/system/css/base.min.css"/>
+    <link rel="stylesheet" href="/static/system/css/fontawesome.min.css"/>
+    <script src="/static/system/js/jquery.min.js"></script>
+    <script src="/static/system/js/app.min.js"></script>
 </head>
 <body class="bg-gray-100 text-sm">
     @include($layout)
