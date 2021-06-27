@@ -14,7 +14,7 @@
     <meta name="MobileOptimized" content="320"/>
     <meta name="robots" content="noindex,nofollow,noarchive"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ mix('static/system/css/base.css') }}"/>
+    <link rel="stylesheet" href="{{ public_path('static/system/css/base.css') }}"/>
 </head>
 <body class="border-t-2 border-blue-900 flex flex-col bg-gray-100 h-screen">
 <div class="flex items-center justify-center flex-auto">
