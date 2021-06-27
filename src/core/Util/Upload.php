@@ -1,6 +1,7 @@
 <?php
 
 namespace Duxravel\Core\Util;
+
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
@@ -22,7 +23,25 @@ class Upload
         $files = request()->allFiles();
         $ids = [];
         if (is_array($files)) {
-            foreach ($files as $field => $file) {
+            $filesData = [];
+            foreach ($files as $key => $item) {
+                if (is_array($item)) {
+                    foreach ($item as $vo) {
+                        $filesData[] = [
+                            'field' => $key,
+                            'file' => $vo
+                        ];
+                    }
+                } else {
+                    $filesData[] = [
+                        'field' => $key,
+                        'file' => $item
+                    ];
+                }
+            }
+            foreach ($filesData as $item) {
+                $file = $item['file'];
+                $field = $item['field'];
                 $ext = $file->extension();
                 if (in_array($ext, ['jpg', 'png', 'bmp', 'jpeg', 'gif'])) {
                     $tmpPath = $file->getRealPath();
