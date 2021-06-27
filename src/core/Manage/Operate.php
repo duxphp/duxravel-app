@@ -14,7 +14,7 @@ trait Operate
         $parser = app_parsing();
         $layer = strtolower($parser['layer']);
         $route = strtolower($parser['layer']) . '.' . strtolower($parser['app']);
-        $table = new \Duxravel\Core\UI\Table(new $this->model());
+        $table = new \Duxravel\Core\UI\Table(new \Duxravel\Core\Model\VisitorOperate());
         $table->title('操作日志');
         $table->model()->where('has_type', $layer);
         $table->model()->orderBy('operate_id', 'desc');
@@ -86,7 +86,7 @@ trait Operate
 
     public function info($id)
     {
-        $info = $this->model::find($id);
+        $info = \Duxravel\Core\Model\VisitorOperate::find($id);
 
         $params = $info['params'];
 

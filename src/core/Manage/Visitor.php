@@ -5,7 +5,7 @@ namespace Duxravel\Core\Manage;
 use Illuminate\Support\Facades\DB;
 use Duxravel\Core\Util\View;
 
-class VisitorViews
+trait Visitor
 {
     public function info()
     {
@@ -38,8 +38,9 @@ class VisitorViews
             \Arr::set($config, 'legend.show', true);
             return $config;
         });
-        $this->assign('appChart', $appChart);
-        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorViews.info', $appChart))->render('dialog');
+        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorViews.info', [
+            'appChart' => $appChart
+        ]))->render('dialog');
     }
 
 }
