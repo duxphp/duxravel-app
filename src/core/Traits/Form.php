@@ -25,7 +25,7 @@ trait Form
         if (!$id || !$formId) {
             return false;
         }
-        return \Duxravel\Core\Service\Form::saveForm($formId, $data, $id, get_called_class());
+        return \Duxravel\Core\Util\Form::saveForm($formId, $data, $id, get_called_class());
     }
 
     /**

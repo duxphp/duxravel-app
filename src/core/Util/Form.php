@@ -1,6 +1,6 @@
 <?php
 
-namespace Duxravel\Core\Service;
+namespace Duxravel\Core\Util;
 
 use Duxravel\Core\Model\FormData;
 
