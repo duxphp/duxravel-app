@@ -83,7 +83,7 @@
             {!! $vo !!}
             @endforeach
             @endif
-            <div class="overflow-x-scroll">
+            <div class="overflow-x-auto">
                 <table class="table-box {{$class}}" style="{!! $style !!}" {!! $attr !!}
                data-table>
             @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax') </table>
