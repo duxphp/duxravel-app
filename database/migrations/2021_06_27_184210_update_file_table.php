@@ -14,7 +14,7 @@ class UpdateFileTable extends Migration
     public function up()
     {
         Schema::table('file', function (Blueprint $table) {
-            $table->string('field')->nullable()->comment('文件字段')->after('mime');
+            $table->string('field', 50)->nullable()->comment('文件字段')->after('mime');
         });
     }
 
