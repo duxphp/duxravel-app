@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  * @method delData($id = 0)
  * @method clearData($id, $info)
  * @method dataSearch()
- * @method dataWhere($data)
+ * @method dataWhere($query)
  * @method dataField()
  * @method dataManageUrl($item)
  * @method dataInfoUrl($item)
