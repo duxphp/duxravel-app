@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\DB;
  * @method \Duxravel\Core\UI\Table table()
  * @method \Duxravel\Core\UI\Form form($id = 0):
  * @method storeData($data, $id)
- * @method updateData($data, $id)
  * @method delData($id = 0)
  * @method clearData($id, $info)
+ * @method dataSearch()
+ * @method dataWhere($data)
+ * @method dataField()
+ * @method dataManageUrl($item)
+ * @method dataInfoUrl($item)
  */
 trait Expend
 {
