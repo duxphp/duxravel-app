@@ -33,7 +33,7 @@ class RichText implements Component
      */
     public function image(string $label, int $width = 10, int $height = 10, string $placeholder = '', ?callable $callback = null): self
     {
-        $this->image = [
+        $this->image[] = [
             'label' => $label,
             'width' => $width,
             'height' => $height,
@@ -54,16 +54,18 @@ class RichText implements Component
         // 设置图片
         $imageHtml = '';
         if ($this->image) {
-            $url = Tools::parsingArrData($data, $this->image['label'], true);
-            if ($this->image['callback'] instanceof \Closure) {
-                $url = call_user_func($this->image['callback'], $url, $data);
-            }
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                $url = route('service.image.placeholder', ['w' => 100, 'h' => 100, 't' => $this->image['placeholder'] ?: '暂无']);
-            }
-            $imageHtml = <<<HTML
-                <span class="flex-none avatar w-{$this->image['width']} h-{$this->image['height']}" style="background-image: url('$url');"></span>
+            foreach ($this->image as $vo) {
+                $url = Tools::parsingArrData($data, $vo['label'], true);
+                if ($vo['callback'] instanceof \Closure) {
+                    $url = call_user_func($vo['callback'], $url, $data);
+                }
+                if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                    $url = route('service.image.placeholder', ['w' => 100, 'h' => 100, 't' => $vo['placeholder'] ?: '暂无']);
+                }
+                $imageHtml .= <<<HTML
+                <span class="flex-none avatar w-{$vo['width']} h-{$vo['height']}" style="background-image: url('$url');"></span>
             HTML;
+            }
         }
 
         // 设置描述
