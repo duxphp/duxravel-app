@@ -28,30 +28,15 @@ class Excel
             $objRead->setReadDataOnly(true);
             $obj = $objRead->load($tmpFile);
             $currSheet = $obj->getSheet(0);
-            $columnH = $currSheet->getHighestColumn();
-            $columnCnt = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($columnH);
-            $rowCnt = $currSheet->getHighestRow();
-            $data = [];
-            for ($_row = $start; $_row <= $rowCnt; $_row++) {
-                $isNull = true;
-                for ($_column = 1; $_column <= $columnCnt; $_column++) {
-                    $cellName = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($_column);
-                    $cellId = $cellName . $_row;
-                    $data[$_row][$cellName] = trim($currSheet->getCell($cellId)->getFormattedValue());
-                    if (!empty($data[$_row][$cellName])) {
-                        $isNull = false;
-                    }
+            $data = $currSheet->toArray();
+            $array = [];
+            for ($_row = $start; $_row <= count($data); $_row++) {
+                if ($data[$_row] !== null) {
+                    $array[] = $data[$_row];
                 }
-                if ($isNull) {
-                    unset($data[$_row]);
-                }
-            }
-            $table = [];
-            foreach ($data as $vo) {
-                $table[] = array_values($vo);
             }
             @unlink($tmpFile);
-            return $table;
+            return $array;
         } catch (\Exception $e) {
             @unlink($tmpFile);
             app_error($e->getMessage());
