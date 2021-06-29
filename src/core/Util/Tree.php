@@ -63,26 +63,6 @@ class Tree
         return $tree;
     }
 
-
-    /**树形转表格树
-     * @param $data
-     * @param string $name
-     * @param string $prefix
-     * @return array
-     */
-    public static function data2table($data, $name = 'name', $prefix = '├'): array
-    {
-        $tree = [];
-        foreach ($data as $vo) {
-            $vo['spl_' . $name] = PHP_EOL . $prefix . ' ' . $vo->{$name};
-            $tree[] = $vo;
-            if ($vo->children) {
-                $tree = array_merge($tree, self::data2table($vo->children, $name, $prefix . '-'));
-            }
-        }
-        return $tree;
-    }
-
     /**
      * 数组转路径
      * @param array $data
