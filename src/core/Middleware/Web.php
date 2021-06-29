@@ -17,6 +17,7 @@ class Web
         }
         $finder = app('view')->getFinder();
         $finder->prependLocation(base_path('public/themes/' . $theme));
+        $finder->prependLocation(base_path('modules'));
         return $next($request);
     }
 
