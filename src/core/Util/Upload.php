@@ -31,7 +31,22 @@ class Upload
         $files = request()->allFiles();
         $ids = [];
         if (is_array($files)) {
-            $filesData = self::unfold($files);
+            $filesData = [];
+            foreach ($files as $key => $item) {
+                if (is_array($item)) {
+                    foreach ($item as $vo) {
+                        $filesData[] = [
+                            'field' => $key,
+                            'file' => $vo
+                        ];
+                    }
+                } else {
+                    $filesData[] = [
+                        'field' => $key,
+                        'file' => $item
+                    ];
+                }
+            }
             foreach ($filesData as $item) {
                 $file = $item['file'];
                 $field = $item['field'];
@@ -153,27 +168,6 @@ class Upload
             $item->time = $item->create_time->format('Y-m-d H:i:s');
             return $item;
         })->toArray();
-    }
-
-    /**
-     * 展开多维数组
-     * @param $files
-     * @param array $data
-     * @return array|mixed
-     */
-    public static function unfold($files, &$data = [])
-    {
-        foreach ($files as $key => $item) {
-            if (is_array($item)) {
-                $data[] = self::unfold($item, $data);
-            } else {
-                $data[] = [
-                    'field' => $key,
-                    'file' => $item
-                ];
-            }
-        }
-        return $data;
     }
 
 
