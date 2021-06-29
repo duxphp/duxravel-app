@@ -11,6 +11,14 @@ use Intervention\Image\Facades\Image;
 class Upload
 {
 
+    /**
+     * @param $hasType
+     * @param array $config
+     * @param int $dirId
+     * @param string $driver
+     * @return array
+     * @throws \Duxravel\Core\Exceptions\ErrorException
+     */
     public static function load($hasType, $config = [], $dirId = 0, $driver = ''): array
     {
         $thumb = $config['thumb'] ?? config('image.thumb');
