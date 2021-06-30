@@ -13,6 +13,7 @@ class Menu extends Widget
 {
 
     protected string $name;
+    protected string $type;
     protected array $link = [];
 
     /**
@@ -20,9 +21,10 @@ class Menu extends Widget
      * @param string $name
      * @param callable|null $callback
      */
-    public function __construct(string $name, callable $callback = NULL)
+    public function __construct(string $name, string $type = 'blue', callable $callback = NULL)
     {
         $this->name = $name;
+        $this->type = $type;
         $this->callback = $callback;
     }
 
@@ -35,7 +37,7 @@ class Menu extends Widget
     public function link(string $name, string $route = '', array $params = []): Link
     {
         $link = new Link($name, $route, $params);
-        $link->class('block p-2 hover:bg-gray-200');
+        $link->restClass('flex p-2 hover:bg-gray-200');
         $this->link[] = $link;
         return $link;
     }
@@ -47,12 +49,12 @@ class Menu extends Widget
     {
         $inner = [];
         foreach ($this->link as $class) {
-            $inner[] = $class->render();
+            $inner[] = '<div>' . $class->render() . '</div>';
         }
-        $this->class('dropdown mt-1 left-0');
+        $this->class('shadow absolute right-2 w-40 pt-1 pb-1 rounded-sm bg-white');
         return <<<HTML
-            <divx-data="show.dropdown()">
-                <button class="btn-blue" type="button" x-on:click="open = true">$this->name</button>
+            <div x-data="show.dropdown()">
+                <button class="btn-$this->type" type="button" x-on:click="open = true">$this->name</button>
                 <div {$this->toElement()}  x-cloak x-bind="dropdown">
                 {$this->mergeArray($inner)}
                 </div>

@@ -39,7 +39,7 @@ class Action
      * @param string $type
      * @return Menu
      */
-    public function menu(string $name, string $type = 'default'): Menu
+    public function menu(string $name, string $type = 'blue'): Menu
     {
         $menu = new Menu($name, $type);
         $this->menu[] = $menu;

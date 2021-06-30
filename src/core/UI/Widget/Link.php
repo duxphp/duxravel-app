@@ -89,7 +89,7 @@ class Link extends Widget
         if ($this->show && !call_user_func($this->show, $data)) {
             return '';
         }
-        $this->class[] = 'inline-flex items-center';
+        $this->class('inline-flex items-center');
         $url = 'javascript:;';
         if ($this->route || $this->params) {
             $params = [];

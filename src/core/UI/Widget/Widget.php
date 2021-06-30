@@ -13,6 +13,7 @@ class Widget
     protected $callback;
 
     protected array $class = [];
+    protected array $restClass = [];
     protected array $attr = [];
     protected array $style = [];
     protected $callbackData;
@@ -56,6 +57,17 @@ class Widget
     public function class(string $name): self
     {
         $this->class[] = $name;
+        return $this;
+    }
+
+    /**
+     * 重置class样式
+     * @param string $name
+     * @return $this
+     */
+    public function restClass(string $name): self
+    {
+        $this->restClass[] = $name;
         return $this;
     }
 
@@ -119,7 +131,7 @@ class Widget
      */
     public function toClass(): string
     {
-        return Tools::toClass($this->class);
+        return Tools::toClass($this->restClass ?: $this->class);
     }
 
     /**
