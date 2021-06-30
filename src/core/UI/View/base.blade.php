@@ -233,7 +233,7 @@
                             </div>
                         </div>
                     </div>
-                    <ul x-show="open" @click.away="open = false"
+                    <ul x-show="open" @click.outside="open = false"
                         class="shadow absolute right-0 w-40 pt-1 pb-1 rounded-sm bg-white">
                         <li>
                             <a target="_blank" href="{{route('web.index')}}" class="block p-2 hover:bg-gray-200">返回首页</a>
