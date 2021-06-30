@@ -55,6 +55,7 @@ class Menu
             }
             $url = $appList['url'] ? route($appList['url'], $appList['params']) : '';
             $appData = [
+                'app' => $app,
                 'name' => $appList['name'],
                 'icon' => $appList['icon'],
                 'url' => $url,

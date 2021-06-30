@@ -92,7 +92,7 @@
             <div class="pb-4 overflow-auto max-h-64">
                 <ul>
                     <template x-for="(item, index) in items" :key="index">
-                        <li class="px-4" x-show="!item.hidden || index === active">
+                        <li class="px-4" x-show="!item.hidden || index === active" :class="{'mt-20': item.app === 'app'}">
                             <div class="flex items-center space-x-2 p-2 rounded"
                                  @click="item.url && !item.menu ? window.location.href = item.url : (active === index ? active = -1 : active = index)"
                                  :class="{ 'bg-blue-900 text-white': active === index}"
