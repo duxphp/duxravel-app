@@ -56,20 +56,12 @@ class Install extends Command
 
         //数据安装
         if (is_dir($database . '/Seeders')) {
-            $path = $database . '/Seeders/*.php';
-            $fileList = glob($path);
-            if (!empty($fileList)) {
-                $data = [];
-                foreach ($fileList as $file) {
-                    $data[] = file_class($file);
-                }
-                foreach ($data as $vo) {
-                    $this->callSilent('db:seed', [
-                        '--force' => true,
-                        '--class' => $vo,
-                    ]);
-                }
-            }
+            $path = $database . '/Seeders/DatabaseSeeder.php';
+            $class = file_class($path);
+            $this->callSilent('db:seed', [
+                '--force' => true,
+                '--class' => $class,
+            ]);
         }
         $this->callSilent('app:build');
         $this->info('Installation and application successful');
