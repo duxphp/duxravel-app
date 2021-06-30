@@ -22,7 +22,7 @@
 <body class="bg-gray-100 text-sm">
     @include($layout)
 </body>
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>
     Do('base', function () {
         base.init()
