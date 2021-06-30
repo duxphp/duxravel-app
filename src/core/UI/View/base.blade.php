@@ -156,7 +156,7 @@
                             <div
                                 x-on:mouseenter="active = index"
                                 x-on:click="window.location.href=item.url"
-                                class="cursor-pointer block rounded-sm  py-1.5 text-center flex items-center justify-center text-gray-300"
+                                class="cursor-pointer block rounded-sm  py-1.5 text-center flex items-center justify-center text-gray-300 truncate"
                                 :class="{ 'bg-blue-900 text-white': active === index, 'hover:text-white hover:bg-gray-700': active !== index }"
                             >
                             <span class="w-5 mr-1 fill-current  flex items-center justify-center"
@@ -184,7 +184,7 @@
                                                 <template x-for="(sub, subIndex) in parent.menu" :key="subIndex">
                                                     <li>
                                                         <a :href="sub.url"
-                                                           class="text-gray-800 hover:text-blue-900 block p-2 rounded"
+                                                           class="text-gray-800 hover:text-blue-900 block p-2 rounded truncate"
                                                            :class="{'bg-blue-200 text-blue-900' : sub.cur, 'text-gray-800 hover:text-blue-900' : !sub.cur}"
                                                            x-text="sub.name"></a>
                                                     </li>
