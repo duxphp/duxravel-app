@@ -51,7 +51,7 @@ class Menu extends Widget
         foreach ($this->link as $class) {
             $inner[] = '<div>' . $class->render() . '</div>';
         }
-        $this->class('shadow absolute right-0 w-40 pt-1 pb-1 rounded-sm bg-white');
+        $this->class('shadow absolute right-0 w-40 pt-1 pb-1 mt-2 rounded-sm bg-white');
         return <<<HTML
             <div x-data="{open: false}" class="relative">
                 <button class="btn-$this->type" type="button" @click="open = !open">$this->name</button>
