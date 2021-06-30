@@ -135,7 +135,7 @@ class Upload
                         $watermark = Image::make($source)->opacity($alpha);
                         $image->insert($watermark, $position, 10, 10);
                     }
-                    $image->save($tmpPath);
+                    $image->stream($tmpPath);
                 }
                 $path = $file->store('upload/' . date('Y-m-d'), $driver);
                 if ($path) {
