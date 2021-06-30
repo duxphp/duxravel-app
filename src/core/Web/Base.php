@@ -10,6 +10,25 @@ class Base extends Controller
 
     protected array $assign = [];
 
+    protected array $meta = [
+        'title' => '',
+        'keyword' => '',
+        'description' => ''
+    ];
+
+    /**
+     * 媒体头
+     * @param $title
+     * @param $keyword
+     * @param $description
+     */
+    public function meta($title, $keyword, $description): void
+    {
+        $this->meta['title'] = $title;
+        $this->meta['keyword'] = $keyword;
+        $this->meta['description'] = $description;
+    }
+
     /**
      * 模板赋值
      * @param $name
@@ -28,6 +47,12 @@ class Base extends Controller
      */
     public function view(string $tpl = '')
     {
+        $this->meta = [
+            'title' => $this->meta['title'] ? $this->meta['title'] . ' - ' . config('theme.title') : config('theme.title'),
+            'keyword' => $this->meta['keyword'] ?: config('theme.keyword'),
+            'description' => $this->meta['description'] ?: config('theme.description'),
+        ];
+        $this->assign('meta', $this->meta);
         return (new View($tpl, $this->assign))->render('web');
     }
 
