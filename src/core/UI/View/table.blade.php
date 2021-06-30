@@ -7,9 +7,9 @@
         </div>
         @endif
         @if ($actions)
-        <div class="flex-none">
+        <div class="flex-none flex gap-2">
             @foreach ($actions as $vo)
-            <div class="mb-1.5 mt-1.5">{!! $vo !!}</div>
+            <div>{!! $vo !!}</div>
             @endforeach
         </div>
         @endif
