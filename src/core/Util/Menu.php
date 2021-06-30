@@ -68,50 +68,49 @@ class Menu
                     $appData['cur'] = true;
                     $appData['hidden'] = false;
                 }
-            } else {
-                $parentData = [];
-                $appList['menu'] = collect($appList['menu'])->sortBy('order')->values();
-                foreach ($appList['menu'] as $parent => $parentList) {
-                    $parentData[$parent] = [
-                        'name' => $parentList['name'],
-                    ];
-                    if (empty($parentList['menu'])) {
+            }
+            $parentData = [];
+            $appList['menu'] = collect($appList['menu'])->sortBy('order')->values();
+            foreach ($appList['menu'] as $parent => $parentList) {
+                $parentData[$parent] = [
+                    'name' => $parentList['name'],
+                ];
+                if (empty($parentList['menu'])) {
+                    continue;
+                }
+                $subData = [];
+                $parentList['menu'] = collect($parentList['menu'])->sortBy('order')->values();
+                foreach ($parentList['menu'] as $sub => $subList) {
+                    if ($purview && !in_array($subList['url'], $purview)) {
                         continue;
                     }
-                    $subData = [];
-                    $parentList['menu'] = collect($parentList['menu'])->sortBy('order')->values();
-                    foreach ($parentList['menu'] as $sub => $subList) {
-                        if ($purview && !in_array($subList['url'], $purview)) {
-                            continue;
-                        }
-                        $url = route($subList['url'], $subList['params']);
-                        $subData[$sub] = [
-                            'name' => $subList['name'],
-                            'url' => $url,
-                            'target' => $subList['target'],
-                            'cur' => false,
-                        ];
+                    $url = route($subList['url'], $subList['params']);
+                    $subData[$sub] = [
+                        'name' => $subList['name'],
+                        'url' => $url,
+                        'target' => $subList['target'],
+                        'cur' => false,
+                    ];
 
-                        if (!$appData['url']) {
-                            $appData['url'] = $url;
-                        }
+                    if (!$appData['url']) {
+                        $appData['url'] = $url;
+                    }
 
-                        if ($this->contrastRoute($url, $ruleName)) {
-                            $subData[$sub]['cur'] = true;
-                            $appData['cur'] = true;
-                            $appData['hidden'] = false;
-                        }
+                    if ($this->contrastRoute($url, $ruleName)) {
+                        $subData[$sub]['cur'] = true;
+                        $appData['cur'] = true;
+                        $appData['hidden'] = false;
                     }
-                    if (empty($subData)) {
-                        unset($parentData[$parent]);
-                    } else {
-                        $parentData[$parent]['menu'] = $subData;
-                    }
-                    if (empty($parentData)) {
-                        unset($parentData);
-                    } else {
-                        $appData['menu'] = $parentData;
-                    }
+                }
+                if (empty($subData)) {
+                    unset($parentData[$parent]);
+                } else {
+                    $parentData[$parent]['menu'] = $subData;
+                }
+                if (empty($parentData)) {
+                    unset($parentData);
+                } else {
+                    $appData['menu'] = $parentData;
                 }
             }
             if (!empty($appData)) {
