@@ -51,7 +51,7 @@ class Menu extends Widget
         }
         $this->class('dropdown mt-1 left-0');
         return <<<HTML
-            <divx-data="show.dropdown()">
+            <divx-data="show.dropdown">
                 <button class="btn-blue" type="button" x-on:click="open = true">$this->name</button>
                 <div {$this->toElement()}  x-cloak x-bind="dropdown">
                 {$this->mergeArray($inner)}
