@@ -91,6 +91,10 @@ class Menu
                             'cur' => false,
                         ];
 
+                        if (!$appData['url']) {
+                            $appData['url'] = $url;
+                        }
+                        
                         if ($this->contrastRoute($url, $ruleName)) {
                             $subData[$sub]['cur'] = true;
                             $appData['cur'] = true;

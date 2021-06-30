@@ -154,7 +154,8 @@
                     <template x-for="(item, index) in items" :key="index">
                         <li class="mb-2" x-show="!item.hidden || index === active">
                             <div
-                                @click="item.url ? window.location.href=item.url : active = index"
+                                x-on:mouseenter="active = index"
+                                x-on:click="window.location.href=item.url"
                                 class="cursor-pointer block rounded-sm  py-1.5 text-center flex items-center justify-center text-gray-300"
                                 :class="{ 'bg-blue-900 text-white': active === index, 'hover:text-white hover:bg-gray-700': active !== index }"
                             >
