@@ -94,7 +94,7 @@
                     <template x-for="(item, index) in items" :key="index">
                         <li class="px-4" x-show="!item.hidden || index === active">
                             <div class="flex items-center space-x-2 p-2 rounded"
-                                 @click="item.url ? window.location.href = item.url : (active === index ? active = -1 : active = index)"
+                                 @click="item.url && !item.menu ? window.location.href = item.url : (active === index ? active = -1 : active = index)"
                                  :class="{ 'bg-blue-900 text-white': active === index}"
                             >
                                 <span class="flex-none w-5 mr-1 fill-current  flex items-center justify-center"
