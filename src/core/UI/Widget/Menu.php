@@ -53,9 +53,9 @@ class Menu extends Widget
         }
         $this->class('shadow absolute right-2 w-40 pt-1 pb-1 rounded-sm bg-white');
         return <<<HTML
-            <div x-data="show.dropdown()">
-                <button class="btn-$this->type" type="button" x-on:click="open = true">$this->name</button>
-                <div {$this->toElement()}  x-cloak x-bind="dropdown">
+            <div x-data="{open: false}" class="relative">
+                <button class="btn-$this->type" type="button" @click="open = !open">$this->name</button>
+                <div {$this->toElement()}  x-cloak @click.outside="open = false" x-show="open">
                 {$this->mergeArray($inner)}
                 </div>
             </div>
