@@ -66,6 +66,7 @@ class Menu
             if ($appList['url']) {
                 if ($this->contrastRoute($url, $ruleName)) {
                     $appData['cur'] = true;
+                    $appData['hidden'] = false;
                 }
             } else {
                 $parentData = [];
@@ -94,10 +95,11 @@ class Menu
                         if (!$appData['url']) {
                             $appData['url'] = $url;
                         }
-                        
+
                         if ($this->contrastRoute($url, $ruleName)) {
                             $subData[$sub]['cur'] = true;
                             $appData['cur'] = true;
+                            $appData['hidden'] = false;
                         }
                     }
                     if (empty($subData)) {
