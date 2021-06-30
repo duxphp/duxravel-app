@@ -82,11 +82,6 @@ class Installer extends LibraryInstaller
      */
     public function getInstallPath(PackageInterface $package)
     {
-        $prefix = 'duxphp/duxravel-';
-        if (strpos($package->getPrettyName(), $prefix, 0) === false) {
-            throw new \InvalidArgumentException('Unable to install non official application of duxravel temporarily');
-        }
-
         $config = $this->getAppConfig($package);
 
         if ($config['type'] === 'app') {
