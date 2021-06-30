@@ -52,7 +52,7 @@ class Base extends Controller
             'keyword' => $this->meta['keyword'] ?: config('theme.keyword'),
             'description' => $this->meta['description'] ?: config('theme.description'),
         ];
-        $this->assign('meta', $this->meta);
+        $this->assign('meta', (object) $this->meta);
         return (new View($tpl, $this->assign))->render('web');
     }
 
