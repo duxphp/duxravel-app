@@ -41,7 +41,7 @@ class Status implements Component
         foreach ($this->color as $key => $vo) {
             $statusArr[$key]['color'] = $vo;
         }
-        $statusRaw = $statusArr[(int)$value];
+        $statusRaw = $statusArr[$value];
         $statusColor = $statusRaw['color'] ?: 'blue';
         if ($this->type === 'badge') {
             return (new Badge($statusRaw['name']))->color($statusColor)->render();
