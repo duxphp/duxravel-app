@@ -26,20 +26,12 @@
     <div class="lg:hidden h-14" x-data='{active: {{$menuActive}}, items: menuList, open: false}'>
         <header class="bg-white h-14 shadow flex fixed w-full items-center justify-center px-4 z-10">
             <div class="flex-none">
-                <a  href="{{route('admin.index')}}" class="h-10 w-10 flex items-center justify-center">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                         x="0px"
-                         y="0px"
-                         viewBox="0 0 12 16" xml:space="preserve" class="h-6 w-6 fill-current text-blue-900">
-                        <g>
-                            <polygon
-                                points="6.66,12.04 6.66,8.92 3.43,8.92 3.43,3.96 5.34,3.96 5.34,7.08 8.57,7.08 8.57,12.04 	"/>
-                            <polygon
-                                points="3.43,15.17 3.43,10.21 5.34,10.21 5.34,13.33 9.9,13.33 9.9,0.83 11.81,0.83 11.81,15.17 	"/>
-                            <polygon
-                                points="0.19,15.17 0.19,0.83 8.57,0.83 8.57,5.79 6.66,5.79 6.66,2.67 2.1,2.67 2.1,15.17 	"/>
-                        </g>
+                <a href="{{route('admin.index')}}" class="h-10 w-10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 202.97 197.7" class="h-6 w-6 fill-current text-blue-900">
+                        <path d="M170,94.52l-35.9-20.73-24.34,14,11.62,6.71a5,5,0,0,1,0,8.66L32.5,154.52a5,5,0,0,1-7.5-4.33V99.61a6.44,6.44,0,0,1,0-1.52V47.51a5,5,0,0,1,7.5-4.33l35,20.23,24.32-14L7.5.68A5,5,0,0,0,0,5V192.69A5,5,0,0,0,7.5,197L170,103.18A5,5,0,0,0,170,94.52Z"/>
+                        <path d="M32.93,103.18l35.9,20.73,24.34-14-11.62-6.71a5,5,0,0,1,0-8.66l88.92-51.34a5,5,0,0,1,7.5,4.33V98.09a6.44,6.44,0,0,1,0,1.52v50.58a5,5,0,0,1-7.5,4.33l-35-20.23-24.32,14L195.47,197a5,5,0,0,0,7.5-4.33V5a5,5,0,0,0-7.5-4.33L32.93,94.52A5,5,0,0,0,32.93,103.18Z"/>
                     </svg>
+
                 </a>
 
             </div>
@@ -56,22 +48,15 @@
                 </button>
             </div>
         </header>
-        <div class="fixed z-10 bg-white m-2  left-0 right-0 shadow bg-white border rounded-md border-solid border-gray-300" x-cloak x-show="open">
+        <div class="fixed z-10 bg-white m-2  left-0 right-0 shadow bg-white border rounded-md border-solid border-gray-300"
+             x-cloak x-show="open">
             <div class="flex p-2">
                 <div class="flex-none">
-                    <a  href="{{route('admin.index')}}" class="h-10 w-10 flex items-center justify-center">
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                             x="0px"
-                             y="0px"
-                             viewBox="0 0 12 16" xml:space="preserve" class="h-6 w-6 fill-current text-blue-900">
-                        <g>
-                            <polygon
-                                points="6.66,12.04 6.66,8.92 3.43,8.92 3.43,3.96 5.34,3.96 5.34,7.08 8.57,7.08 8.57,12.04 	"/>
-                            <polygon
-                                points="3.43,15.17 3.43,10.21 5.34,10.21 5.34,13.33 9.9,13.33 9.9,0.83 11.81,0.83 11.81,15.17 	"/>
-                            <polygon
-                                points="0.19,15.17 0.19,0.83 8.57,0.83 8.57,5.79 6.66,5.79 6.66,2.67 2.1,2.67 2.1,15.17 	"/>
-                        </g>
+                    <a href="{{route('admin.index')}}" class="h-10 w-10 flex items-center justify-center">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 202.97 197.7" class="h-6 w-6 fill-current text-blue-900">
+                            <path d="M170,94.52l-35.9-20.73-24.34,14,11.62,6.71a5,5,0,0,1,0,8.66L32.5,154.52a5,5,0,0,1-7.5-4.33V99.61a6.44,6.44,0,0,1,0-1.52V47.51a5,5,0,0,1,7.5-4.33l35,20.23,24.32-14L7.5.68A5,5,0,0,0,0,5V192.69A5,5,0,0,0,7.5,197L170,103.18A5,5,0,0,0,170,94.52Z"/>
+                            <path d="M32.93,103.18l35.9,20.73,24.34-14-11.62-6.71a5,5,0,0,1,0-8.66l88.92-51.34a5,5,0,0,1,7.5,4.33V98.09a6.44,6.44,0,0,1,0,1.52v50.58a5,5,0,0,1-7.5,4.33l-35-20.23-24.32,14L195.47,197a5,5,0,0,0,7.5-4.33V5a5,5,0,0,0-7.5-4.33L32.93,94.52A5,5,0,0,0,32.93,103.18Z"/>
                         </svg>
                     </a>
                 </div>
@@ -133,31 +118,23 @@
         <div class="flex-none w-24 bg-gray-800 fixed left-0 top-0 bottom-0 text-white ">
             <div class="flex flex-col items-center justify-center">
                 <div class="rounded-full h-10 w-10 flex items-center justify-center bg-white mt-5">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                         x="0px"
-                         y="0px"
-                         viewBox="0 0 12 16" xml:space="preserve" class="h-6 w-6 fill-current text-blue-900">
-                                <g>
-                                    <polygon
-                                        points="6.66,12.04 6.66,8.92 3.43,8.92 3.43,3.96 5.34,3.96 5.34,7.08 8.57,7.08 8.57,12.04 	"/>
-                                    <polygon
-                                        points="3.43,15.17 3.43,10.21 5.34,10.21 5.34,13.33 9.9,13.33 9.9,0.83 11.81,0.83 11.81,15.17 	"/>
-                                    <polygon
-                                        points="0.19,15.17 0.19,0.83 8.57,0.83 8.57,5.79 6.66,5.79 6.66,2.67 2.1,2.67 2.1,15.17 	"/>
-                                </g>
-                                </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 202.97 197.7" class="h-6 w-6 fill-current text-blue-900">
+                        <path d="M170,94.52l-35.9-20.73-24.34,14,11.62,6.71a5,5,0,0,1,0,8.66L32.5,154.52a5,5,0,0,1-7.5-4.33V99.61a6.44,6.44,0,0,1,0-1.52V47.51a5,5,0,0,1,7.5-4.33l35,20.23,24.32-14L7.5.68A5,5,0,0,0,0,5V192.69A5,5,0,0,0,7.5,197L170,103.18A5,5,0,0,0,170,94.52Z"/>
+                        <path d="M32.93,103.18l35.9,20.73,24.34-14-11.62-6.71a5,5,0,0,1,0-8.66l88.92-51.34a5,5,0,0,1,7.5,4.33V98.09a6.44,6.44,0,0,1,0,1.52v50.58a5,5,0,0,1-7.5,4.33l-35-20.23-24.32,14L195.47,197a5,5,0,0,0,7.5-4.33V5a5,5,0,0,0-7.5-4.33L32.93,94.52A5,5,0,0,0,32.93,103.18Z"/>
+                    </svg>
                 </div>
                 <div class="text-xs text-gray-400 mt-2">后台管理</div>
             </div>
             <div class="text-gray-400 p-2 mt-3">
                 <ul>
                     <template x-for="(item, index) in items" :key="index">
-                        <li class="mb-2" x-show="!item.hidden || index === active"  :class="{'mt-20': item.app === 'app'}">
+                        <li class="mb-2" x-show="!item.hidden || index === active"
+                            :class="{'mt-20': item.app === 'app'}">
                             <div
-                                x-on:mouseenter="active = index"
-                                x-on:click="window.location.href=item.url"
-                                class="cursor-pointer block rounded-sm  py-1.5 text-center flex items-center justify-center text-gray-300 truncate"
-                                :class="{ 'bg-blue-900 text-white': active === index, 'hover:text-white hover:bg-gray-700': active !== index }"
+                                    x-on:mouseenter="active = index"
+                                    x-on:click="window.location.href=item.url"
+                                    class="cursor-pointer block rounded-sm  py-1.5 text-center flex items-center justify-center text-gray-300 truncate"
+                                    :class="{ 'bg-blue-900 text-white': active === index, 'hover:text-white hover:bg-gray-700': active !== index }"
                             >
                             <span class="w-5 mr-1 fill-current  flex items-center justify-center"
                                   x-html="item.icon"></span>
@@ -175,7 +152,7 @@
                     <template x-if="item.menu && item.menu.length">
                         <div class="flex-none w-32">
                             <div
-                                class="w-32 top-14 bg-white h-full fixed left-24 px-2 pt-1 border-gray-300 border-solid border-r">
+                                    class="w-32 top-14 bg-white h-full fixed left-24 px-2 pt-1 border-gray-300 border-solid border-r">
                                 <template x-for="(parent, parentIndex) in item.menu" :key="parentIndex">
                                     <div>
                                         <div class="text-xs text-gray-500 py-3 px-2" x-text="parent.name"></div>
@@ -204,8 +181,9 @@
         <div class="h-14 hidden lg:flex">
             <header class="bg-white shadow p-2 flex items-center z-10 fixed top-0 right-0 left-24 h-14">
                 <div
-                    class="flex-none flex space-x-2 pl-2 items-center text-gray-500 hover:text-gray-900 cursor-pointer select-none"
-                    data-js="dialog-open" data-layout="false" data-url="{{route('admin.search')}}" data-title="搜索引擎">
+                        class="flex-none flex space-x-2 pl-2 items-center text-gray-500 hover:text-gray-900 cursor-pointer select-none"
+                        data-js="dialog-open" data-layout="false" data-url="{{route('admin.search')}}"
+                        data-title="搜索引擎">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor">
@@ -221,7 +199,7 @@
                 <div class="flex-none relative mr-2 cursor-pointer select-none" x-cloak x-data="{open: false}">
                     <div class="flex" @click="open = !open">
                         <div
-                            class="flex-none mr-2 bg-gray-400 text-gray-700 rounded flex justify-center items-center w-9 h-9">
+                                class="flex-none mr-2 bg-gray-400 text-gray-700 rounded flex justify-center items-center w-9 h-9">
                             A
                         </div>
                         <div class="flex-grow">
@@ -236,7 +214,8 @@
                     <ul x-show="open" @click.outside="open = false"
                         class="shadow absolute right-0 w-40 pt-1 pb-1 rounded-sm bg-white">
                         <li>
-                            <a target="_blank" href="{{route('web.index')}}" class="block p-2 hover:bg-gray-200">返回首页</a>
+                            <a target="_blank" href="{{route('web.index')}}"
+                               class="block p-2 hover:bg-gray-200">返回首页</a>
                         </li>
                         {{--<li>
                             <a href="" class="block p-2 hover:bg-gray-200">个人设置</a>
