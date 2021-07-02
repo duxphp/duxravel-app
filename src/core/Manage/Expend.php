@@ -142,8 +142,8 @@ trait Expend
         if (!$id) {
             app_error('参数错误');
         }
-        $value = request()->input('value');
         $field = request()->input('field', 'status');
+        $value = request()->input($field);
         if (!$id || !$field) {
             app_error('状态参数传递错误');
         }
