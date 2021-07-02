@@ -35,7 +35,8 @@
     "phpoffice/phpspreadsheet": "^1.15",
     "rtconner/laravel-tagging": "^4.1",
     "tymon/jwt-auth": "^1.0",
-    "mews/captcha": "^3.2"
+    "mews/captcha": "^3.2",
+    "telstatic/rakan": "^2.2"
 
   },
   "require-dev": {
