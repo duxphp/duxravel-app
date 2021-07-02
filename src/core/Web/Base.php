@@ -19,10 +19,10 @@ class Base extends Controller
     /**
      * 媒体头
      * @param $title
-     * @param $keyword
-     * @param $description
+     * @param string $keyword
+     * @param string $description
      */
-    public function meta($title, $keyword, $description): void
+    public function meta($title, ?string $keyword = '', ?string $description = ''): void
     {
         $this->meta['title'] = $title;
         $this->meta['keyword'] = $keyword;

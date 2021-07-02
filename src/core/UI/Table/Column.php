@@ -187,7 +187,6 @@ class Column
      */
     public function desc(string $label, callable $callback = null): self
     {
-
         if (!$this->element && !$this->element instanceof Table\Column\RichText) {
             $this->element = new Table\Column\RichText();
         }
