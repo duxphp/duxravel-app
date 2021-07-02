@@ -45,4 +45,17 @@ class Daterange extends Element implements Component
         return $this->object->render($this->getValue($value));
     }
 
+    /**
+     * @param $data
+     * @return array|string[]
+     */
+    public function getInputData($data)
+    {
+        $dataArray = explode('至', $data);
+        $dataArray = array_map(function ($item) {
+            return trim($item);
+        }, $dataArray);
+        return $dataArray;
+    }
+
 }

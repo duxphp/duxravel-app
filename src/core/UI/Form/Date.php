@@ -37,7 +37,18 @@ class Date extends Element implements Component
      */
     public function render($value): string
     {
-        return $this->object->render($this->getValue($value));
+        $value = $this->getValue($value ?: null);
+        return $this->object->render($value ? date('Y-m-d', $value) : '');
+    }
+
+    /**
+     * 获取输入值
+     * @param $data
+     * @return string|null
+     */
+    public function getInputData($data): ?string
+    {
+        return $data ? strtotime($data) : null;
     }
 
 }
