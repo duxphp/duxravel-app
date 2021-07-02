@@ -42,7 +42,7 @@ class Toggle implements Component
             ->attr('data-js', 'form-switch')
             ->attr('data-params', json_encode($params))
             ->attr('data-field', $this->field)
-            ->attr('data-url', route($this->url))
+            ->attr('data-url', route($this->url, $params))
             ->render($value);
     }
 
