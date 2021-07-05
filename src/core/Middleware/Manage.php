@@ -22,6 +22,9 @@ class Manage
                 }
             }
         }
+        app()->singleton('purview_app', function () use ($layer) {
+            return $layer;
+        });
 
         // 权限检测
         $public = request()->route()->getAction('public');

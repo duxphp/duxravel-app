@@ -103,28 +103,8 @@ class Link extends Widget
      */
     public function render($data = null): string
     {
-        $public = app('router')->getRoutes()->getByName($this->route)->getAction('public');
-        if ($public === false) {
-            $purview = app()->make('purview');
-            if ($purview) {
-                if ($this->auth) {
-                    if (!in_array($this->auth, $purview)) {
-                        return '';
-                    }
-                } else {
-                    $auth = false;
-                    foreach ($purview as $vo) {
-                        $arr = explode('|', $vo);
-                        if ($arr[0] === $this->route) {
-                            $auth = true;
-                            break;
-                        }
-                    }
-                    if (!$auth) {
-                        return '';
-                    }
-                }
-            }
+        if (!$this->isAuth()) {
+            return '';
         }
 
         if ($this->show && !call_user_func($this->show, $data)) {
@@ -142,7 +122,9 @@ class Link extends Widget
                 }
             }
             $url = route($this->route, $params);
+            $this->params = $params;
         }
+
         switch ($this->type) {
             case 'default':
                 $this->attr('href', $url);
@@ -177,6 +159,42 @@ class Link extends Widget
             <a {$this->toElement()}>$icon $this->name</a>
         HTML;
 
+    }
+
+    private function isAuth()
+    {
+        $public = app('router')->getRoutes()->getByName($this->route)->getAction('public');
+        $app = \Str::before($this->route, '.');
+        if ($app <> app()->make('purview_app') || $public) {
+            return true;
+        }
+        $purview = app()->make('purview');
+        if (!$purview) {
+            return true;
+        }
+        if (\Str::afterLast($this->route, '.') === 'page') {
+            if ($this->params['id']) {
+                $this->auth('edit');
+            } else {
+                $this->auth('add');
+            }
+        }
+        if ($this->auth) {
+            if (!in_array($this->auth, $purview)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        $filterPurview = [];
+        foreach ($purview as $vo) {
+            $arr = explode('|', $vo);
+            $filterPurview[] = $arr[0];
+        }
+        if (in_array($this->route, $filterPurview)) {
+            return true;
+        }
+        return false;
     }
 
 }
