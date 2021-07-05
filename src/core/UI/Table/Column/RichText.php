@@ -84,7 +84,7 @@ class RichText implements Component
                     return '';
                 }
                 $value = $value ?: '-';
-                return "<div class='text-gray-500 overflow-ellipsis max-w-md line-clamp-2 whitespace-normal'>$value</div>";
+                return "<div class='text-gray-500 overflow-ellipsis max-w-md '>$value</div>";
             }, $desc));
         }
 
@@ -92,7 +92,7 @@ class RichText implements Component
             <div class="flex items-center space-x-2">
                 $imageHtml
                 <div class="flex-grow ">
-                <div class="overflow-ellipsis max-w-md line-clamp-2 whitespace-normal">$value</div>
+                <div class="overflow-ellipsis max-w-md">$value</div>
                 $descHtml
                 </div>
             </div>
