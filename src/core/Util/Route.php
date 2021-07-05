@@ -8,7 +8,7 @@ namespace Duxravel\Core\Util;
 class Route
 {
 
-    private array $action = ['index', 'data', 'page', 'save', 'del', 'recovery', 'clear', 'status'];
+    private array $action = ['index', 'data', 'page', 'save', 'del', 'recovery', 'clear', 'status', 'export'];
     private string $app;
     private string $layout;
     private string $name;
@@ -217,6 +217,17 @@ class Route
             'uses' => $class . '@status',
             'desc' => '状态',
             'name' => implode('.', [$layout, $app, $name, 'status'])
+        ];
+    }
+
+    private function addItemexport($app, $layout, $name, $class)
+    {
+        return [
+            'type' => 'get',
+            'rule' => $this->prefix . '/export',
+            'uses' => $class . '@export',
+            'desc' => '导出',
+            'name' => implode('.', [$layout, $app, $name, 'export'])
         ];
     }
 
