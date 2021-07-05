@@ -11,7 +11,9 @@ class App extends \Duxravel\Core\Console\Common\Stub
      */
     protected $signature = 'app:make 
                                 {name : 应用名}
-                                {--title= : 应用描述}
+                                {--title= : 应用名称}
+                                {--desc= : 应用描述}
+                                {--auth= : 应用作者}
                                 ';
 
     /**
@@ -29,6 +31,8 @@ class App extends \Duxravel\Core\Console\Common\Stub
     public function handle()
     {
         $title = $this->option('title') ?: '应用名称';
+        $desc = $this->option('desc') ?: '应用描述';
+        $auth = $this->option('auth') ?: '应用作者';
         $name = $this->argument('name');
         $appDir = ucfirst($name);
         if (is_dir(base_path('/modules/' . $appDir))) {
@@ -51,8 +55,8 @@ class App extends \Duxravel\Core\Console\Common\Stub
             'id' => $id,
             'title' => $title,
             'system' => 0,
-            'auth' => '作者',
-            'desc' => '应用描述',
+            'auth' => $auth,
+            'desc' => $desc,
             'icon' => '',
         ]);
         $this->generatorFile($appDir . '/' . 'Service/Menu.php', __DIR__ . '/Tpl/App/Menu.stub', [
