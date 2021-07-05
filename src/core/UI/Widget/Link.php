@@ -103,23 +103,26 @@ class Link extends Widget
      */
     public function render($data = null): string
     {
-        $purview = app()->make('purview');
-        if ($purview) {
-            if ($this->auth) {
-                if (!in_array($this->auth, $purview)) {
-                    return '';
-                }
-            } else {
-                $auth = false;
-                foreach ($purview as $vo) {
-                    $arr = explode('|', $vo);
-                    if ($arr[0] === $this->route) {
-                        $auth = true;
-                        break;
+        $public = app('router')->getRoutes()->getByName($this->route)->getAction('public');
+        if ($public === false) {
+            $purview = app()->make('purview');
+            if ($purview) {
+                if ($this->auth) {
+                    if (!in_array($this->auth, $purview)) {
+                        return '';
                     }
-                }
-                if (!$auth) {
-                    return '';
+                } else {
+                    $auth = false;
+                    foreach ($purview as $vo) {
+                        $arr = explode('|', $vo);
+                        if ($arr[0] === $this->route) {
+                            $auth = true;
+                            break;
+                        }
+                    }
+                    if (!$auth) {
+                        return '';
+                    }
                 }
             }
         }
