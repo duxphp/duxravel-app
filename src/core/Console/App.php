@@ -9,7 +9,10 @@ class App extends \Duxravel\Core\Console\Common\Stub
      *
      * @var string
      */
-    protected $signature = 'app:make {name}';
+    protected $signature = 'app:make 
+                                {name : 应用名}
+                                {--title= : 应用描述}
+                                ';
 
     /**
      * The console command description.
@@ -25,6 +28,7 @@ class App extends \Duxravel\Core\Console\Common\Stub
      */
     public function handle()
     {
+        $title = $this->option('title') ?: '应用名称';
         $name = $this->argument('name');
         $appDir = ucfirst($name);
         if (is_dir(base_path('/modules/' . $appDir))) {
@@ -45,7 +49,7 @@ class App extends \Duxravel\Core\Console\Common\Stub
         // 创建初始文件
         $this->generatorFile($appDir . '/' . 'Config/Config.php', __DIR__ . '/Tpl/App/Config.stub', [
             'id' => $id,
-            'title' => '应用名称',
+            'title' => $title,
             'system' => 0,
             'auth' => '作者',
             'desc' => '应用描述',
@@ -54,15 +58,22 @@ class App extends \Duxravel\Core\Console\Common\Stub
         $this->generatorFile($appDir . '/' . 'Service/Menu.php', __DIR__ . '/Tpl/App/Menu.stub', [
             'appDir' => $appDir,
             'name' => $name,
-            'menu' => '菜单',
+            'menu' => $title,
             'icon' => '',
         ]);
         $this->generatorFile($appDir . '/' . 'Route/AuthAdmin.php', __DIR__ . '/Tpl/App/AuthAdmin.stub', [
-            'title' => '应用名称',
+            'title' => $title,
             'name' => $name,
         ]);
         $this->callSilent('app:build');
         $this->info('创建应用成功');
+    }
+
+    protected function getOptions()
+    {
+        return array(
+            array('user', null, InputOption::VALUE_REQUIRED, 'user', null),
+        );
     }
 
 }
