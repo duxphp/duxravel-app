@@ -14,6 +14,7 @@ class {{class}} extends \Modules\System\Admin\Expend
     {
         $table = new Table(new $this->model());
         $table->title('{{title}}');
+        // Generate Table Make
         return $table;
     }
 
@@ -21,6 +22,7 @@ class {{class}} extends \Modules\System\Admin\Expend
     {
         $form = new Form(new $this->model());
         $form->title('{{title}}');
+        // Generate Form Make
         return $form;
     }
 

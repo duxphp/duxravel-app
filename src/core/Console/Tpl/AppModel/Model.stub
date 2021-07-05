@@ -8,6 +8,7 @@ namespace Modules\{{app}}\Model;
  */
 class {{modelName}} extends \Duxravel\Core\Model\Base
 {
+    // Generate Model Make
 
     protected $table = '{{table}}';
 
