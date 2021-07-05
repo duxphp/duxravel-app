@@ -46,6 +46,7 @@ class Images extends Element implements Component
             HTML;
         }
         $innerHtml = implode('', $inner);
+        $this->class('flex gap-2 flex-wrap');
 
         return <<<HTML
             <div {$this->toElement()} data-js="form-images" data-name="$this->field">
