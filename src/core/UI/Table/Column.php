@@ -319,7 +319,7 @@ class Column
                 }
             }
         }
-        $parsingData = $parsingData ?: '-';
+        $parsingData = $parsingData === null ? '-' : $parsingData;
 
         // 扩展组件
         if ($this->element) {
