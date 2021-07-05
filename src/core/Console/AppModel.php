@@ -12,7 +12,7 @@ class AppModel extends \Duxravel\Core\Console\Common\Stub
      *
      * @var string
      */
-    protected $signature = 'app:make-model {name}';
+    protected $signature = 'app:make-model {name} {--table= : 表名} {--key= : 主键名}';
 
     /**
      * The console command description.
@@ -40,12 +40,18 @@ class AppModel extends \Duxravel\Core\Console\Common\Stub
     {
         $name = $this->argument('name');
         $app = ucfirst($name);
+        $table = strtolower($this->option('table'));
+        $key = strtolower($this->option('key'));
         if (!is_dir(base_path('/modules/' . $app))) {
             $this->error('应用不存在，请检查!');
             exit;
         }
-        $table = $this->ask('请输入表名(英文+下划线)');
-        $key = $this->ask('请输入主键');
+        if (!$table) {
+            $table = $this->ask('请输入表名(英文+下划线)');
+        }
+        if (!$key) {
+            $key = $this->ask('请输入主键');
+        }
         $tmpArr = explode('_', $table);
         $modelName = implode('', array_map(function ($vo) {
             return ucfirst($vo);
