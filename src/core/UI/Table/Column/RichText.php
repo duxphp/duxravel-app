@@ -84,15 +84,15 @@ class RichText implements Component
                     return '';
                 }
                 $value = $value ?: '-';
-                return "<div class='text-gray-500'>$value</div>";
+                return "<div class='text-gray-500 truncate max-w-lg'>$value</div>";
             }, $desc));
         }
 
         return <<<HTML
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2 max-w-2xl truncate">
                 $imageHtml
-                <div class="flex-grow">
-                <div>$value</div>
+                <div class="flex-grow ">
+                <div class="truncate max-w-lg ">$value</div>
                 $descHtml
                 </div>
             </div>
