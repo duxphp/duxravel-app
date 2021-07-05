@@ -29,7 +29,6 @@ class Manage
             // 非公共方法进行验证
             $name = request()->route()->getName();
             $roleList = auth($layer)->user()->roles()->get();
-            $authList = request()->route()->getAction('auth_list');
 
             // 合并多角色权限
             $purview = [];
@@ -37,6 +36,10 @@ class Manage
                 $purview = array_merge($purview, (array)$item->purview);
             });
             $purview = array_filter($purview);
+            app()->instance('purview', function () use ($purview) {
+                return $purview;
+            });
+
             // 权限存在判断
             if ($purview) {
                 foreach ($purview as $vo) {
