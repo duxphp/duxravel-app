@@ -72,7 +72,7 @@ class Route
             $collection->add($route);
         }
         $collection->map(function ($item) {
-            \Route::{$item['type']}($item['rule'], ['uses' => $item['uses'], 'desc' => $item['desc']])->name($item['name']);
+            \Route::{$item['type']}($item['rule'], ['uses' => $item['uses'], 'desc' => $item['desc'], 'auth_list' => isset($item['auth_list']) ? $item['auth_list'] : []])->name($item['name']);
         });
     }
 
@@ -126,7 +126,7 @@ class Route
             'rule' => $this->prefix . '/page/{id?}',
             'uses' => $class . '@page',
             'desc' => '保存页面',
-            'auth' => ['add' => '添加', 'edit' => '编辑'],
+            'auth_list' => ['add' => '添加页面', 'edit' => '编辑页面'],
             'name' => implode('.', [$layout, $app, $name, 'page'])
         ];
     }
@@ -145,7 +145,7 @@ class Route
             'rule' => $this->prefix . '/save/{id?}',
             'uses' => $class . '@save',
             'desc' => '保存数据',
-            'auth' => ['add' => '添加', 'edit' => '编辑'],
+            'auth_list' => ['add' => '添加数据', 'edit' => '编辑数据'],
             'name' => implode('.', [$layout, $app, $name, 'save'])
         ];
     }

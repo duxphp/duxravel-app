@@ -43,6 +43,11 @@ trait Expend
 
     public function page($id = 0)
     {
+        if ($id) {
+            $this->isAuth('edit');
+        }else {
+            $this->isAuth('add');
+        }
         $form = $this->form($id);
         if ($id && $form->modelElo()) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
@@ -53,6 +58,11 @@ trait Expend
 
     public function save($id = 0)
     {
+        if ($id) {
+            $this->isAuth('edit');
+        }else {
+            $this->isAuth('add');
+        }
         $form = $this->form($id);
         if ($id && $form->modelElo) {
             $form->setKey($form->modelElo()->getKeyName(), $id);

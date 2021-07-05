@@ -38,4 +38,20 @@ trait Common
         return (new View($tpl, $this->assign))->render('dialog');
     }
 
+    public function isAuth($name)
+    {
+        $route = request()->route()->getName();
+        $layer = strtolower(app_parsing('layer'));
+
+        $roleList = auth($layer)->user()->roles()->get();
+        $purview = [];
+        $roleList->map(function ($item) use (&$purview) {
+            $purview = array_merge($purview, (array)$item->purview);
+        });
+        $purview = array_filter($purview);
+        if (!in_array($route . '|' . $name, $purview)) {
+            app_error('没有权限使用该功能', 403);
+        }
+    }
+
 }
