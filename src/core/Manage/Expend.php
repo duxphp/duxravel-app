@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @method dataField()
  * @method dataManageUrl($item)
  * @method dataInfoUrl($item)
+ * @method exportData($export)
  */
 trait Expend
 {
@@ -92,6 +93,18 @@ trait Expend
         }
         DB::commit();
         return app_success('删除记录成功');
+    }
+
+    public function export()
+    {
+        $table = $this->table();
+        app_hook('Manage', 'export', ['class' => get_called_class(), 'table' => &$table]);
+        if (!method_exists($this, 'exportData')) {
+            app_error('', 404);
+        }
+        $table->export(function ($export) {
+            return $this->exportData($export);
+        });
     }
 
     public function recovery($id = 0)
