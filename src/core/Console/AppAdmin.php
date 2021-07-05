@@ -38,7 +38,7 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
      */
     public function handle()
     {
-        $name = $this->argument('name');
+        $name = lcfirst($this->argument('name'));
         $title = $this->option('title');
         $fun = lcfirst($this->option('class'));
         $app = ucfirst($name);
