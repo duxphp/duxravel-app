@@ -81,8 +81,8 @@ class Build
         foreach ($serviceList as $value) {
             $path = substr($value, strlen(base_path('modules') . '/'), -4);
             $path = str_replace('\\', '/', $path);
-            $class = '\\Modules\\' . str_replace('/', '\\', $path);
-            if (!class_exists($class)) {
+            $class = 'Modules\\' . str_replace('/', '\\', $path);
+            if (!class_exists('\\' . $class)) {
                 continue;
             }
             $list['modules']['service'][] = $class;
@@ -102,7 +102,7 @@ class Build
             if (isset($vo['route']) && $vo['route']) {
                 $vo['route'] = is_array($vo['route']) ? $vo['route'] : [$vo['route']];
                 foreach ($vo['route'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . $v;
+                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . trim($v, '/');
                     $name = basename($file, '.php');
                     if ($name) {
                         $route[$name][] = $file;
@@ -112,7 +112,7 @@ class Build
             if (isset($vo['config']) && $vo['config']) {
                 $vo['config'] = is_array($vo['config']) ? $vo['config'] : [$vo['config']];
                 foreach ($vo['config'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . $v;
+                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . trim($v, '/');
                     $name = basename($file, '.php');
                     if ($name) {
                         $config[$name][] = $file;
