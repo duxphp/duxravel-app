@@ -24,6 +24,7 @@ class Link extends Widget
     protected array $class = [];
     protected array $typeConfig = [];
     protected string $icon = '';
+    protected string $auth = '';
 
     /**
      * Link constructor.
@@ -82,6 +83,21 @@ class Link extends Widget
     }
 
     /**
+     * 自定义权限
+     * @param $name
+     * @return $this
+     */
+    public function auth($name): self
+    {
+        if (strpos($name, '.') !== false) {
+            $this->auth = $name;
+        } else {
+            $this->auth = $this->route . '|' . $name;
+        }
+        return $this;
+    }
+
+    /**
      * @param $data
      * @return string
      */
@@ -89,16 +105,22 @@ class Link extends Widget
     {
         $purview = app()->make('purview');
         if ($purview) {
-            $auth = false;
-            foreach ($purview as $vo) {
-                $arr = explode('|', $vo);
-                if ($arr[0] === $this->route) {
-                    $auth = true;
-                    break;
+            if ($this->auth) {
+                if (!in_array($this->auth, $purview)) {
+                    return '';
                 }
-            }
-            if (!$auth) {
-                return '';
+            } else {
+                $auth = false;
+                foreach ($purview as $vo) {
+                    $arr = explode('|', $vo);
+                    if ($arr[0] === $this->route) {
+                        $auth = true;
+                        break;
+                    }
+                }
+                if (!$auth) {
+                    return '';
+                }
             }
         }
 
