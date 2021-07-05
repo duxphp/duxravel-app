@@ -40,7 +40,7 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
     {
         $name = $this->argument('name');
         $title = $this->option('title');
-        $fun = $this->option('class');
+        $fun = lcfirst($this->option('class'));
         $app = ucfirst($name);
         if (!is_dir(base_path('/modules/' . $app))) {
             $this->error('应用不存在，请检查!');
