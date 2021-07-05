@@ -126,6 +126,7 @@ class Route
             'rule' => $this->prefix . '/page/{id?}',
             'uses' => $class . '@page',
             'desc' => '保存页面',
+            'auth' => ['add' => '添加', 'edit' => '编辑'],
             'name' => implode('.', [$layout, $app, $name, 'page'])
         ];
     }
@@ -144,6 +145,7 @@ class Route
             'rule' => $this->prefix . '/save/{id?}',
             'uses' => $class . '@save',
             'desc' => '保存数据',
+            'auth' => ['add' => '添加', 'edit' => '编辑'],
             'name' => implode('.', [$layout, $app, $name, 'save'])
         ];
     }
