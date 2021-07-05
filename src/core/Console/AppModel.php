@@ -12,7 +12,7 @@ class AppModel extends \Duxravel\Core\Console\Common\Stub
      *
      * @var string
      */
-    protected $signature = 'app:make-model {name} {--table= : 表名} {--key= : 主键名}';
+    protected $signature = 'app:make-model {name} {--table= : 表名} {--key= : 主键名} {--del= : 删除时间}';
 
     /**
      * The console command description.
@@ -42,6 +42,7 @@ class AppModel extends \Duxravel\Core\Console\Common\Stub
         $app = ucfirst($name);
         $table = strtolower($this->option('table'));
         $key = strtolower($this->option('key'));
+        $del = strtolower($this->option('del'));
         if (!is_dir(base_path('/modules/' . $app))) {
             $this->error('应用不存在，请检查!');
             exit;
@@ -58,10 +59,13 @@ class AppModel extends \Duxravel\Core\Console\Common\Stub
         }, $tmpArr));
 
         //创建模型
-        Schema::create($table, function (Blueprint $table) use ($key) {
+        Schema::create($table, function (Blueprint $table) use ($key, $del) {
             $table->increments($key);
             $table->integer('create_time');
             $table->integer('update_time');
+            if ($del) {
+                $table->integer('delete_time');
+            }
         });
         $this->generatorFile($app . "/Model/{$modelName}.php", __DIR__ . '/Tpl/AppModel/Model.stub', [
             'app' => $app,
