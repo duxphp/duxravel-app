@@ -233,7 +233,7 @@
     </main>
 </div>
 </body>
-<script src="https://lib.baomitu.com/alpinejs/3.2.1/cdn.min.js"></script>
+<script defer src="https://lib.baomitu.com/alpinejs/3.2.1/cdn.min.js"></script>
 <script>
     window.menuList = @json($menuList);
 
