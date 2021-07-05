@@ -177,7 +177,7 @@
             </template>
         </div>
     </aside>
-    <main class="lg:flex-grow lg:ml-24 lg:h-full">
+    <main class="lg:flex-grow lg:ml-24 lg:h-full lg:w-full">
         <div class="h-14 hidden lg:flex">
             <header class="bg-white shadow p-2 flex items-center z-10 fixed top-0 right-0 left-24 h-14">
                 <div
