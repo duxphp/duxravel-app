@@ -12,7 +12,7 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
      *
      * @var string
      */
-    protected $signature = 'app:make-admin {name} {--title= : 功能名称}';
+    protected $signature = 'app:make-admin {name} {--class= : 类名} {--title= : 功能名称}';
 
     /**
      * The console command description.
@@ -40,12 +40,15 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
     {
         $name = $this->argument('name');
         $title = $this->option('title');
+        $fun = $this->option('class');
         $app = ucfirst($name);
         if (!is_dir(base_path('/modules/' . $app))) {
             $this->error('应用不存在，请检查!');
             exit;
         }
-        $fun = lcfirst($this->getAppName('请输入类名'));
+        if (!$fun) {
+            $fun = lcfirst($this->getAppName('请输入类名'));
+        }
         $class = ucfirst($fun);
         if (!$title) {
             $title = $this->ask('请输入功能名称');
@@ -61,9 +64,7 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
         ]);
 
         // 创建路由
-        $routeFile = base_path('/modules/' . $app . '/Route/AuthAdmin.php');
-
-        $this->appendFile($routeFile, <<<EOL
+        $this->appendFile($app . '/Route/AuthAdmin.php', <<<EOL
                                     Route::group([
                                         'auth_group' => '$title'
                                     ], function () {
@@ -73,9 +74,7 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
             '// Generate Route Make');
 
         // 创建菜单
-        $menuFile = base_path('/modules/' . $app . '/Service/Menu.php');
-
-        $this->appendFile($menuFile, <<<EOL
+        $this->appendFile($app . '/Service/Menu.php', <<<EOL
                                     [
                                         'name'  => '$title',
                                         'url'   => 'admin.$name.$fun',
@@ -92,15 +91,15 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
         $data = [];
         $contentData = explode("\n", $content);
         foreach (file($file) as $line) {
-            if (strpos($file, $mark) !== false) {
+            if (strpos($line, $mark) !== false) {
                 $place = substr($line, 0, strrpos($line, $mark));
                 foreach ($contentData as $content) {
-                    $data[] = $place . $content;
+                    $data[] = $place . $content . "\n";
                 }
             }
             $data[] = $line;
         }
-        file_put_contents($file, implode("\n", $data));
+        file_put_contents($file, implode("", $data));
     }
 
 }
