@@ -58,6 +58,7 @@ class Link extends Widget
         $this->icon = $icon;
         return $this;
     }
+
     /**
      * 设置为按钮
      * @param string $type
@@ -86,6 +87,21 @@ class Link extends Widget
      */
     public function render($data = null): string
     {
+        $purview = app()->make('purview');
+        if ($purview) {
+            $auth = false;
+            foreach ($purview as $vo) {
+                $arr = explode('|', $vo);
+                if ($arr[0] === $this->route) {
+                    $auth = true;
+                    break;
+                }
+            }
+            if (!$auth) {
+                return '';
+            }
+        }
+
         if ($this->show && !call_user_func($this->show, $data)) {
             return '';
         }
@@ -125,11 +141,11 @@ class Link extends Widget
 
         if ($this->button) {
             $this->class('btn-' . $this->button);
-        }else {
+        } else {
             $this->class('text-blue-900 hover:underline');
         }
         $icon = '';
-        if($this->icon) {
+        if ($this->icon) {
             $icon = '<div class="w-4 h-4 mr-2 ">' . \Duxravel\Core\UI\Widget::icon($this->icon) . '</div>';
         }
         return <<<HTML
