@@ -49,7 +49,7 @@ trait Common
             $purview = array_merge($purview, (array)$item->purview);
         });
         $purview = array_filter($purview);
-        if (!in_array($route . '|' . $name, $purview)) {
+        if ($purview && !in_array($route . '|' . $name, $purview)) {
             app_error('没有权限使用该功能', 403);
         }
     }

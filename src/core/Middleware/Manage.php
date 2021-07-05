@@ -38,13 +38,15 @@ class Manage
             });
             $purview = array_filter($purview);
             // 权限存在判断
-            foreach ($purview as $vo) {
-                $arr = explode('|', $vo);
-                if ($arr[0] === $name) {
-                    return $next($request);
+            if ($purview) {
+                foreach ($purview as $vo) {
+                    $arr = explode('|', $vo);
+                    if ($arr[0] === $name) {
+                        return $next($request);
+                    }
                 }
+                app_error('没有权限使用该功能', 403);
             }
-            app_error('没有权限使用该功能', 403);
         }
         return $next($request);
     }
