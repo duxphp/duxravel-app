@@ -36,7 +36,7 @@ class Manage
                 $purview = array_merge($purview, (array)$item->purview);
             });
             $purview = array_filter($purview);
-            app()->instance('purview', function () use ($purview) {
+            app()->singleton('purview', function () use ($purview) {
                 return $purview;
             });
 
