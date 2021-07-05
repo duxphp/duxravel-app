@@ -319,6 +319,7 @@ class Column
                 }
             }
         }
+        $parsingData = $parsingData ?: '-';
 
         // 扩展组件
         if ($this->element) {
@@ -326,7 +327,6 @@ class Column
         } else {
             $data = $parsingData;
         }
-        $data = $data ?: '-';
 
         return [
             'data' => $data,
