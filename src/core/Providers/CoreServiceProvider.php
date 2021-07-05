@@ -66,23 +66,21 @@ class CoreServiceProvider extends ServiceProvider
         $router->pushMiddlewareToGroup('api', \Duxravel\Core\Middleware\Header::class);
 
         // 命令行注册
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                \Duxravel\Core\Console\AppBuild::class,
-                \Duxravel\Core\Console\App::class,
-                \Duxravel\Core\Console\AppAdmin::class,
-                \Duxravel\Core\Console\AppModel::class,
-                \Duxravel\Core\Console\Install::class,
-                \Duxravel\Core\Console\Uninstall::class,
-                \Duxravel\Core\Console\InstallStatic::class,
-                \Duxravel\Core\Console\UninstallStatic::class,
-                \Duxravel\Core\Console\Operate::class,
-                \Duxravel\Core\Console\Visitor::class,
-            ]);
-            $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Console/*.php');
-            foreach ($list as $file) {
-                $this->commands[] = file_class($file);
-            }
+        $this->commands([
+            \Duxravel\Core\Console\AppBuild::class,
+            \Duxravel\Core\Console\App::class,
+            \Duxravel\Core\Console\AppAdmin::class,
+            \Duxravel\Core\Console\AppModel::class,
+            \Duxravel\Core\Console\Install::class,
+            \Duxravel\Core\Console\Uninstall::class,
+            \Duxravel\Core\Console\InstallStatic::class,
+            \Duxravel\Core\Console\UninstallStatic::class,
+            \Duxravel\Core\Console\Operate::class,
+            \Duxravel\Core\Console\Visitor::class,
+        ]);
+        $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Console/*.php');
+        foreach ($list as $file) {
+            $this->commands[] = file_class($file);
         }
 
         // 注册公共路由
