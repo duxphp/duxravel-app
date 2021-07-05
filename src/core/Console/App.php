@@ -69,11 +69,4 @@ class App extends \Duxravel\Core\Console\Common\Stub
         $this->info('创建应用成功');
     }
 
-    protected function getOptions()
-    {
-        return array(
-            array('user', null, InputOption::VALUE_REQUIRED, 'user', null),
-        );
-    }
-
 }
