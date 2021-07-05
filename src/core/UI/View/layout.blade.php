@@ -22,7 +22,7 @@
 <body class="bg-gray-100 text-sm">
     @include($layout)
 </body>
-<script src="https://lib.baomitu.com/alpinejs/3.2.1/cdn.min.js"></script>
+<script defer src="https://lib.baomitu.com/alpinejs/3.2.1/cdn.min.js"></script>
 <script>
     Do('base', function () {
         base.init()
