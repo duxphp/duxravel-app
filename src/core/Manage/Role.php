@@ -89,17 +89,26 @@ trait Role
         $form->html('角色权限', function () use ($info) {
             $parsing = app_parsing();
             $purview = $info->purview ?: [];
+
             $data = $this->getAuthAll(strtolower($parsing['layer']));
             $html = [];
             foreach ($data as $app) {
                 $html[] = '
-                        <div class="card mb-3" auth>
-                        <div class="card-header"><label class="mb-0"><input type="checkbox" auth-app  class="form-check-input align-middle align-text-bottom"> ' . $app['name'] . '</label></div>
-                        <div class="card-body pt-0 pb-0">';
+                        <div class="border-gray-300 border mb-3" auth>
+                        <div class="bg-gray-300 p-3"><label class="flex items-center flex-wrap gap-2"><input type="checkbox" auth-app  class="form-checkbox"> ' . $app['name'] . '</label></div>
+                        <div class="p-3">';
                 foreach ($app['group'] as $group) {
-                    $html[] = '<div class="mt-4 mb-4" group><div class="text-black-50 mb-2"><label class="mb-0"><input  auth-group type="checkbox"  class="form-check-input align-middle align-text-bottom"> ' . $group['name'] . '</label></div><div class=" d-flex flex-wrap mb-2">';
+                    $html[] = '<div class="py-3" group><div class="text-black-50 mb-2"><label class="flex gap-2 items-center text-gray-500"><input  auth-group type="checkbox"  class="form-checkbox"> ' . $group['name'] . '</label></div><div class="flex flex-wrap gap-4">';
                     foreach ($group['list'] as $vo) {
-                        $html[] = '<label class="form-check-label" style="width: 100px;"><input auth-item type="checkbox"  ' . (in_array($vo['value'], $purview) ? 'checked' : '') . ' class="form-check-input align-middle align-text-bottom" value="' . $vo['value'] . '" name="purview[]" /> ' . $vo['name'] . '</label>';
+
+                        if ($vo['auth_list']) {
+                            foreach ($vo['auth_list'] as $k => $v) {
+                                $html[] = '<label class="flex gap-2 items-center" ><input auth-item type="checkbox"  ' . (in_array($vo['value'] . '|' . $k, $purview) ? 'checked' : '') . ' class="form-checkbox" value="' . $vo['value'] . '|' . $k . '" name="purview[]" /> ' . $v . '</label>';
+                            }
+                        } else {
+                            $html[] = '<label class="flex gap-2 items-center"><input auth-item type="checkbox"  ' . (in_array($vo['value'], $purview) ? 'checked' : '') . ' class="form-checkbox" value="' . $vo['value'] . '" name="purview[]" /> ' . $vo['name'] . '</label>';
+                        }
+
                     }
                     $html[] = '
                             </div></div>
@@ -123,7 +132,7 @@ trait Role
             }
             if (!$data[$vo->action['auth_app']]) {
                 $data[$vo->action['auth_app']] = [
-                    'name'  => $vo->action['auth_app'],
+                    'name' => $vo->action['auth_app'],
                     'group' => []
                 ];
             }
@@ -134,8 +143,9 @@ trait Role
                 ];
             }
             $data[$vo->action['auth_app']]['group'][$vo->action['auth_group']]['list'][] = [
-                'name'  => $vo->action['desc'],
+                'name' => $vo->action['desc'],
                 'value' => $vo->action['as'],
+                'auth_list' => $vo->action['auth_list']
             ];
         }
         return $data;
