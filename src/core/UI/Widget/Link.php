@@ -122,7 +122,6 @@ class Link extends Widget
                 }
             }
             $url = route($this->route, $params);
-            $this->params = $params;
         }
 
         switch ($this->type) {
