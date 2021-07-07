@@ -36,7 +36,7 @@
     "rtconner/laravel-tagging": "^4.1",
     "tymon/jwt-auth": "^1.0",
     "mews/captcha": "^3.2",
-    "overtrue/flysystem-qiniu": "^2.0"
+    "overtrue/flysystem-qiniu": "^1.0"
 
   },
   "require-dev": {
