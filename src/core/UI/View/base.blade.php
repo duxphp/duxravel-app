@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/static/system/css/base.min.css"/>
     <link rel="stylesheet" href="/static/system/css/fontawesome.min.css"/>
     <script src="/static/system/js/jquery.min.js"></script>
-    <script src="/static/system/js/app.min.js" data-manage="{{ $manage }}"></script>
+    <script src="/static/system/js/app.min.js" data-manage="{{ strtolower($manage) }}"></script>
 
 </head>
 <body class="text-sm  bg-gray-200 lg:h-screen overflow-x-hidden overflow-auto">
