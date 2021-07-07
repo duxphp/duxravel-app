@@ -266,6 +266,15 @@ class Column
     }
 
     /**
+     * 获取权限数据
+     * @return string
+     */
+    public function getAuth(): string
+    {
+        return $this->auth;
+    }
+
+    /**
      * 获取列名
      * @return array
      */

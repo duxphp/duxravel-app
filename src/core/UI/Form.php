@@ -273,7 +273,7 @@ class Form
                 'html' => $vo->render(Tools::parsingArrData($info, $vo->getHas() ?: $vo->getField())),
                 'sort' => $sort,
             ];
-        })->sortBy('sort');
+        })->filter()->sortBy('sort');
 
         return view('vendor.duxphp.duxravel-app.src.core.UI.View.Form.layout', ['items' => $forms])->render();
     }

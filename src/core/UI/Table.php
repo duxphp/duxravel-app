@@ -485,7 +485,12 @@ class Table
             }
 
             // 设置表格信息
-            $columns = $this->getColumns();
+            $columns = $this->getColumns()->map(function ($column) {
+                if(!Tools::isAuth($column->getAuth())) {
+                    return null;
+                }
+                return $column;
+            })->filter();
             $thead = $columns->map(function ($column, $key) {
                 $header = $column->getHeader();
                 if (!empty($header)) {

@@ -171,18 +171,18 @@ class Link extends Widget
         if (!$purview) {
             return true;
         }
-        if ($this->auth) {
-            if (!in_array($this->auth, $purview)) {
-                return false;
-            }
-            return true;
-        }
         if (\Str::afterLast($this->route, '.') === 'page') {
             if ($this->params['id']) {
                 $this->can('edit');
             } else {
                 $this->can('add');
             }
+        }
+        if ($this->auth) {
+            if (!in_array($this->auth, $purview)) {
+                return false;
+            }
+            return true;
         }
         $filterPurview = [];
         foreach ($purview as $vo) {

@@ -110,8 +110,9 @@ class Tools
         if (!$auth) {
             return true;
         }
-        $public = app('router')->getRoutes()->getByName($auth)->getAction('public');
-        $app = \Str::before($auth, '.');
+        $tmp = explode('|', $auth);
+        $public = app('router')->getRoutes()->getByName($tmp[0])->getAction('public');
+        $app = \Str::before($tmp[0], '.');
         if ($app <> app()->make('purview_app') || $public) {
             return true;
         }
