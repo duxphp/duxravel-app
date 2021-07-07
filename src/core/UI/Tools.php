@@ -100,4 +100,29 @@ class Tools
         return $inner ? implode(';', $style) : 'style="' . implode(';', $style) . '"';
     }
 
+    /**
+     * 权限判断
+     * @param $auth
+     * @return bool
+     */
+    public static function isAuth($auth): bool
+    {
+        if (!$auth) {
+            return true;
+        }
+        $public = app('router')->getRoutes()->getByName($auth)->getAction('public');
+        $app = \Str::before($auth, '.');
+        if ($app <> app()->make('purview_app') || $public) {
+            return true;
+        }
+        $purview = app()->make('purview');
+        if (!$purview) {
+            return true;
+        }
+        if (!in_array($auth, $purview)) {
+            return false;
+        }
+        return true;
+    }
+
 }

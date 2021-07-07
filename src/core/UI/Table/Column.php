@@ -36,6 +36,7 @@ class Column
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
     protected ?int $sort = null;
+    protected string $auth = '';
     protected $layout;
     protected $relation;
     protected $model;
@@ -247,6 +248,21 @@ class Column
         $this->sort = $num;
         return $this;
 
+    }
+
+    /**
+     * 列权限
+     * @param $name
+     * @return $this
+     */
+    public function can($name): self
+    {
+        if (strpos($name, '.') !== false) {
+            $this->auth = $name;
+        } else {
+            $this->auth = \Request::route()->getName() . '|' . $name;
+        }
+        return $this;
     }
 
     /**

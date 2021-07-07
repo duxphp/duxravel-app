@@ -30,6 +30,7 @@ class Element
     protected bool $must = false;
     protected array $group = [];
     protected ?int $sort = null;
+    protected string $auth = '';
     protected $value;
     protected $default;
 
@@ -307,6 +308,30 @@ class Element
     {
         $this->sort = $num;
         return $this;
+    }
+
+    /**
+     * 元素权限
+     * @param $name
+     * @return $this
+     */
+    public function can($name): self
+    {
+        if (strpos($name, '.') !== false) {
+            $this->auth = $name;
+        } else {
+            $this->auth = \Request::route()->getName() . '|' . $name;
+        }
+        return $this;
+    }
+
+    /**
+     * 获取权限数据
+     * @return string
+     */
+    public function getAuth(): string
+    {
+        return $this->auth;
     }
 
     /**

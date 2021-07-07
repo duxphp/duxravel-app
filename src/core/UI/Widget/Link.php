@@ -87,7 +87,7 @@ class Link extends Widget
      * @param $name
      * @return $this
      */
-    public function auth($name): self
+    public function can($name): self
     {
         if (strpos($name, '.') !== false) {
             $this->auth = $name;
@@ -171,18 +171,17 @@ class Link extends Widget
         if (!$purview) {
             return true;
         }
-        if (\Str::afterLast($this->route, '.') === 'page') {
-            if ($this->params['id']) {
-                $this->auth('edit');
-            } else {
-                $this->auth('add');
-            }
-        }
         if ($this->auth) {
             if (!in_array($this->auth, $purview)) {
                 return false;
+            }
+            return true;
+        }
+        if (\Str::afterLast($this->route, '.') === 'page') {
+            if ($this->params['id']) {
+                $this->can('edit');
             } else {
-                return true;
+                $this->can('add');
             }
         }
         $filterPurview = [];

@@ -44,9 +44,9 @@ trait Expend
     public function page($id = 0)
     {
         if ($id) {
-            $this->isAuth('edit');
+            $this->can('edit');
         }else {
-            $this->isAuth('add');
+            $this->can('add');
         }
         $form = $this->form($id);
         if ($id && $form->modelElo()) {
@@ -59,9 +59,9 @@ trait Expend
     public function save($id = 0)
     {
         if ($id) {
-            $this->isAuth('edit');
+            $this->can('edit');
         }else {
-            $this->isAuth('add');
+            $this->can('add');
         }
         $form = $this->form($id);
         if ($id && $form->modelElo) {

@@ -246,6 +246,9 @@ class Form
         $forms = $this->element->map(function ($vo, $key) use ($info) {
             $sort = $vo->getSort();
             $sort = $sort ?? $key;
+            if (!Tools::isAuth($vo->getAuth())) {
+                return false;
+            }
             if ($vo instanceof Form\Composite) {
                 return [
                     'name' => $vo->getName(),
@@ -418,6 +421,9 @@ class Form
         // 过滤数据
         $collection = Collection::make();
         $this->element->map(function ($item) use ($collection, $time) {
+            if (!Tools::isAuth($item->getAuth())) {
+                return false;
+            }
             $inputs = $item->getInput($time);
             $filed = $item->getField();
             if ($item instanceof Form\Composite) {

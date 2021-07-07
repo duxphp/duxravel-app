@@ -38,7 +38,7 @@ trait Common
         return (new View($tpl, $this->assign))->render('dialog');
     }
 
-    public function isAuth($name)
+    public function can($name)
     {
         $route = request()->route()->getName();
         $purview = app()->make('purview');
