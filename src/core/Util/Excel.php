@@ -4,6 +4,7 @@ namespace Duxravel\Core\Util;
 
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class Excel
 {
@@ -25,18 +26,11 @@ class Excel
 
         try {
             $objRead = \PhpOffice\PhpSpreadsheet\IOFactory::createReader(ucfirst($ext));
-            $objRead->setReadDataOnly(true);
             $obj = $objRead->load($tmpFile);
             $currSheet = $obj->getSheet(0);
             $data = $currSheet->toArray();
-            $array = [];
-            for ($_row = $start; $_row <= count($data); $_row++) {
-                if ($data[$_row] !== null) {
-                    $array[] = $data[$_row];
-                }
-            }
             @unlink($tmpFile);
-            return $array;
+            return $data;
         } catch (\Exception $e) {
             @unlink($tmpFile);
             app_error($e->getMessage());
@@ -45,56 +39,51 @@ class Excel
 
     public static function export($title, $subtitle, $label, $data)
     {
-        $columns = [
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-            'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN',
-            'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ',
-        ];
-
         $count = count($label);
-        $column = $columns[$count - 1];
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $worksheet = $spreadsheet->getSheet(0);
         //标题
-        $worksheet->setCellValue('A1', $title)->mergeCells("A1:".$column.'1');
+        $worksheet->setCellValueByColumnAndRow(1, 1, $title)->mergeCellsByColumnAndRow(1, 1, $count, 1);
         $styleCenter = [
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ],
-            'font'      => [
+            'font' => [
                 'size' => 16,
             ],
         ];
-        $worksheet->getStyle('A1')->applyFromArray($styleCenter);
+        $worksheet->getStyleByColumnAndRow(1, 1)->applyFromArray($styleCenter);
+
         foreach ($label as $key => $vo) {
-            $worksheet->getColumnDimension($columns[$key])->setWidth($vo['width']);
+            $worksheet->getColumnDimensionByColumn($key + 1)->setWidth($vo['width']);
         }
 
-        $worksheet->setCellValue('A2', $subtitle)->mergeCells("A2:".$column.'2');
-        $worksheet->getStyle('A2')->applyFromArray([
+        $worksheet->setCellValueByColumnAndRow(1, 2, $subtitle)->mergeCellsByColumnAndRow(1, 2, $count, 2);
+        $worksheet->getStyleByColumnAndRow(1, 2)->applyFromArray([
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ],
         ]);
+
         //表头
         $styleArray = [
-            'borders'   => [
+            'borders' => [
                 'outline' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color'       => ['argb' => '000000'],
+                    'color' => ['argb' => '000000'],
                 ],
             ],
             'alignment' => [
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ],
-            'font'      => [
+            'font' => [
                 'size' => 12,
             ],
         ];
         $headRow = 3;
         foreach ($label as $key => $vo) {
-            $worksheet->setCellValueExplicit($columns[$key].$headRow, $vo['name'],
-                's')->getStyle($columns[$key].$headRow)->applyFromArray($styleArray);
+            $worksheet->setCellValueExplicitByColumnAndRow($key + 1, $headRow, $vo['name'], DataType::TYPE_STRING);
+            $worksheet->getStyleByColumnAndRow($key + 1, $headRow)->applyFromArray($styleArray);
         }
         foreach ($data as $list) {
             $headRow++;
@@ -106,9 +95,9 @@ class Excel
                     $content = $vo;
                     $callback = '';
                 }
-                $item = $worksheet->setCellValueExplicit($columns[$k].$headRow, $content,
-                    's')->getStyle($columns[$k].$headRow)->applyFromArray($styleArray);
-                if ($callback) {
+                $worksheet->setCellValueExplicitByColumnAndRow($k + 1, $headRow, $content, DataType::TYPE_STRING);
+                $item = $worksheet->getStyleByColumnAndRow($k + 1, $headRow)->applyFromArray($styleArray);
+                if (is_callable($callback)) {
                     $callback($item);
                 }
             }
@@ -116,7 +105,7 @@ class Excel
 
         unset($worksheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$title.'-'.date('YmdHis').'.xlsx"');
+        header('Content-Disposition: attachment;filename="' . $title . '-' . date('YmdHis') . '.xlsx"');
         header('Cache-Control: max-age=0');
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $writer->save('php://output');
