@@ -45,6 +45,7 @@ class View
                 $this->tpl = implode('.', $view);
             }
             $assign['layout'] = $this->tpl;
+            $assign['manage'] = $parsing['layer'];
         }
         if ($type === 'base') {
             $list = app(\Duxravel\Core\Util\Menu::class)->getManage($parsing['layer'] ?: '', $this->route);
