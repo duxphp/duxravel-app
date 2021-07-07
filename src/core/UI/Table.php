@@ -384,7 +384,7 @@ class Table
             return $filter->render($key);
         });
         // 查询导出数据
-        $data = $this->query->get();
+        $data = $this->query->eloquent()->get();
         // 执行渲染输出
         $export = new \Duxravel\Core\UI\Table\Export();
         $callback($export);
