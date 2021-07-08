@@ -35,10 +35,9 @@ class Images extends Element implements Component
     public function render($value): string
     {
         $values = $this->getValueArray($value) ?: [];
-
         $inner = [];
         foreach ($values as $vo) {
-            $inner = <<<HTML
+            $inner[] = <<<HTML
                 <div class="relative w-32 h-32 border-2 border-gray-400 border-dashed rounded bg-cover bg-center bg-no-repeat block hover:border-blue-900" style="background-size:90%; background-image:url('$vo')" data-item>
                     <div class="opacity-0 hover:opacity-100 absolute flex items-center justify-center w-full h-full bg-blue-200 bg-opacity-90 rounded cursor-pointer"><button type="button" class="btn-red" data-del>删除</button></div>
                     <input type="hidden" name="$this->field[]" value="$vo">
