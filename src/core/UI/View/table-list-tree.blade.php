@@ -13,7 +13,7 @@
             @endif
 
             @if($sortable)
-                <div class="w-6 py-4">
+                <div  data-td class="w-6 py-4">
                     <div class="drag select-none cursor-move w-6 justify-end">
                         <svg class="w-4 h-4 stroke-current text-gray-100" viewBox="0 0 1024 1024" version="1.1"
                              xmlns="http://www.w3.org/2000/svg" p-id="2396" width="32" height="32">
