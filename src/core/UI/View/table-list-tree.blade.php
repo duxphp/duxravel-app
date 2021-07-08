@@ -35,7 +35,7 @@
                      x-on:click="expand = !expand"
                 >
                     @if($vo->drag)
-                        <div class="w-6">
+                        <div class="w-6 contraction">
                             <svg x-show="!expand && num" class="w-4 h-4 fill-current" viewBox="0 0 1024 1024"
                                  version="1.1"
                                  xmlns="http://www.w3.org/2000/svg" p-id="2668" width="16" height="16">
