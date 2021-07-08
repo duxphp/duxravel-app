@@ -18,7 +18,7 @@
 
     </div>
 
-    <div data-tbody sortable-layout class="mt-2 sortable-group">
+    <div data-tbody sortable-layout class="sortable-group">
         @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list-tree', ['list' => $tbody])
     </div>
 @else
