@@ -33,6 +33,8 @@ class Column
     protected array $headerAttr = [];
     protected array $headerStyle = [];
     protected array $headerClass = [];
+    protected $width = '';
+    protected $drag = false;
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
     protected ?int $sort = null;
@@ -84,10 +86,7 @@ class Column
      */
     public function width($width): self
     {
-
-        $width = strpos($width, '%') === false ? $width . 'px' : $width;
-        $this->headerStyle['width'] = $width;
-        $this->headerStyle['min-width'] = $width;
+        $this->width = $width;
         return $this;
     }
 
@@ -247,7 +246,15 @@ class Column
     {
         $this->sort = $num;
         return $this;
+    }
 
+    /**
+     * 拖动排序
+     * @param bool $drag
+     */
+    public function drag($drag = true)
+    {
+        $this->drag = $drag;
     }
 
     /**
@@ -286,6 +293,7 @@ class Column
         return [
             'name' => $this->name,
             'sort' => $this->sort,
+            'width' => $this->width,
             'attr' => Tools::toAttr($this->headerAttr),
             'class' => Tools::toClass($this->headerClass, true),
             'style' => Tools::toStyle($this->headerStyle, true)
@@ -359,9 +367,12 @@ class Column
             'name' => $this->label,
             'colspan' => $this->colspan,
             'sort' => $this->sort,
+            'width' => $this->width,
+            'drag' => $this->drag,
             'class' => Tools::toClass($this->class, true),
             'attr' => Tools::toAttr($this->attr),
-            'style' => Tools::toStyle($this->style, true)
+            'style' => Tools::toStyle($this->style, true),
+
         ];
     }
 

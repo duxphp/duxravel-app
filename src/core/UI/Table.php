@@ -37,6 +37,7 @@ class Table
     protected array $toolsHtml = [];
     protected array $footerHtml = [];
     protected string $tree = '';
+    protected string $sortable = '';
     protected int $limit = 20;
     protected array $attr = [];
     protected array $class = [];
@@ -253,11 +254,24 @@ class Table
     /**
      * 树形表格
      * @param string $field
+     * @param string $sortable
      * @return $this
      */
-    public function tree(string $field = 'parent_id'): self
+    public function tree(string $field = 'parent_id', string $sortable = ''): self
     {
         $this->tree = $field;
+        $this->sortable = $sortable;
+        return $this;
+    }
+
+    /**
+     * 表格排序
+     * @param string $sortable
+     * @return $this
+     */
+    public function sortable(string $sortable = ''): self
+    {
+        $this->sortable = $sortable;
         return $this;
     }
 
@@ -453,7 +467,6 @@ class Table
         })->implode('');
 
         //主键
-        $tbody = [];
         $thead = [];
         $data = [];
         $key = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
@@ -465,8 +478,8 @@ class Table
                 $data = $this->query;
                 if ($this->tree) {
                     $data = $data->paginate(99999)->eloquent();
-                    $data->setCollection($data->getCollection()->toFlatTree());
-                }else {
+                    $data->setCollection($data->getCollection()->toTree());
+                } else {
                     $data = $data->paginate($this->limit)->eloquent();
                 }
             } else {
@@ -486,7 +499,7 @@ class Table
 
             // 设置表格信息
             $columns = $this->getColumns()->map(function ($column) {
-                if(!Tools::isAuth($column->getAuth())) {
+                if (!Tools::isAuth($column->getAuth())) {
                     return null;
                 }
                 return $column;
@@ -498,22 +511,8 @@ class Table
                     return (object)$header;
                 }
             })->filter()->sortBy('sort');
-            foreach ($data as $vo) {
-                $column = $columns->map(function ($column, $key) use ($vo) {
-                    $render = $column->render($vo);
-                    if (!empty($render)) {
-                        $render['sort'] = $render['sort'] ?? $key;
-                        return (object)$render;
-                    }
-                })->filter()->sortBy('sort');
-                $tbody[] = [
-                    'column' => $column,
-                    'data' => $vo,
-                    'json' => $column->pluck('original', 'name')->toJson(),
-                    'key' => $vo[$key]
-                ];
-            }
 
+            $tbody = $this->tbody($data, $columns, $key);
         }
 
         // 设置样式
@@ -569,13 +568,40 @@ class Table
             'toolsHtml' => $toolsHtml, // 工具html
             'footerHtml' => $footerHtml, // 底部html
             'title' => $this->title, // 表格标题
-            'tree' => $this->tree // 树形表格
+            'tree' => $this->tree, // 树形表格
+            'sortable' => $this->sortable, // 表格排序
         ];
         $assign = array_merge($assign, $this->assign);
         if ($this->dialog) {
             return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render('dialog');
         }
         return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render();
+    }
+
+    public function tbody($data, $columns, $primaryKey)
+    {
+        $tbody = [];
+        foreach ($data as $vo) {
+            $column = $columns->map(function ($column, $key) use ($vo, $primaryKey) {
+                $render = $column->render($vo);
+                if (!empty($render)) {
+                    $render['sort'] = $render['sort'] ?? $key;
+                    return (object)$render;
+                }
+            })->filter()->sortBy('sort');
+            $array = [
+                'column' => $column,
+                'data' => $vo,
+                'json' => $column->pluck('original', 'name')->toJson(),
+                'key' => $vo[$key],
+                'id' => $vo[$primaryKey]
+            ];
+            if ($vo->children) {
+                $array['children'] = $this->tbody($vo->children, $columns, $primaryKey);
+            }
+            $tbody[] = $array;
+        }
+        return $tbody;
     }
 
     /**
