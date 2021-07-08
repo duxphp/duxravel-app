@@ -5,7 +5,7 @@
         data-json="{{$item['json']}}"
     >
         <div
-            class="flex border-gray-300 items-center flex-nowrap box-border">
+            class="flex border-gray-300 items-center flex-nowrap box-border" data-items>
             @if($batch)
                 <div data-td class="flex-none flex items-center justify-start px-3 py-4" style="width: 50px;">
                     <input class="form-checkbox" data-check type="checkbox" value="{{$item['key']}}">
