@@ -5,7 +5,7 @@
         data-json="{{$item['json']}}"
     >
         <div
-            class="flex {{!$hidden && $loop->first ? 'border-t-0' : 'border-t'}} border-gray-300 items-center flex-nowrap box-border">
+            class="flex border-gray-300 items-center flex-nowrap box-border">
             @if($batch)
                 <div data-td class="flex-none flex items-center justify-start px-3 py-4" style="width: 50px;">
                     <input class="form-checkbox" data-check type="checkbox" value="{{$item['key']}}">
@@ -63,7 +63,7 @@
             data-parent="{{$item['id']}}"
         >
             @if($item['children'])
-                @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list-tree', ['list' => $item['children'], 'hidden' => true])
+                @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list-tree', ['list' => $item['children']])
             @endif
         </div>
     </div>

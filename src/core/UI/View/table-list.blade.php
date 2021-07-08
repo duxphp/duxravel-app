@@ -19,7 +19,7 @@
     </div>
 
     <div data-tbody sortable-layout class="mt-2 sortable-group">
-        @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list-tree', ['list' => $tbody, 'hidden' => false])
+        @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list-tree', ['list' => $tbody])
     </div>
 @else
     <div class="border border-gray-300 rounded p-6">
