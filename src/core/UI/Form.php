@@ -42,7 +42,7 @@ class Form
     public $modelElo;
     public $info;
     protected $title;
-    protected bool $bark;
+    protected $bark;
     protected $attr = [];
     protected $extend = [];
     protected string $method = 'post';
