@@ -465,7 +465,7 @@ class Table
         // ajax表单
         $ajax = $this->ajax;
 
-        if ($ajax) {
+        if (!$ajax) {
             $table = $this->renderTable($filters);
             $data = $table['data'];
             $thead = $table['thead'];
@@ -525,10 +525,8 @@ class Table
             'sortable' => $this->sortable, // 表格排序
         ];
         $assign = array_merge($assign, $this->assign);
-        if ($this->dialog) {
-            return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render('dialog');
-        }
-        return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render();
+
+        return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render($this->dialog ? 'dialog' : '');
     }
 
     /**
