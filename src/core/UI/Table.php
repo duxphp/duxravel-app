@@ -433,12 +433,15 @@ class Table
      */
     public function render()
     {
-
-        \DB::enableQueryLog();
         // 设置筛选信息
         $filters = $this->filters->map(function ($filter) {
             return $filter->render();
         })->toArray();
+
+        // 设置渲染类型
+        $filterType = $this->filtersType->map(function ($filter, $key) {
+            return $filter->render($key);
+        })->implode('');
 
         $filter = [];
         $filterStatus = false;
@@ -452,67 +455,6 @@ class Table
                     $filterStatus = true;
                 }
             }
-            if ($vo['status']) {
-                if ($vo['where'] instanceof \Closure) {
-                    $vo['where']($this->query, $vo['value'], $vo['data']);
-                } elseif ($vo['where'] !== false) {
-                    $this->query->where(is_string($vo['where']) ? $vo['where'] : $vo['field'], $vo['value']);
-                }
-            }
-        }
-
-        // 设置渲染类型
-        $filterType = $this->filtersType->map(function ($filter, $key) {
-            return $filter->render($key);
-        })->implode('');
-
-        //主键
-        $thead = [];
-        $data = [];
-        $key = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
-
-        // 查询列表
-        if (!$this->ajax) {
-            if ($this->query) {
-                //\DB::enableQueryLog();
-                $data = $this->query;
-                if ($this->tree) {
-                    $data = $data->paginate(99999)->eloquent();
-                    $data->setCollection($data->getCollection()->toTree());
-                } else {
-                    $data = $data->paginate($this->limit)->eloquent();
-                }
-            } else {
-                foreach ($filters as $vo) {
-                    if ($vo['status'] && $vo['where'] instanceof \Closure) {
-                        call_user_func($vo['where'], $this->data, $vo['value'], $vo['data']);
-                    }
-                }
-                $data = $this->paginateCollection($this->data, $this->limit);
-                if ($this->tree) {
-                    $data->setCollection(collect(Tree::arr2table($data->getCollection()->toArray(), $key, $this->tree)));
-                }
-            }
-            if ($this->dataCallback) {
-                $data->setCollection(call_user_func($this->dataCallback, $data->getCollection()));
-            }
-
-            // 设置表格信息
-            $columns = $this->getColumns()->map(function ($column) {
-                if (!Tools::isAuth($column->getAuth())) {
-                    return null;
-                }
-                return $column;
-            })->filter();
-            $thead = $columns->map(function ($column, $key) {
-                $header = $column->getHeader();
-                if (!empty($header)) {
-                    $header['sort'] = $header['sort'] ?? $key;
-                    return (object)$header;
-                }
-            })->filter()->sortBy('sort');
-
-            $tbody = $this->tbody($data, $columns, $key);
         }
 
         // 设置样式
@@ -522,6 +464,17 @@ class Table
 
         // ajax表单
         $ajax = $this->ajax;
+
+        if ($ajax) {
+            $table = $this->renderTable($filters);
+            $data = $table['data'];
+            $thead = $table['thead'];
+            $tbody = $table['tbody'];
+        } else {
+            $data = null;
+            $thead = [];
+            $tbody = [];
+        }
 
         // 设置操作
         $actions = $this->action ? $this->action()->render() : [];
@@ -551,7 +504,7 @@ class Table
 
         $assign = [
             'ajax' => $ajax ? $ajax . ($params ? (strpos($ajax, '?') === false ? '?' : '&') . http_build_query($params) : '') : null, // ajax表格
-            'pages' => $data->lastPage() > 1 ? $data->withQueryString()->links('vendor.duxphp.duxravel-app.src.core.UI.View.table-pages') : '', // 分页html
+            'pages' => $data && $data->lastPage() > 1 ? $data->withQueryString()->links('vendor.duxphp.duxravel-app.src.core.UI.View.table-pages') : '', // 分页html
             'thead' => $thead, // 表头
             'tbody' => $tbody, // 表数据
             'style' => $style, // 样式
@@ -578,64 +531,89 @@ class Table
         return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render();
     }
 
-    public function tbody($data, $columns, $primaryKey)
+    /**
+     * 表格渲染
+     * @param $filters
+     * @return array
+     */
+    public function renderTable($filters): array
     {
-        $tbody = [];
-        foreach ($data as $vo) {
-            $column = $columns->map(function ($column, $key) use ($vo, $primaryKey) {
-                $render = $column->render($vo);
-                if (!empty($render)) {
-                    $render['sort'] = $render['sort'] ?? $key;
-                    return (object)$render;
+        // 筛选条件
+        foreach ($filters as $vo) {
+            if ($vo['status']) {
+                if ($vo['where'] instanceof \Closure) {
+                    $vo['where']($this->query, $vo['value'], $vo['data']);
+                } elseif ($vo['where'] !== false) {
+                    $this->query->where(is_string($vo['where']) ? $vo['where'] : $vo['field'], $vo['value']);
                 }
-            })->filter()->sortBy('sort');
-            $array = [
-                'column' => $column,
-                'data' => $vo,
-                'json' => $column->pluck('original', 'name')->toJson(),
-                'key' => $vo[$key],
-                'id' => $vo[$primaryKey]
-            ];
-            if ($vo->children) {
-                $array['children'] = $this->tbody($vo->children, $columns, $primaryKey);
             }
-            $tbody[] = $array;
         }
-        return $tbody;
+
+        //主键
+        $key = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
+
+        // 查询列表
+        if ($this->query) {
+            $data = $this->query;
+            if ($this->tree) {
+                $data = $data->paginate(99999)->eloquent();
+                $data->setCollection($data->getCollection()->toTree());
+            } else {
+                $data = $data->paginate($this->limit)->eloquent();
+            }
+        } else {
+            foreach ($filters as $vo) {
+                if ($vo['status'] && $vo['where'] instanceof \Closure) {
+                    call_user_func($vo['where'], $this->data, $vo['value'], $vo['data']);
+                }
+            }
+            $data = $this->paginateCollection($this->data, $this->limit);
+            if ($this->tree) {
+                $data->setCollection(collect(Tree::arr2table($data->getCollection()->toArray(), $key, $this->tree)));
+            }
+        }
+        if ($this->dataCallback) {
+            $data->setCollection(call_user_func($this->dataCallback, $data->getCollection()));
+        }
+
+        // 设置表格信息
+        $columns = $this->getColumns()->map(function ($column) {
+            if (!Tools::isAuth($column->getAuth())) {
+                return null;
+            }
+            return $column;
+        })->filter();
+        $thead = $columns->map(function ($column, $key) {
+            $header = $column->getHeader();
+            if (!empty($header)) {
+                $header['sort'] = $header['sort'] ?? $key;
+                return (object)$header;
+            }
+        })->filter()->sortBy('sort');
+
+        $tbody = $this->tbody($data, $columns, $key);
+
+        return [
+            'thead' => $thead,
+            'tbody' => $tbody,
+            'data' => $data,
+            'key' => $key
+        ];
     }
 
     /**
      * Ajax数据输出
-     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
     public function renderAjax()
     {
-        $this->filters->map(function ($filter) {
+        $filters = $this->filters->map(function ($filter) {
             return $filter->render();
         })->toArray();
+        $table = $this->renderTable($filters);
+        $data = $table['data'];
+        $thead = $table['thead'];
+        $tbody = $table['tbody'];
 
-        if ($this->model) {
-            $data = $this->query->paginate($this->limit);
-        } else {
-            $data = $this->paginateCollection($this->data, $this->limit);
-        }
-
-        $key = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
-
-        // 设置表格信息
-        $columns = $this->getColumns();
-        $thead = $columns->map(function ($column) {
-            return (object)$column->getHeader();
-        })->filter();
-        $tbody = [];
-        foreach ($data as $vo) {
-            $tbody[] = [
-                'column' => $columns->map(function ($column) use ($vo) {
-                    return (object)$column->render($vo);
-                })->filter(),
-                'key' => $vo->$key
-            ];
-        }
         $totalPage = $data->lastPage();
         $page = $data->currentPage();
 
@@ -649,6 +627,39 @@ class Table
             'totalPage' => $totalPage,
             'page' => $page
         ]);
+    }
+
+
+    /**
+     * 渲染表格内容
+     * @param $data
+     * @param $columns
+     * @param $primaryKey
+     * @return array
+     */
+    public function tbody($data, $columns, $primaryKey)
+    {
+        $tbody = [];
+        foreach ($data as $index => $vo) {
+            $column = $columns->map(function ($column, $key) use ($vo) {
+                $render = $column->render($vo);
+                if (!empty($render)) {
+                    $render['sort'] = $render['sort'] ?? $key;
+                    return (object)$render;
+                }
+            })->filter()->sortBy('sort');
+            $array = [
+                'column' => $column,
+                'json' => $column->pluck('original', 'name')->toJson(),
+                'key' => $vo[$index],
+                'id' => $vo[$primaryKey]
+            ];
+            if ($vo->children) {
+                $array['children'] = $this->tbody($vo->children, $columns, $primaryKey);
+            }
+            $tbody[] = $array;
+        }
+        return $tbody;
     }
 
     /**
