@@ -518,15 +518,15 @@ class Table
         foreach ($this->footerHtml as $vo) {
             $footerHtml[] = is_callable($vo) ? $vo() : $vo;
         }
+
         $sideLeftHtml = [];
         $sideRightHtml = [];
         foreach ($this->sideHtml as $vo) {
             if ($vo['direction'] === 'left') {
-                $sideLeftHtml[] = is_callable($vo['callback']) ? $vo() : $vo;
+                $sideLeftHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
             } else {
-                $sideRightHtml[] = is_callable($vo['callback']) ? $vo() : $vo;
+                $sideRightHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
             }
-
         }
 
         $assign = [

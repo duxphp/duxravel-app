@@ -47,7 +47,7 @@
         @if($item->children->count())
             <div x-show="expand" class="bg-gray-500 rounded bg-opacity-5">
                 <ul x-data="{expand: false}">
-                    @include('vendor.duxphp.duxravel-app.src.core.UI.View.Widget.tree-list', ['items' => $item->children, 'level' => $level + 1])
+                    @include('vendor.duxphp.duxravel-app.src.core.UI.View.Widget.tree-list-inner', ['items' => $item->children, 'level' => $level + 1])
                 </ul>
             </div>
         @endif

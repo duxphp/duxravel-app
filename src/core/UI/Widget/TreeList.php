@@ -35,7 +35,7 @@ class TreeList extends Widget
      */
     public function render(): string
     {
-        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Widget.tree-list.blade', [
+        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Widget.tree-list', [
             'data' => $this->data,
             'name' => $this->name,
             'title' => $this->title,
