@@ -8,7 +8,7 @@ namespace Duxravel\Core\Util;
 class Route
 {
 
-    private array $action = ['index', 'data', 'page', 'save', 'del', 'recovery', 'clear', 'status', 'export'];
+    private array $action = ['index', 'ajax', 'data', 'page', 'save', 'del', 'recovery', 'clear', 'status', 'export'];
     private string $app;
     private string $layout;
     private string $name;
@@ -90,6 +90,24 @@ class Route
             'rule' => $this->prefix,
             'uses' => $class . '@' . 'index',
             'desc' => '列表页面',
+            'name' => implode('.', [$layout, $app, $name])
+        ];
+    }
+
+    /**
+     * @param $app
+     * @param $layout
+     * @param $name
+     * @param $class
+     * @return array
+     */
+    private function addItemAjax($app, $layout, $name, $class)
+    {
+        return [
+            'type' => 'get',
+            'rule' => $this->prefix,
+            'uses' => $class . '@' . 'ajax',
+            'desc' => '列表ajax数据',
             'name' => implode('.', [$layout, $app, $name])
         ];
     }
