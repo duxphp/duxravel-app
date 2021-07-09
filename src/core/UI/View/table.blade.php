@@ -1,11 +1,11 @@
-<div class="flex">
+<div class="lg:flex">
     @foreach($sideLeftHtml as $vo)
-        <div class="flex-none">
+        <div class="lg:flex-none hidden lg:block">
             {!! $vo !!}
         </div>
     @endforeach
 
-    <div class="p-5 flex-grow w-44">
+    <div class="p-5 lg:flex-grow lg:w-44">
         @if($title || $actions)
             <div class="flex items-center  pb-4">
                 @if($title)
@@ -151,7 +151,7 @@
     </div>
 
     @foreach($sideRightHtml as $vo)
-        <div class="flex-none">
+        <div class="lg:flex-none hidden lg:block">
             {!! $vo !!}
         </div>
     @endforeach

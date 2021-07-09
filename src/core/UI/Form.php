@@ -52,6 +52,7 @@ class Form
     protected array $flow = [];
     protected array $assign = [];
     protected array $script = [];
+    protected array $sideHtml = [];
     protected bool $dialog = false;
     public Collection $element;
 
@@ -236,6 +237,16 @@ class Form
         return $data;
     }
 
+    // 边栏元素
+    public function side($callback, string $direction = 'left'): self
+    {
+        $this->sideHtml[] = [
+            'callback' => $callback,
+            'direction' => $direction
+        ];
+        return $this;
+    }
+
     /**
      * 表单渲染
      * @param $info
@@ -381,6 +392,17 @@ class Form
             }
         }
 
+        // 边栏元素
+        $sideLeftHtml = [];
+        $sideRightHtml = [];
+        foreach ($this->sideHtml as $vo) {
+            if ($vo['direction'] === 'left') {
+                $sideLeftHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
+            } else {
+                $sideRightHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
+            }
+        }
+
         // 渲染表单页面
         $assign = [
             'title' => $this->title,
@@ -392,6 +414,8 @@ class Form
             'method' => $this->method,
             'attr' => $this->attr,
             'script' => $script,
+            'sideLeftHtml' => $sideLeftHtml,
+            'sideRightHtml' => $sideRightHtml,
         ];
         $assign = array_merge($assign, $this->assign);
 
