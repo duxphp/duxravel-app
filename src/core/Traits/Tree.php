@@ -4,7 +4,7 @@ namespace Duxravel\Core\Traits;
 
 /**
  * Class Tree
- * @package Duxravel\Core\Model
+ * @package Duxravel\Core\Traits
  */
 trait Tree
 {
