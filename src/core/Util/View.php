@@ -37,6 +37,7 @@ class View
     public function render($type = 'base')
     {
         $assign = $this->data;
+        $view = '';
 
         $parsing = app_parsing();
         if ($type === 'base' || $type === 'layout' || $type === 'dialog') {
@@ -85,7 +86,7 @@ class View
             }
             $view = $this->tpl;
         }
-        return view($view, $assign);
+        return view($view ?: $this->tpl, $assign);
     }
 
 

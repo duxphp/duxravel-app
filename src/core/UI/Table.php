@@ -462,6 +462,18 @@ class Table
         $class = Tools::toClass($this->class, true);
         $attr = Tools::toAttr($this->attr);
 
+        // 设置操作
+        $actions = $this->action ? $this->action()->render() : [];
+
+        // 批量操作
+        $batch = $this->batch ? $this->batch()->render() : [];
+        $params = request()->all();
+
+        // 弹窗布局
+        if ($this->dialog === null) {
+            $this->dialog = (bool)request()->get('dialog');
+        }
+
         // ajax表单
         $ajax = $this->ajax;
 
@@ -476,17 +488,6 @@ class Table
             $tbody = [];
         }
 
-        // 设置操作
-        $actions = $this->action ? $this->action()->render() : [];
-
-        // 批量操作
-        $batch = $this->batch ? $this->batch()->render() : [];
-        $params = request()->all();
-
-        // 弹窗布局
-        if ($this->dialog === null) {
-            $this->dialog = (bool)request()->get('dialog');
-        }
 
         //html解析
         $headerHtml = [];
@@ -526,7 +527,7 @@ class Table
         ];
         $assign = array_merge($assign, $this->assign);
 
-        return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render($this->dialog ? 'dialog' : '');
+        return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render($this->dialog ? 'dialog' : 'base');
     }
 
     /**
@@ -611,7 +612,6 @@ class Table
         $data = $table['data'];
         $thead = $table['thead'];
         $tbody = $table['tbody'];
-
         $totalPage = $data->lastPage();
         $page = $data->currentPage();
 
@@ -621,7 +621,7 @@ class Table
             'batch' => (bool)$this->batch
         ];
         return app_success('ok', [
-            'html' => (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax', $assign))->render(),
+            'html' => (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax', $assign))->render(null)->render(),
             'totalPage' => $totalPage,
             'page' => $page
         ]);

@@ -90,15 +90,18 @@
                 @endforeach
             @endif
             <div class="overflow-x-auto">
-
                 @if($tree)
                     <div class="py-4 table-list" data-table>
-                        @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list')
+                        @if(!$ajax)
+                            @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-list')
+                        @endif
                     </div>
                 @else
                     <table class="table-box {{$class}}" style="{!! $style !!}" {!! $attr !!}
                     data-table>
-                        @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax')
+                        @if(!$ajax)
+                            @include('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax')
+                        @endif
                     </table>
                 @endif
             </div>
