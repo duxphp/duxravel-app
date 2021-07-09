@@ -8,7 +8,7 @@ namespace Duxravel\Core\Util;
 class Route
 {
 
-    private array $action = ['index', 'ajax', 'data', 'page', 'save', 'del', 'recovery', 'clear', 'status', 'export'];
+    private array $action = ['index', 'data', 'page', 'save', 'del', 'recovery', 'clear', 'status', 'export'];
     private string $app;
     private string $layout;
     private string $name;
@@ -64,6 +64,21 @@ class Route
         return $this;
     }
 
+    /**
+     * 追加方法
+     * @param $name
+     * @return $this
+     */
+    public function append($name): self
+    {
+        $name = is_array($name) ? $name : [$name];
+        $this->action = array_merge($this->action, $name);
+        return $this;
+    }
+
+    /**
+     * 生成路由
+     */
     public function make(): void
     {
         $collection = collect();
@@ -91,24 +106,6 @@ class Route
             'uses' => $class . '@' . 'index',
             'desc' => '列表页面',
             'name' => implode('.', [$layout, $app, $name])
-        ];
-    }
-
-    /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
-     * @return array
-     */
-    private function addItemAjax($app, $layout, $name, $class)
-    {
-        return [
-            'type' => 'get',
-            'rule' => $this->prefix . '/ajax',
-            'uses' => $class . '@ajax',
-            'desc' => 'ajax数据',
-            'name' => implode('.', [$layout, $app, $name, 'ajax'])
         ];
     }
 
@@ -248,6 +245,42 @@ class Route
             'uses' => $class . '@export',
             'desc' => '导出',
             'name' => implode('.', [$layout, $app, $name, 'export'])
+        ];
+    }
+
+    /**
+     * @param $app
+     * @param $layout
+     * @param $name
+     * @param $class
+     * @return array
+     */
+    private function addItemAjax($app, $layout, $name, $class)
+    {
+        return [
+            'type' => 'get',
+            'rule' => $this->prefix . '/ajax',
+            'uses' => $class . '@ajax',
+            'desc' => 'ajax数据',
+            'name' => implode('.', [$layout, $app, $name, 'ajax'])
+        ];
+    }
+
+    /**
+     * @param $app
+     * @param $layout
+     * @param $name
+     * @param $class
+     * @return array
+     */
+    private function addItemSort($app, $layout, $name, $class)
+    {
+        return [
+            'type' => 'post',
+            'rule' => $this->prefix . '/sortable',
+            'uses' => $class . '@sortable',
+            'desc' => '排序',
+            'name' => implode('.', [$layout, $app, $name, 'sortable'])
         ];
     }
 
