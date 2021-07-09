@@ -106,7 +106,7 @@ class Route
         return [
             'type' => 'get',
             'rule' => $this->prefix . '/ajax',
-            'uses' => $class . '@' . 'ajax',
+            'uses' => $class . '@ajax',
             'desc' => 'ajax数据',
             'name' => implode('.', [$layout, $app, $name, 'ajax'])
         ];
