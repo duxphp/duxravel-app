@@ -105,10 +105,10 @@ class Route
     {
         return [
             'type' => 'get',
-            'rule' => $this->prefix . '/data',
+            'rule' => $this->prefix . '/ajax',
             'uses' => $class . '@' . 'ajax',
-            'desc' => '列表ajax数据',
-            'name' => implode('.', [$layout, $app, $name])
+            'desc' => 'ajax数据',
+            'name' => implode('.', [$layout, $app, $name, 'ajax'])
         ];
     }
 
