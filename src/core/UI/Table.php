@@ -36,6 +36,7 @@ class Table
     protected array $headerHtml = [];
     protected array $toolsHtml = [];
     protected array $footerHtml = [];
+    protected array $sideHtml = [];
     protected string $tree = '';
     protected string $sortable = '';
     protected int $limit = 20;
@@ -192,6 +193,21 @@ class Table
     public function footer($callback): self
     {
         $this->footerHtml[] = $callback;
+        return $this;
+    }
+
+    /**
+     * 自定义侧边html
+     * @param $callback
+     * @param string $direction
+     * @return $this
+     */
+    public function side($callback, string $direction = 'left'): self
+    {
+        $this->sideHtml[] = [
+            'callback' => $callback,
+            'direction' => $direction
+        ];
         return $this;
     }
 
@@ -502,6 +518,16 @@ class Table
         foreach ($this->footerHtml as $vo) {
             $footerHtml[] = is_callable($vo) ? $vo() : $vo;
         }
+        $sideLeftHtml = [];
+        $sideRightHtml = [];
+        foreach ($this->sideHtml as $vo) {
+            if ($vo['direction'] === 'left') {
+                $sideLeftHtml[] = is_callable($vo['callback']) ? $vo() : $vo;
+            } else {
+                $sideRightHtml[] = is_callable($vo['callback']) ? $vo() : $vo;
+            }
+
+        }
 
         $assign = [
             'ajax' => $ajax ? $ajax . ($params ? (strpos($ajax, '?') === false ? '?' : '&') . http_build_query($params) : '') : null, // ajax表格
@@ -521,6 +547,8 @@ class Table
             'headerHtml' => $headerHtml, // 头部html
             'toolsHtml' => $toolsHtml, // 工具html
             'footerHtml' => $footerHtml, // 底部html
+            'sideLeftHtml' => $sideLeftHtml, // 侧边栏html
+            'sideRightHtml' => $sideRightHtml, // 右侧边栏html
             'title' => $this->title, // 表格标题
             'tree' => $this->tree, // 树形表格
             'sortable' => $this->sortable, // 表格排序
