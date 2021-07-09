@@ -158,6 +158,9 @@ class Widget
      */
     public function next(): Widget
     {
+        if (!$this->callback) {
+            return $this;
+        }
         $this->callbackData = call_user_func($this->callback, $this);
         return $this;
     }

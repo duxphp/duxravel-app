@@ -41,7 +41,7 @@ trait Tree
      */
     public function allParent()
     {
-        return $this->parent()->with('parent_rec');
+        return $this->parent()->with('allParent');
     }
 
 }
