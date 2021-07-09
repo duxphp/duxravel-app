@@ -81,7 +81,7 @@ class Checkbox extends Element implements Component
             $this->attr('data-js', 'form-change');
             $this->attr('data-group', $this->switch);
         }
-        $values = $values ?: array_key_first($data);
+        $values = $values ?: array_key_first((array) $data);
 
         $inner = [];
         foreach ($data as $key => $vo) {

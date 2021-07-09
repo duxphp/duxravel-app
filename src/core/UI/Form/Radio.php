@@ -93,7 +93,7 @@ class Radio extends Element implements Component
         if (is_array($this->data)) {
             $data = $this->data;
         }
-        $value = $value ?? array_key_first($data);
+        $value = $value ?? array_key_first((array) $data);
 
         $this->attr('name', $this->field);
         if ($this->switch) {
