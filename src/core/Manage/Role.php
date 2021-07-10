@@ -71,7 +71,16 @@ trait Role
         });
 
         $form->before(function ($data, $type, $model) {
-            $model->purview = explode(',', $data['purview']);
+            $purview = explode(',', $data['purview']);
+
+            $purview = array_filter($purview, function ($item) {
+                if (stripos($item, 'desc_', 0) !== false) {
+                    return false;
+                }
+                return true;
+            });
+
+            $model->purview = array_values($purview);
         });
 
         return $form;
@@ -95,19 +104,18 @@ trait Role
 
             $purviewData = [];
             $i = 0;
-            foreach ($data as $app) {
+            foreach ($data as $appName => $app) {
                 $i++;
                 $tmp = [
-                    'id' => 'app.node.' . $i,
+                    'id' => 'desc_' . $i,
                     'text' => $app['name'],
                     'children' => []
                 ];
 
-                $s = 0;
-                foreach ($app['group'] as $item) {
-                    $s++;
+                foreach ($app['group'] as $groupName => $item) {
+                    $i++;
                     $group = [
-                        'id' => 'group.node.' . $s,
+                        'id' => 'desc_' . $i,
                         'text' => $item['name'],
                         'children' => []
                     ];

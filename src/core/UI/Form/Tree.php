@@ -49,14 +49,7 @@ class Tree extends Element implements Component
             $data = $data->toArray();
         }
 
-        foreach ($data as $key => &$item) {
-            if (array_key_exists('parent', $item)) {
-                $item['parent'] = $item['parent'] ?: '#';
-            }
-            $item['state'] = [
-                'selected' => $item['id'] !== null && in_array($item['id'], (array) $values) ? true : false
-            ];
-        }
+        $data = $this->loop($data, $values);
 
         unset($item);
 
@@ -68,6 +61,22 @@ class Tree extends Element implements Component
                 <div {$this->toElement()} data-js="form-tree" data-data='$json'></div>
             </div>
         HTML;
+    }
+
+    protected function loop($data, $values)
+    {
+        foreach ($data as $key => $item) {
+            if (array_key_exists('parent', $item)) {
+                $data[$key]['parent'] = $item['parent'] ?: '#';
+            }
+            $data[$key]['state'] = [
+                'selected' => $item['id'] !== null && in_array($item['id'], (array)$values) ? true : false
+            ];
+            if ($item['children']) {
+                $data[$key]['children'] = $this->loop($item['children'], $values);
+            }
+        }
+        return $data;
     }
 
 }
