@@ -95,7 +95,7 @@ trait Role
 
             $purviewData = [];
             $i = 0;
-            foreach ($data as $appName => $app) {
+            foreach ($data as $app) {
                 $i++;
                 $tmp = [
                     'id' => 'app.node.' . $i,
@@ -104,7 +104,7 @@ trait Role
                 ];
 
                 $s = 0;
-                foreach ($app['group'] as $groupName => $item) {
+                foreach ($app['group'] as $item) {
                     $s++;
                     $group = [
                         'id' => 'group.node.' . $s,
