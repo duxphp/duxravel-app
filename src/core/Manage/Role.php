@@ -71,7 +71,7 @@ trait Role
         });
 
         $form->before(function ($data, $type, $model) {
-            $model->purview = request()->input('purview');
+            $model->purview = explode(',', $data['purview']);
         });
 
         return $form;
@@ -86,38 +86,50 @@ trait Role
             'required' => '请填写角色名',
             'min' => '用户名不能少于2位',
         ]);
-        $form->html('角色权限', function () use ($info) {
+
+
+        $form->tree('树形分类', 'purview', function () {
+
             $parsing = app_parsing();
-            $purview = $info->purview ?: [];
-
             $data = $this->getAuthAll(strtolower($parsing['layer']));
-            $html = [];
-            foreach ($data as $app) {
-                $html[] = '
-                        <div class="border-gray-300 border mb-3" auth>
-                        <div class="bg-gray-300 p-3"><label class="flex items-center flex-wrap gap-2"><input type="checkbox" auth-app  class="form-checkbox"> ' . $app['name'] . '</label></div>
-                        <div class="p-3">';
-                foreach ($app['group'] as $group) {
-                    $html[] = '<div class="py-3" group><div class="text-black-50 mb-2"><label class="flex gap-2 items-center text-gray-500"><input  auth-group type="checkbox"  class="form-checkbox"> ' . $group['name'] . '</label></div><div class="flex flex-wrap gap-4">';
-                    foreach ($group['list'] as $vo) {
 
+            $purviewData = [];
+            foreach ($data as $appName => $app) {
+                $tmp = [
+                    'id' => $appName,
+                    'text' => $app['name'],
+                    'children' => []
+                ];
+
+                foreach ($app['group'] as $groupName => $item) {
+                    $group = [
+                        'id' => $groupName,
+                        'text' => $item['name'],
+                        'children' => []
+                    ];
+                    foreach ($item['list'] as $vo) {
                         if ($vo['auth_list']) {
                             foreach ($vo['auth_list'] as $k => $v) {
-                                $html[] = '<label class="flex gap-2 items-center" ><input auth-item type="checkbox"  ' . (in_array($vo['value'] . '|' . $k, $purview) ? 'checked' : '') . ' class="form-checkbox" value="' . $vo['value'] . '|' . $k . '" name="purview[]" /> ' . $v . '</label>';
+                                $group['children'][] = [
+                                    'id' => $vo['value'] . '|' . $k,
+                                    'text' => $v
+                                ];
                             }
                         } else {
-                            $html[] = '<label class="flex gap-2 items-center"><input auth-item type="checkbox"  ' . (in_array($vo['value'], $purview) ? 'checked' : '') . ' class="form-checkbox" value="' . $vo['value'] . '" name="purview[]" /> ' . $vo['name'] . '</label>';
+                            $group['children'][] = [
+                                'id' => $vo['value'],
+                                'text' => $vo['name']
+                            ];
                         }
-
                     }
-                    $html[] = '
-                            </div></div>
-                        ';
+                    $tmp['children'][] = $group;
                 }
-                $html[] = '</div></div>';
+                $purviewData[] = $tmp;
             }
-            return implode('', $html);
-        })->help('请选择权限，如果不选择任何权限则默认拥有所有权限', true);
+
+            return $purviewData;
+        });
+
         return $form;
     }
 
