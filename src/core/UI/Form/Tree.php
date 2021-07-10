@@ -45,29 +45,29 @@ class Tree extends Element implements Component
         if ($this->data instanceof \Closure) {
             $data = call_user_func($this->data, $values);
         }
-        if (is_array($this->data)) {
-            $data = collcet($this->data);
+        if ($data instanceof \Illuminate\Database\Eloquent\Collection) {
+            $data = $data->toArray();
         }
 
-        $data = $data->map(function ($item) {
-            if (!$item->parent) {
-                $item->parent = '#';
+        foreach ($data as $key => &$item) {
+            if (array_key_exists('parent', $item)) {
+                $item['parent'] = $item['parent'] ?: '#';
             }
-            $item->state = [
-                'selected' => $item->id !== null && in_array($item->id, (array) $values) ? true : false
+            $item['state'] = [
+                'selected' => $item['id'] !== null && in_array($item['id'], (array) $values) ? true : false
             ];
-            return $item;
-        });
+        }
+
+        unset($item);
 
         $json = json_encode($data, JSON_THROW_ON_ERROR);
-
+        $value = is_array($values) ? implode(',', $values) : '';
         return <<<HTML
             <div class="border border-gray-300 p-4 max-h-56 overflow-auto">
                 <input type="hidden" name="$this->field" value="$value">
                 <div {$this->toElement()} data-js="form-tree" data-data='$json'></div>
             </div>
         HTML;
-
     }
 
 }
