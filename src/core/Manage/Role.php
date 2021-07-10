@@ -88,22 +88,26 @@ trait Role
         ]);
 
 
-        $form->tree('树形分类', 'purview', function () {
+        $form->tree('权限选择', 'purview', function () {
 
             $parsing = app_parsing();
             $data = $this->getAuthAll(strtolower($parsing['layer']));
 
             $purviewData = [];
+            $i = 0;
             foreach ($data as $appName => $app) {
+                $i++;
                 $tmp = [
-                    'id' => $appName,
+                    'id' => 'app.node.' . $i,
                     'text' => $app['name'],
                     'children' => []
                 ];
 
+                $s = 0;
                 foreach ($app['group'] as $groupName => $item) {
+                    $s++;
                     $group = [
-                        'id' => $groupName,
+                        'id' => 'group.node.' . $s,
                         'text' => $item['name'],
                         'children' => []
                     ];
@@ -128,7 +132,7 @@ trait Role
             }
 
             return $purviewData;
-        });
+        })->help('全部不选择为拥有所有权限', true);
 
         return $form;
     }
