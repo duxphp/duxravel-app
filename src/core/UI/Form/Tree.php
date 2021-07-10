@@ -54,7 +54,7 @@ class Tree extends Element implements Component
                 $item->parent = '#';
             }
             $item->state = [
-                'selected' => $item->id !== null && in_array($item->id, $values) ? true : false
+                'selected' => $item->id !== null && in_array($item->id, (array) $values) ? true : false
             ];
             return $item;
         });
@@ -62,8 +62,10 @@ class Tree extends Element implements Component
         $json = json_encode($data, JSON_THROW_ON_ERROR);
 
         return <<<HTML
-            <div><input type="hidden" name="$this->field" value="$value"></div>
-            <div {$this->toElement()} data-js="form-tree" class="border border-gray-300 p-4" data-data='$json'></div>
+            <div class="border border-gray-300 p-4 max-h-56 overflow-auto">
+                <input type="hidden" name="$this->field" value="$value">
+                <div {$this->toElement()} data-js="form-tree" data-data='$json'></div>
+            </div>
         HTML;
 
     }
