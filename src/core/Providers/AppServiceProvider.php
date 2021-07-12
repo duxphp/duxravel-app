@@ -4,6 +4,8 @@ namespace Duxravel\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Database\Eloquent\Builder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // 异常级别
         error_reporting(E_ALL^E_WARNING^E_NOTICE);
 
         // 注册模板组件

@@ -20,11 +20,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/';
 
-    public function boot(Router $router)
+    public function boot()
     {
 
         // 注册公共路由
-        $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
+        $this->app['router']->group(['prefix' => 'service', 'middleware' => ['web']], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('Service');
             foreach ($list as $file) {
                 if (is_file($file)) {
@@ -32,7 +32,7 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         });
-        $router->group(['middleware' => ['api'], 'statis' => true], function () {
+        $this->app['router']->group(['middleware' => ['api'], 'statis' => true], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('Api');
             foreach ($list as $file) {
                 if (is_file($file)) {
@@ -40,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         });
-        $router->group(['middleware' => ['api', 'auth.api']], function () {
+        $this->app['router']->group(['middleware' => ['api', 'auth.api']], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('AuthApi');
             foreach ($list as $file) {
                 if (is_file($file)) {
@@ -48,7 +48,7 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         });
-        $router->group(['middleware' => ['web'], 'statis' => true], function () {
+        $this->app['router']->group(['middleware' => ['web'], 'statis' => true], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('Web');
             foreach ($list as $file) {
                 if (is_file($file)) {
