@@ -19,14 +19,17 @@ class AppServiceProvider extends ServiceProvider
     {
         // 异常级别
         error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-
+        
         // 注册核心配置
         foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
             $this->mergeConfigFrom($vo, basename($vo, '.php'));
         }
 
-        // 编译扩展包
-        (new Build)->getBuild();
+        // 注册组件
+        $this->app->singleton(Build::class);
+
+        // 编译包
+        app(Build::class)->getBuild();
 
         // 扩展路由方法
         \Route::macro('manage', function ($class, $name = '') {
