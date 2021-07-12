@@ -18,6 +18,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
 
+        // 扩展路由方法
+        \Route::macro('manage', function ($class, $name = '') {
+            return (new \Duxravel\Core\Util\Route($class, $name));
+        });
+
         // 注册组件
         $this->app->singleton(Build::class);
 
@@ -33,11 +38,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
-        // 扩展路由方法
-        \Route::macro('manage', function ($class, $name = '') {
-            return (new \Duxravel\Core\Util\Route($class, $name));
-        });
 
         // 异常级别
         error_reporting(E_ALL^E_WARNING^E_NOTICE);
