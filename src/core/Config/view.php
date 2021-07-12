@@ -1,6 +1,5 @@
 <?php
 return [
-
     'paths' => [
         base_path(),
         resource_path('views'),
