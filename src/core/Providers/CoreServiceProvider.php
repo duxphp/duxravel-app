@@ -31,5 +31,6 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/dux.php','dux');
         $this->mergeConfigFrom(__DIR__.'/../Config/theme.php','theme');
+        $this->mergeConfigFrom(__DIR__.'/../Config/filesystems.php','filesystems');
     }
 }
