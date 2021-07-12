@@ -17,6 +17,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->register(AuthServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
         // 注册核心配置
         foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
             $this->mergeConfigFrom($vo, basename($vo, '.php'));
@@ -33,18 +46,8 @@ class AppServiceProvider extends ServiceProvider
         // 编译包
         app(Build::class)->getBuild();
 
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-
         // 异常级别
-        error_reporting(E_ALL^E_WARNING^E_NOTICE);
+        error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
         // 注册模板组件
         Blade::component('app-loading', \Duxravel\Core\UI\Components\Loading::class);

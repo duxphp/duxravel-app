@@ -56,11 +56,6 @@
     },
     "laravel": {
       "providers": [
-        "Duxravel\\Core\\Providers\\CoreServiceProvider",
-        "Duxravel\\Core\\Providers\\AppServiceProvider",
-        "Duxravel\\Core\\Providers\\AuthServiceProvider",
-        "Duxravel\\Core\\Providers\\EventServiceProvider",
-        "Duxravel\\Core\\Providers\\RouteServiceProvider"
       ]
     },
     "duxravel": {
