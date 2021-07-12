@@ -33,7 +33,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../Config/dux.php' => config_path('dux.php'),
             __DIR__.'/../Config/theme.php' => config_path('theme.php'),
-        ], 'duxravel-install');
+        ], 'duxravel-core');
 
     }
 }
