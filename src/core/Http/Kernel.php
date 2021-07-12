@@ -21,6 +21,10 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
 
         \Duxravel\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+
+        \Duxravel\Core\Middleware\CheckInstall::class,
+        \Duxravel\Core\Middleware\VisitorBefore::class,
+        \Duxravel\Core\Middleware\VisitorAfter::class
     ];
     /**
      * 路由分组中间层
@@ -37,12 +41,27 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
 
             \Duxravel\Core\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+            \Duxravel\Core\Middleware\Web::class
         ],
         'api' => [
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+            \Duxravel\Core\Middleware\Header::class,
+            \Duxravel\Core\Middleware\Api::class,
         ],
+
+        'auth.manage' => [
+            'web',
+            \Duxravel\Core\Middleware\Manage::class,
+        ],
+
+        'auth.manage.register' => [
+            'web',
+            \Duxravel\Core\Middleware\ManageRegister::class,
+        ]
     ];
 
     /**

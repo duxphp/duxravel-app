@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -19,34 +20,46 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/';
 
-    /**
-     * The controller namespace for the application.
-     *
-     * When present, controller route declarations will automatically be prefixed with this namespace.
-     *
-     * @var string|null
-     */
-    // protected $namespace = 'App\\Http\\Controllers';
-
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(Router $router)
     {
-        $this->configureRateLimiting();
-    }
 
-    /**
-     * Configure the rate limiters for the application.
-     *
-     * @return void
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+        // 注册公共路由
+        $router->group(['prefix' => 'service', 'middleware' => ['web']], function () {
+            $list = \Duxravel\Core\Util\Cache::routeList('Service');
+            foreach ($list as $file) {
+                if (is_file($file)) {
+                    $this->loadRoutesFrom($file);
+                }
+            }
         });
+        $router->group(['middleware' => ['api'], 'statis' => true], function () {
+            $list = \Duxravel\Core\Util\Cache::routeList('Api');
+            foreach ($list as $file) {
+                if (is_file($file)) {
+                    $this->loadRoutesFrom($file);
+                }
+            }
+        });
+        $router->group(['middleware' => ['api', 'auth.api']], function () {
+            $list = \Duxravel\Core\Util\Cache::routeList('AuthApi');
+            foreach ($list as $file) {
+                if (is_file($file)) {
+                    $this->loadRoutesFrom($file);
+                }
+            }
+        });
+        $router->group(['middleware' => ['web'], 'statis' => true], function () {
+            $list = \Duxravel\Core\Util\Cache::routeList('Web');
+            foreach ($list as $file) {
+                if (is_file($file)) {
+                    $this->loadRoutesFrom($file);
+                }
+            }
+        });
+
+        // 请求频率限制
+        /*RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+        });*/
     }
 }

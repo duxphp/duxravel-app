@@ -17,11 +17,20 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-     * 自定义命令
+     * 定义命令
      * @var array
      */
     protected $commands = [
-        //自定义命令
+        \Duxravel\Core\Console\AppBuild::class,
+        \Duxravel\Core\Console\App::class,
+        \Duxravel\Core\Console\AppAdmin::class,
+        \Duxravel\Core\Console\AppModel::class,
+        \Duxravel\Core\Console\Install::class,
+        \Duxravel\Core\Console\Uninstall::class,
+        \Duxravel\Core\Console\InstallStatic::class,
+        \Duxravel\Core\Console\UninstallStatic::class,
+        \Duxravel\Core\Console\Operate::class,
+        \Duxravel\Core\Console\Visitor::class,
     ];
 
     /**
@@ -44,6 +53,11 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        $list = \Duxravel\Core\Util\Cache::globList(base_path('modules') . '/*/Console/*.php');
+        foreach ($list as $file) {
+                $this->commands[] = file_class($file);
+        }
+
         //$this->load(__DIR__ . '/Commands');
     }
 }
