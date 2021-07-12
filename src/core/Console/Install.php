@@ -54,7 +54,7 @@ class Install extends Command
             }
         }
 
-        //数据安装
+        // 数据安装
         if (is_dir($database . '/Seeders')) {
             $path = $database . '/Seeders/DatabaseSeeder.php';
             $class = file_class($path);
@@ -63,6 +63,13 @@ class Install extends Command
                 '--class' => $class,
             ]);
         }
+
+        // 发布配置
+        $this->callSilent('vendor:publish', [
+            '--tag' => 'duxravel-' . strtolower($name),
+            '--force' => true,
+        ]);
+
         $this->callSilent('app:build');
         $this->info('Installation and application successful');
     }
