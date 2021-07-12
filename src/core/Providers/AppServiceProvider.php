@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // 编译扩展包
-        (new Build::class)->getBuild();
+        (new Build)->getBuild();
 
         // 扩展路由方法
         \Route::macro('manage', function ($class, $name = '') {

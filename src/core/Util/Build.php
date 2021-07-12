@@ -31,6 +31,10 @@ class Build
         return $this->data;
     }
 
+    /**
+     * @param $key
+     * @return mixed
+     */
     public function getData($key)
     {
         $data = $this->getBuild();
