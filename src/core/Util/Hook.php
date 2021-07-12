@@ -21,6 +21,9 @@ class Hook
         $list = app(Build::class)->getData('service.' . ucfirst($name));
         $data = [];
         foreach ($list as $class) {
+            if (!class_exists($class)) {
+                continue;
+            }
             $class = new $class;
             if (method_exists($class, $method)) {
                 $data[] = call_user_func_array([$class, $method], $vars);
