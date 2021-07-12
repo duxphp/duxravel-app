@@ -17,6 +17,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // 注册核心配置
+        foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
+            $this->mergeConfigFrom($vo, basename($vo, '.php'));
+        }
+
+        // 注册组件
+        $this->app->singleton(Build::class);
+
+        // 编译包
+        app(Build::class)->getBuild();
+
+        // 扩展路由方法
+        \Route::macro('manage', function ($class, $name = '') {
+            return (new \Duxravel\Core\Util\Route($class, $name));
+        });
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
@@ -30,22 +46,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 注册核心配置
-        foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
-            $this->mergeConfigFrom($vo, basename($vo, '.php'));
-        }
-
-        // 扩展路由方法
-        \Route::macro('manage', function ($class, $name = '') {
-            return (new \Duxravel\Core\Util\Route($class, $name));
-        });
-
-        // 注册组件
-        $this->app->singleton(Build::class);
-
-        // 编译包
-        app(Build::class)->getBuild();
-
         // 异常级别
         error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
