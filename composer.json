@@ -38,7 +38,6 @@
     "mews/captcha": "^3.2",
     "overtrue/laravel-filesystem-qiniu": "^1.0",
     "overtrue/laravel-filesystem-cos": "^2.0"
-
   },
   "require-dev": {
   },
@@ -57,7 +56,11 @@
     },
     "laravel": {
       "providers": [
-        "Duxravel\\Core\\Providers\\CoreServiceProvider"
+        "Duxravel\\Core\\Providers\\CoreServiceProvider",
+        "Duxravel\\Core\\Providers\\AppServiceProvider",
+        "Duxravel\\Core\\Providers\\AuthServiceProvider",
+        "Duxravel\\Core\\Providers\\EventServiceProvider",
+        "Duxravel\\Core\\Providers\\RouteServiceProvider"
       ]
     },
     "duxravel": {
