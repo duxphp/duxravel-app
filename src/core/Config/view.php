@@ -3,7 +3,7 @@ return [
     'paths' => [
         base_path(),
         resource_path('views'),
-        dirname(dirname(__DIR__)) . '/resource/views'
+        dirname(dirname(__DIR__)) . '/resources/views'
     ],
 
     'compiled' => env(
