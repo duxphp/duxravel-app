@@ -19,6 +19,10 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // 注册核心配置
+        foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
+            $this->mergeConfigFrom($vo, basename($vo, '.php'));
+        }
 
     }
 
@@ -29,8 +33,10 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
-        $this->mergeConfigFrom(__DIR__.'/../Config/dux.php','dux');
-        $this->mergeConfigFrom(__DIR__.'/../Config/theme.php','theme');
-        $this->mergeConfigFrom(__DIR__.'/../Config/filesystems.php','filesystems');
+        // 注册数据库目录
+        $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
+
+        // 调用系统扩展
+        app_hook('App', 'extend');
     }
 }

@@ -69,11 +69,5 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        // 注册数据库目录
-        $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
-
-        // 调用系统扩展
-        app_hook('App', 'extend');
-
     }
 }

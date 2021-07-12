@@ -50,10 +50,15 @@ class Menu
             if (empty($appList['menu']) && empty($appList['url'])) {
                 continue;
             }
-            if ($appList['url'] && $purview && !in_array($appList['url'], $purview)) {
-                continue;
+
+            if ($appList['url']) {
+                $public = app('router')->getRoutes()->getByName($appList['url'])->getAction('public');
+                if (!$public && $purview && !in_array($appList['url'], $purview)) {
+                    continue;
+                }
             }
             $url = $appList['url'] ? route($appList['url'], $appList['params']) : '';
+
             $appData = [
                 'app' => $app,
                 'name' => $appList['name'],
@@ -82,7 +87,9 @@ class Menu
                 $subData = [];
                 $parentList['menu'] = collect($parentList['menu'])->sortBy('order')->values();
                 foreach ($parentList['menu'] as $sub => $subList) {
-                    if ($purview && !in_array($subList['url'], $purview)) {
+                    $public = app('router')->getRoutes()->getByName($subList['url'])->getAction('public');
+
+                    if (!$public && $purview && !in_array($subList['url'], $purview)) {
                         continue;
                     }
                     $url = route($subList['url'], $subList['params']);
