@@ -23,10 +23,11 @@ class Build
         if ($this->data) {
             return $this->data;
         }
-        if (!is_file(base_path('bootstrap/cache/duxravel.php'))) {
+
+        if (!is_file($buildPath = app()->bootstrapPath('cache/duxravel.php'))) {
             $this->build();
         }
-        $this->data = require_once base_path('bootstrap/cache/duxravel.php');
+        $this->data = require_once $buildPath;
         return $this->data;
     }
 
@@ -41,7 +42,7 @@ class Build
      */
     public function build()
     {
-        $buildPath = base_path('bootstrap/cache/duxravel.php');
+        $buildPath = app()->bootstrapPath('cache/duxravel.php');
 
         if (!is_writable($dirname = dirname($buildPath))) {
             throw new \Exception("The {$dirname} directory must be present and writable.");
