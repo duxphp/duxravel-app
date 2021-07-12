@@ -44,6 +44,10 @@ class Build
     {
         $buildPath = app()->bootstrapPath('cache/duxravel.php');
 
+        if (!is_writable($dirname = dirname($buildPath))) {
+            throw new \Exception("The {$dirname} directory must be present and writable.");
+        }
+
         \File::delete($buildPath, true);
         $files = new Filesystem();
         $vendor = base_path('vendor');
