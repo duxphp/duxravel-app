@@ -8,10 +8,6 @@ return [
     ],
 
     'guards' => [
-        /*'admin' => [
-            'driver' => 'session',
-            'provider' => 'admins',
-        ],*/
         /*'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
@@ -20,10 +16,6 @@ return [
 
 
     'providers' => [
-        /*'admins' => [
-            'driver' => 'eloquent',
-            'model' => Modules\System\Model\SystemUser::class,
-        ],*/
         /*'users' => [
             'driver' => 'eloquent',
             'model' => Modules\Member\Model\MemberUser::class,
