@@ -2,8 +2,7 @@
 
 namespace Duxravel\Core\Web;
 
-use App\Http\Controllers\Controller;
-use Modules\System\Model\ToolsArea;
+use Duxravel\Core\Controllers\Controller;
 
 class Area extends Controller
 {
@@ -15,7 +14,7 @@ class Area extends Controller
         $id = request()->get('id');
         $parent = request()->get('parent');
         $level = request()->get('level');
-        $model = new ToolsArea();
+        $model = new \Duxravel\Core\Model\Area();
 
         switch ($level) {
             case 'province':

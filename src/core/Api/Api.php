@@ -2,7 +2,7 @@
 
 namespace Duxravel\Core\Api;
 
-use App\Http\Controllers\Controller;
+use Duxravel\Core\Controllers\Controller;
 
 class Api extends Controller
 {

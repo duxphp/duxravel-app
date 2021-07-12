@@ -2,7 +2,7 @@
 
 namespace Duxravel\Core\Web;
 
-use App\Http\Controllers\Controller;
+use Duxravel\Core\Controllers\Controller;
 
 class Image extends Controller
 {
