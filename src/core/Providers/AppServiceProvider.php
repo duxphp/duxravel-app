@@ -17,16 +17,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // 异常级别
+        error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
+
         // 注册核心配置
         foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
             $this->mergeConfigFrom($vo, basename($vo, '.php'));
         }
 
-        // 注册组件
-        $this->app->singleton(Build::class);
-
-        // 编译包
-        app(Build::class)->getBuild();
+        // 编译扩展包
+        (new Build::class)->getBuild();
 
         // 扩展路由方法
         \Route::macro('manage', function ($class, $name = '') {
@@ -47,8 +47,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 异常级别
-        error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
         // 注册模板组件
         Blade::component('app-loading', \Duxravel\Core\UI\Components\Loading::class);
