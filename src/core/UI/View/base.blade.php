@@ -151,7 +151,7 @@
                 <div x-show="active == index">
                     <template x-if="item.menu && item.menu.length">
                         <div class="flex-none w-32">
-                            <div class="w-32 top-14 bg-white h-full fixed left-24 px-2 pt-1 border-gray-300 border-solid border-r overflow-y-auto">
+                            <div class="w-32 top-14 bg-white bottom-0 fixed left-24 px-2 pt-1 border-gray-300 border-solid border-r overflow-y-auto">
                                 <template x-for="(parent, parentIndex) in item.menu" :key="parentIndex">
                                     <div>
                                         <div class="text-xs text-gray-500 py-3 px-2" x-text="parent.name"></div>
