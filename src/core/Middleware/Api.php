@@ -67,9 +67,6 @@ class Api
         ksort($data);
         $tmp = [];
         foreach ($data as $key => $vo) {
-            if ($vo === '') {
-                continue;
-            }
             if (is_array($vo)) {
                 $vo = $this->paramsStr($vo);
             }
