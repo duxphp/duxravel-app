@@ -32,7 +32,7 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         });
-        $this->app['router']->group(['middleware' => ['api'], 'statis' => true], function () {
+        $this->app['router']->group(['prefix' => 'api', 'middleware' => ['api'], 'statis' => true], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('Api');
             foreach ($list as $file) {
                 if (is_file($file)) {
@@ -40,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         });
-        $this->app['router']->group(['middleware' => ['api', 'auth.api']], function () {
+        $this->app['router']->group(['prefix' => 'api', 'middleware' => ['api', 'auth.api']], function () {
             $list = \Duxravel\Core\Util\Cache::routeList('AuthApi');
             foreach ($list as $file) {
                 if (is_file($file)) {

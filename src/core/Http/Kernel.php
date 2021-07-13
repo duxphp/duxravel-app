@@ -46,10 +46,10 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
             \Duxravel\Core\Middleware\Web::class
         ],
         'api' => [
-            'throttle:api',
+            \Duxravel\Core\Middleware\Header::class,
+            // 'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
 
-            \Duxravel\Core\Middleware\Header::class,
             \Duxravel\Core\Middleware\Api::class,
         ],
 
