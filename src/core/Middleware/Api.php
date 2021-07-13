@@ -36,7 +36,7 @@ class Api
     {
 
         $data = $request->input();
-        $time = $request->header('date');
+        $time = $request->header('Content-Date');
         $sign = $request->header('Content-MD5');
         $id = $request->header('AccessKey');
 
@@ -82,7 +82,7 @@ class Api
      */
     protected function allowTimestamp(Request $request): bool
     {
-        $queryTime = $request->header('date', 0);
+        $queryTime = $request->header('Content-Date', 0);
         if ($queryTime + $this->time < time()) {
             return false;
         }
