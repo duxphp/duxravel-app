@@ -115,8 +115,8 @@
         </div>
     </div>
     <aside class="z-10 hidden lg:flex" x-data='{active: {{$menuActive}}, items: menuList}'>
-        <div class="flex-none w-24 bg-gray-800 fixed left-0 top-0 bottom-0 text-white ">
-            <div class="flex flex-col items-center justify-center">
+        <div class="flex-none w-24 bg-gray-800 fixed left-0 top-0 bottom-0 text-white flex flex-col">
+            <div class="flex-none flex flex-col items-center justify-center">
                 <div class="rounded-full h-10 w-10 flex items-center justify-center bg-white mt-5">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 202.97 197.7" class="h-6 w-6 fill-current text-blue-900">
                         <path d="M170,94.52l-35.9-20.73-24.34,14,11.62,6.71a5,5,0,0,1,0,8.66L32.5,154.52a5,5,0,0,1-7.5-4.33V99.61a6.44,6.44,0,0,1,0-1.52V47.51a5,5,0,0,1,7.5-4.33l35,20.23,24.32-14L7.5.68A5,5,0,0,0,0,5V192.69A5,5,0,0,0,7.5,197L170,103.18A5,5,0,0,0,170,94.52Z"/>
@@ -125,7 +125,7 @@
                 </div>
                 <div class="text-xs text-gray-400 mt-2">后台管理</div>
             </div>
-            <div class="text-gray-400 p-2 mt-3">
+            <div class="flex-grow text-gray-400 p-2 mt-3">
                 <ul>
                     <template x-for="(item, index) in items" :key="index">
                         <li class="mb-2" x-show="!item.hidden || index === active"
@@ -151,8 +151,7 @@
                 <div x-show="active == index">
                     <template x-if="item.menu && item.menu.length">
                         <div class="flex-none w-32">
-                            <div
-                                    class="w-32 top-14 bg-white h-full fixed left-24 px-2 pt-1 border-gray-300 border-solid border-r">
+                            <div class="w-32 top-14 bg-white h-full fixed left-24 px-2 pt-1 border-gray-300 border-solid border-r overflow-y-auto">
                                 <template x-for="(parent, parentIndex) in item.menu" :key="parentIndex">
                                     <div>
                                         <div class="text-xs text-gray-500 py-3 px-2" x-text="parent.name"></div>
