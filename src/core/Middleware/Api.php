@@ -34,8 +34,6 @@ class Api
      */
     protected function signVerify($request): bool
     {
-
-        $data = $request->get();
         $time = $request->header('Content-Date');
         $sign = $request->header('Content-MD5');
         $id = $request->header('AccessKey');
@@ -48,9 +46,8 @@ class Api
             app_error('Signature authorization failed', 402);
         });
         $secretKey = $apiInfo->secret_key;
-        $paramsStr = $this->paramsStr($data);
 
-        $signStr = $paramsStr . "&timestamp={$time}&key=" . $secretKey;
+        $signStr = "timestamp={$time}&key=" . $secretKey;
         if (strtoupper(md5($signStr)) === $sign) {
             return true;
         }
@@ -58,23 +55,8 @@ class Api
     }
 
     /**
-     * 数据签名
-     * @param $data
-     * @return string
-     */
-    protected function paramsStr($data): string
-    {
-        ksort($data);
-        $tmp = [];
-        foreach ($data as $key => $vo) {
-            $tmp[] = $key . '=' . $vo;
-        }
-        return implode('&', $tmp);
-    }
-
-    /**
      * 判断时差
-     * @param $request
+     * @param Request $request
      * @return bool
      */
     protected function allowTimestamp(Request $request): bool
