@@ -35,7 +35,7 @@ class Api
     protected function signVerify($request): bool
     {
 
-        $data = $request->input();
+        $data = $request->get();
         $time = $request->header('Content-Date');
         $sign = $request->header('Content-MD5');
         $id = $request->header('AccessKey');
@@ -67,9 +67,6 @@ class Api
         ksort($data);
         $tmp = [];
         foreach ($data as $key => $vo) {
-            if (is_array($vo)) {
-                $vo = $this->paramsStr($vo);
-            }
             $tmp[] = $key . '=' . $vo;
         }
         return implode('&', $tmp);
