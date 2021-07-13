@@ -31,6 +31,10 @@ class Build
         return $this->data;
     }
 
+    /**
+     * @param $key
+     * @return mixed
+     */
     public function getData($key)
     {
         $data = $this->getBuild();
@@ -43,6 +47,10 @@ class Build
     public function build()
     {
         $buildPath = app()->bootstrapPath('cache/duxravel.php');
+
+        if (!is_writable($dirname = dirname($buildPath))) {
+            throw new \Exception("The {$dirname} directory must be present and writable.");
+        }
 
         \File::delete($buildPath, true);
         $files = new Filesystem();

@@ -25,7 +25,6 @@ class AppBuild extends \Duxravel\Core\Console\Common\Stub
      */
     public function handle()
     {
-        \Duxravel\Composer\Scripts::clearCompiled();
         app(\Duxravel\Core\Util\Build::class)->build();
         $this->info('编译结构成功');
     }

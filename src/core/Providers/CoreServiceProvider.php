@@ -19,10 +19,6 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // 注册核心配置
-        foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
-            $this->mergeConfigFrom($vo, basename($vo, '.php'));
-        }
 
     }
 
