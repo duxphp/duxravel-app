@@ -48,7 +48,7 @@ class Api
         $secretKey = $apiInfo->secret_key;
 
         $url = $request->url();
-        $signStr = "url={$url}timestamp={$time}&key={$secretKey}";
+        $signStr = "url={$url}&timestamp={$time}&key={$secretKey}";
         if (strtoupper(md5($signStr)) === $sign) {
             return true;
         }
