@@ -125,7 +125,7 @@
                 </div>
                 <div class="text-xs text-gray-400 mt-2">后台管理</div>
             </div>
-            <div class="flex-grow text-gray-400 p-2 mt-3">
+            <div class="flex-grow text-gray-400 p-2 mt-3 overflow-y-auto">
                 <ul>
                     <template x-for="(item, index) in items" :key="index">
                         <li class="mb-2" x-show="!item.hidden || index === active"
