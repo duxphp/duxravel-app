@@ -31,7 +31,7 @@
             @endforeach
         @endif
 
-        <div class="bg-white rounded px-4 {{!$dialog ? 'shadow' : ''}}">
+        <div class="bg-white rounded {{!$dialog ? 'px-4 shadow' : ''}}">
 
             @if($quick || $actions || $filterType)
                 <form method="get" data-filter>
@@ -93,7 +93,7 @@
 
 
             <div data-js="table-bind" data-ajax="{{$ajax}}" data-tree="{{$tree}}" data-sortable="{{$sortable}}"
-                 class="py-4" id="table">
+                 class="{{!$dialog ? 'py-4' : ''}}" id="table">
                 @if($toolsHtml)
                     @foreach($toolsHtml as $vo)
                         {!! $vo !!}

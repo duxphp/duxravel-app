@@ -552,6 +552,7 @@ class Table
             'title' => $this->title, // 表格标题
             'tree' => $this->tree, // 树形表格
             'sortable' => $this->sortable, // 表格排序
+            'dialog' => $this->dialog
         ];
         $assign = array_merge($assign, $this->assign);
 
