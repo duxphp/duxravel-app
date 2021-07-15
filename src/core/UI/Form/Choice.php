@@ -131,7 +131,14 @@ class Choice extends Element implements Component
      */
     public function render($value): string
     {
-        $values = $this->getValueArray($value, true);
+        $value = $this->getValue($value);
+        if ($value instanceof \Illuminate\Database\Eloquent\Collection && $value->count()) {
+            $values = $value->toArray();
+        } elseif (is_array($value)) {
+            $values = $value;
+        } else {
+            $values = [];
+        }
 
         $this->attr('data-js', 'form-choice');
         $this->attr('data-only', $this->ajax['key']);
