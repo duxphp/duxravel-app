@@ -44,7 +44,7 @@ class Lists extends Widget
             } else {
                 $border = 'border-b border-gray-300';
             }
-            $inner[] = "<div class='grid grid-cols-{$this->col} gap-4 py-2 px-4 $border'>";
+            $inner[] = "<div class='grid grid-cols-{$this->col} gap-4 py-4 px-4 $border'>";
             if (is_array($item)) {
                 foreach ($item as $vo) {
                     $inner[] = "<div>$vo</div>";
