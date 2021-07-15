@@ -162,7 +162,10 @@ class Link extends Widget
 
     private function isAuth()
     {
-        $public = app('router')->getRoutes()->getByName($this->route)->getAction('public');
+        if(!\Route::has($this->route)) {
+            return false;
+        }
+        $public = \Route::getRoutes()->getByName($this->route)->getAction('public');
         $app = \Str::before($this->route, '.');
         if ($app <> app()->make('purview_app') || $public) {
             return true;
