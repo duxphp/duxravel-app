@@ -72,7 +72,7 @@
             </header>
             <div
                     class="fixed z-10 bg-white m-2  left-0 right-0 shadow bg-white border rounded-md border-solid border-gray-300"
-                    x-cloak x-show="menuOpen">
+                    x-show="menuOpen">
                 <div class="flex p-2">
                     <div class="flex-none">
                         <a href="{{route('admin.index')}}" class="h-10 w-10 flex items-center justify-center">
@@ -154,7 +154,7 @@
                                     d="M32.93,103.18l35.9,20.73,24.34-14-11.62-6.71a5,5,0,0,1,0-8.66l88.92-51.34a5,5,0,0,1,7.5,4.33V98.09a6.44,6.44,0,0,1,0,1.52v50.58a5,5,0,0,1-7.5,4.33l-35-20.23-24.32,14L195.47,197a5,5,0,0,0,7.5-4.33V5a5,5,0,0,0-7.5-4.33L32.93,94.52A5,5,0,0,0,32.93,103.18Z"/>
                         </svg>
                     </div>
-                    <div class="text-xs text-gray-400 mt-2"  x-cloak x-show="!menuCollapse">后台管理</div>
+                    <div class="text-xs text-gray-400 mt-2" x-show="!menuCollapse">后台管理</div>
                 </div>
                 <div class="flex-grow text-gray-400 p-2 mt-3 overflow-y-auto">
                     <ul>
@@ -238,7 +238,7 @@
                 <div class="flex-grow">
 
                 </div>
-                <div class="flex-none relative mr-2 cursor-pointer select-none" x-cloak x-data="{open: false}">
+                <div class="flex-none relative mr-2 cursor-pointer select-none" x-data="{open: false}">
                     <div class="flex" @click="open = !open">
                         <div
                                 class="flex-none mr-2 bg-gray-400 text-gray-700 rounded flex justify-center items-center w-9 h-9">
