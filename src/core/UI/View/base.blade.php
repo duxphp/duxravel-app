@@ -42,8 +42,7 @@
     </style>
 </head>
 <body class="text-sm  bg-gray-200 overflow-x-hidden overflow-auto">
-<div class="lg:flex"
-     x-data='manageInit'>
+<div class="lg:flex" x-data='manageInit' x-cloak>
     <div class="lg:flex-none" x-bind="bindAside">
         <div class="lg:hidden h-14">
             <header class="bg-white h-14 shadow flex fixed w-full items-center justify-center px-4 z-10">
@@ -286,15 +285,11 @@
     document.addEventListener('alpine:init', () => {
 
         Alpine.data('manageInit', () => ({
-            menuOpen: false,
-            menuCollapse: true,
             pageActive: {{$menuActive}},
-            menuActive: {{$menuActive}},
+            menuOpen: false,
+            menuCollapse: localStorage.getItem('menuCollapse') ? true : false,
+            menuActive: localStorage.getItem('menuCollapse') ? -1 : {{$menuActive}},
             menuItems: menuList,
-            init() {
-                this.menuCollapse = localStorage.getItem('menuCollapse') ? true : false
-                this.menuActive = this.menuCollapse ? -1 : this.menuActive;
-            },
             menuToggle() {
                 this.menuActive = this.menuCollapse ? this.pageActive : -1
                 this.menuCollapse = !this.menuCollapse
