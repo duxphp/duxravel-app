@@ -20,7 +20,26 @@
     <script src="/static/system/js/jquery.min.js"></script>
     <script src="/static/system/js/app.min.js" data-manage="{{ $manage }}"></script>
     <script defer src="https://lib.baomitu.com/alpinejs/3.2.1/cdn.min.js"></script>
-
+    <style>
+        *::-webkit-scrollbar-track {
+        }
+        *::-webkit-scrollbar {
+            width: 5px;
+            opacity: 0;
+        }
+        *::-webkit-scrollbar-thumb {
+            display: none;
+            border-radius: 15px;
+            background-color: rgba(0, 0, 0, .6);
+            margin-right: 5px;
+        }
+        *:hover::-webkit-scrollbar-thumb {
+            display: block;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 </head>
 <body class="text-sm  bg-gray-200 overflow-x-hidden overflow-auto">
 <div class="lg:flex"
