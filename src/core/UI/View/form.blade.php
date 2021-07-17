@@ -34,9 +34,12 @@
     @endif
 
     <div class="lg:flex gap-4">
-        <div class="lg:flex-none hidden lg:block">
-            {!! $vo !!}1
-        </div>
+        @foreach($sideLeftHtml as $vo)
+            <div class="lg:flex-none hidden lg:block">
+                {!! $vo !!}
+            </div>
+        @endforeach
+
         <div class="lg:flex-grow">{!! $formHtml !!}</div>
 
         @foreach($sideRightHtml as $vo)
