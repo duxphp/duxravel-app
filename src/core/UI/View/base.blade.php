@@ -155,7 +155,7 @@
                                     d="M32.93,103.18l35.9,20.73,24.34-14-11.62-6.71a5,5,0,0,1,0-8.66l88.92-51.34a5,5,0,0,1,7.5,4.33V98.09a6.44,6.44,0,0,1,0,1.52v50.58a5,5,0,0,1-7.5,4.33l-35-20.23-24.32,14L195.47,197a5,5,0,0,0,7.5-4.33V5a5,5,0,0,0-7.5-4.33L32.93,94.52A5,5,0,0,0,32.93,103.18Z"/>
                         </svg>
                     </div>
-                    <div class="text-xs text-gray-400 mt-2" x-show="!menuCollapse">后台管理</div>
+                    <div class="text-xs text-gray-400 mt-2"  x-cloak x-show="!menuCollapse">后台管理</div>
                 </div>
                 <div class="flex-grow text-gray-400 p-2 mt-3 overflow-y-auto">
                     <ul>
