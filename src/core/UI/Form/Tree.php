@@ -51,14 +51,12 @@ class Tree extends Element implements Component
 
         $data = $this->loop($data, $values);
 
-        unset($item);
-
         $json = json_encode($data, JSON_THROW_ON_ERROR);
         $value = is_array($values) ? implode(',', $values) : '';
         return <<<HTML
             <div class="border border-gray-300 p-4 max-h-56 overflow-auto">
                 <input type="hidden" name="$this->field" value="$value">
-                <div {$this->toElement()} data-js="form-tree" data-data='$json'>
+                <div {$this->toElement()} data-js="form-tree" data-data='$json' data-value="$value">
                     <form-tree></form-tree>
                 </div>
             </div>
