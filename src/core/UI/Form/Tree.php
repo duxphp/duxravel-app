@@ -56,8 +56,8 @@ class Tree extends Element implements Component
         return <<<HTML
             <div class="border border-gray-300 p-4 max-h-56 overflow-auto">
                 <input type="hidden" name="$this->field" value="$value">
-                <div {$this->toElement()} data-js="form-tree" data-data='$json' data-value="$value">
-                    <form-tree></form-tree>
+                <div {$this->toElement()} data-js="form-tree" data-data='$json' >
+                    <form-tree value="$value"></form-tree>
                 </div>
             </div>
         HTML;
