@@ -20,6 +20,8 @@
     <script src="/static/system/js/jquery.min.js"></script>
     <script src="/static/system/js/app.min.js" data-manage="{{ $manage }}"></script>
     <script defer src="https://lib.baomitu.com/alpinejs/3.2.1/cdn.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+
     <style>
         *::-webkit-scrollbar-track {
         }
