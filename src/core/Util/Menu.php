@@ -57,7 +57,7 @@ class Menu
                     continue;
                 }
             }
-            $url = $appList['url'] ? route($appList['url'], $appList['params']) : '';
+            $url = $appList['url'] ? route($appList['url'], $appList['params'], false) : '';
 
             $appData = [
                 'app' => $app,
@@ -92,7 +92,7 @@ class Menu
                     if (!$public && $purview && !in_array($subList['url'], $purview)) {
                         continue;
                     }
-                    $url = route($subList['url'], $subList['params']);
+                    $url = route($subList['url'], $subList['params'], false);
                     $subData[$sub] = [
                         'name' => $subList['name'],
                         'url' => $url,
