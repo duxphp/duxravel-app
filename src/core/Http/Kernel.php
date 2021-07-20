@@ -33,7 +33,6 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
      */
     protected $middlewareGroups = [
         'web' => [
-
             \Duxravel\Core\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -43,13 +42,14 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
             \Duxravel\Core\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
 
+            \Duxravel\Core\Middleware\CrossHttp::class,
+
             \Duxravel\Core\Middleware\Web::class
         ],
         'api' => [
             \Duxravel\Core\Middleware\Header::class,
             // 'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
             \Duxravel\Core\Middleware\Api::class,
         ],
 
