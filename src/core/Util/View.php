@@ -40,15 +40,22 @@ class View
         $view = '';
 
         $parsing = app_parsing();
+        $isSfc = request()->header('x-dux-sfc');
         if ($type === 'base' || $type === 'layout' || $type === 'dialog') {
             if (!$this->tpl) {
                 $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
                 $this->tpl = implode('.', $view);
             }
-            $assign['layout'] = $this->tpl;
             $assign['manage'] = strtolower($parsing['layer']);
+
+            if ($isSfc) {
+                $assign['layout'] = $this->tpl;
+            } else {
+                $view = $this->tpl;
+            }
         }
-        if ($type === 'base') {
+        if ($type === 'base' && !$isSfc) {
+
             $list = app(\Duxravel\Core\Util\Menu::class)->getManage($parsing['layer'] ?: '', $this->route);
             $list = array_values($list);
             $menuActive = 0;
@@ -60,13 +67,14 @@ class View
             $assign['menuList'] = $list;
             $assign['menuActive'] = $menuActive;
             $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.base';
+
         }
 
-        if ($type === 'layout') {
+        if ($type === 'layout' && !$isSfc) {
             $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.layout';
         }
 
-        if ($type === 'dialog') {
+        if ($type === 'dialog' && !$isSfc) {
             $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.dialog';
         }
 
