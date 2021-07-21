@@ -23,7 +23,15 @@ trait Login
         $credentials = $request->only('username', 'password');
         $status = auth($layer)->attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $request->has('remember'));
         if ($status) {
-            return app_success('登录成功', [], route($layer . '.index'));
+            $user = auth($layer)->user();
+            return app_success('登录成功', [
+                'userInfo' => [
+                    'user_id' => $user->user_id,
+                    'avatar' => $user->avatar,
+                    'username' => $user->username,
+                    'nickname' => $user->nickname
+                ]
+            ], route($layer . '.index'));
         }
         app_error('账号密码错误');
     }
