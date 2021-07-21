@@ -39,9 +39,8 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
 
-            \Duxravel\Core\Middleware\VerifyCsrfToken::class,
+            // \Duxravel\Core\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
 
             \Duxravel\Core\Middleware\Web::class
         ],
