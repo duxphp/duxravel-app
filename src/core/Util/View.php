@@ -48,7 +48,7 @@ class View
             }
             $assign['manage'] = strtolower($parsing['layer']);
 
-            if ($isSfc) {
+            if (!$isSfc) {
                 $assign['layout'] = $this->tpl;
             } else {
                 $view = $this->tpl;
