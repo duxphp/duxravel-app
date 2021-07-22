@@ -12,6 +12,8 @@ use Duxravel\Core\Util\View;
 trait Login
 {
 
+
+
     public function index()
     {
         return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.Login.index'))->render('layout');
