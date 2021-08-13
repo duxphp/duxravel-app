@@ -12,12 +12,12 @@ use Duxravel\Core\UI\Tools;
  * 表格列
  * Class Column
  * @method static Column\Hidden hidden()
- * @method static Column\Progress progress(string $color = 'blue', int $max = 100)
+ * @method static Column\Progress progress(string $color = 'default')
  * @method static Column\Status status(array $map, array $color, string $type = 'badge')
  * @method static Column\Chart chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area')
  * @method static Column\Tags tags(array $map, array $color)
- * @method static Column\Toggle toggle(string $field = '', string $url = '', array $params = [])
- * @method static Column\Input input(string $field = '', $url = '', array $params = [])
+ * @method static Column\Toggle toggle(string $field, string $url, array $params = [])
+ * @method static Column\Input input(string $field, $url, array $params = [])
  * @package Duxravel\Core\UI\Table
  */
 class Column
@@ -26,19 +26,20 @@ class Column
     protected string $name;
     protected string $label = '';
     protected ?\Closure $callback = null;
+    protected array $node = [];
     protected array $attr = [];
     protected array $class = [];
-    protected array $style = [];
     protected array $function = [];
-    protected array $headerAttr = [];
-    protected array $headerStyle = [];
-    protected array $headerClass = [];
+    protected array $children = [];
     protected $width = '';
+    protected $align = '';
+    protected $fixed = '';
     protected $drag = false;
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
     protected ?int $sort = null;
     protected string $auth = '';
+    protected $sorter = null;
     protected $layout;
     protected $relation;
     protected $model;
@@ -65,7 +66,6 @@ class Column
     public function setLayout(Table $layout): void
     {
         $this->layout = $layout;
-        $this->model = $layout->model();
     }
 
     /**
@@ -91,6 +91,17 @@ class Column
     }
 
     /**
+     * 自定义节点数据
+     * @param $node
+     * @return $this
+     */
+    public function node($node): self
+    {
+        $this->node = $node;
+        return $this;
+    }
+
+    /**
      * 对齐
      * @param string $align
      * @return $this
@@ -98,11 +109,18 @@ class Column
      */
     public function align(string $align): self
     {
-        if (!in_array($align, ['left', 'center', 'right'])) {
-            throw new Exception('Align attribute does not exist');
-        }
-        $this->headerClass[] = 'text-' . $align;
-        $this->class[] = 'text-' . $align;
+        $this->align = $align;
+        return $this;
+    }
+
+    /**
+     * 固定列
+     * @param string $fixed
+     * @return $this
+     */
+    public function fixed($fixed = 'right'): self
+    {
+        $this->fixed = $fixed;
         return $this;
     }
 
@@ -144,10 +162,10 @@ class Column
     /**
      * 设置附加属性
      * @param string $name
-     * @param string $value
+     * @param $value
      * @return $this
      */
-    public function attr(string $name, string $value): self
+    public function attr(string $name, $value): self
     {
         $this->attr[$name] = $value;
         return $this;
@@ -164,16 +182,23 @@ class Column
         return $this;
     }
 
+    public function expand($node)
+    {
+        $this->attr['type'] = 'expand';
+        $this->attr['renderExpand'] = $node;
+        return $this;
+    }
+
     /**
      * 添加链接
      * @param string $name
      * @param string $route
      * @param array $params
-     * @return mixed
+     * @return Link
      */
-    public function link(string $name, string $route = '', array $params = []): Link
+    public function link(string $name, string $route, array $params = []): Link
     {
-        if (!$this->element && !$this->element instanceof Table\Column\RichText) {
+        if (!$this->element) {
             $this->element = new Table\Column\Link();
         }
         return $this->element->add($name, $route, $params);
@@ -249,6 +274,15 @@ class Column
     }
 
     /**
+     * 排序条件
+     */
+    public function sorter($sorter = true)
+    {
+        $this->sorter = $sorter;
+        return $this;
+    }
+
+    /**
      * 拖动排序
      * @param bool $drag
      */
@@ -282,25 +316,6 @@ class Column
     }
 
     /**
-     * 获取列名
-     * @return array
-     */
-    public function getHeader(): array
-    {
-        if ($this->show && !call_user_func($this->show)) {
-            return [];
-        }
-        return [
-            'name' => $this->name,
-            'sort' => $this->sort,
-            'width' => $this->width,
-            'attr' => Tools::toAttr($this->headerAttr),
-            'class' => Tools::toClass($this->headerClass, true),
-            'style' => Tools::toStyle($this->headerStyle, true)
-        ];
-    }
-
-    /**
      * 列合并
      * @param int $num
      * @return $this
@@ -311,17 +326,77 @@ class Column
         return $this;
     }
 
-    /**
-     * 获取数据
-     * @param $rowData
-     * @return array
-     */
-    public function render($rowData): array
+    // 分组表格
+    public function children(string $name = '', string $label = '', $callback = null)
     {
-        if ($this->show && !call_user_func($this->show)) {
-            return [];
+        $this->children[] = new Column($name, $label, $callback);
+        return $this;
+    }
+
+    /**
+     * 获取字段名
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->relation ? $this->relation . '.' . $this->label : $this->label;
+    }
+
+    /**
+     * 获取列配置
+     */
+    public function getRender()
+    {
+        $render = $this->node;
+        if ($this->node instanceof \Closure) {
+            $render = call_user_func($this->node);
         }
-        //公共组件
+        if ($this->element) {
+            $render = $this->element->render($this->getLabel());
+        }
+
+        $node = [
+            'title' => $this->name,
+            'key' => $this->getLabel(),
+            'width' => $this->width,
+            'className' => Tools::toClass($this->class),
+            'colSpan' => $this->colspan,
+            'sort' => $this->sort,
+            'align' => $this->align,
+        ];
+
+        if ($this->fixed) {
+            $node['fixed'] = $this->fixed;
+        }
+
+        if ($this->children) {
+            $children = [];
+            foreach ($this->children as $item) {
+                $children[] = $item->getRender();
+            }
+            $node['children'] = $children;
+        }
+
+        if ($this->sorter) {
+            $node['sorter'] = true;
+        }
+
+        if ($render) {
+            $node['render:rowData, rowIndex'] = $render;
+        }
+
+        $node = array_merge($node, $this->attr);
+
+        return $node;
+    }
+
+    /**
+     * 行数据
+     * @param $rowData
+     * @return array|\Closure[]
+     */
+    public function getData($rowData)
+    {
         if ($this->relation) {
             // 解析关联数组
             $parsingData = Tools::parsingObjData($rowData, $this->relation, $this->label);
@@ -330,16 +405,12 @@ class Column
             $parsingData = Tools::parsingArrData($rowData, $this->label);
         }
 
-        // 原始数据
-        if ($parsingData instanceof Collection) {
-            $originalData = '';
-        } else {
-            $originalData = $parsingData;
-        }
-
         // 回调处理
         if ($this->callback instanceof \Closure) {
-            $parsingData = call_user_func($this->callback, $parsingData, $rowData);
+            $callback = call_user_func($this->callback, $parsingData, $rowData);
+            if ($callback) {
+                $parsingData = $callback;
+            }
         } else {
             $parsingData = $this->callback ?: $parsingData;
         }
@@ -352,28 +423,46 @@ class Column
                 }
             }
         }
-        $parsingData = $parsingData === null ? '-' : $parsingData;
 
-        // 扩展组件
-        if ($this->element) {
-            $data = $this->element->render($parsingData, $rowData);
+        if ($this->label) {
+            $data = [
+                $this->getLabel() => $parsingData
+            ];
         } else {
-            $data = $parsingData;
+            $data = [];
         }
 
-        return [
-            'data' => $data,
-            'original' => $originalData,
-            'name' => $this->label,
-            'colspan' => $this->colspan,
-            'sort' => $this->sort,
-            'width' => $this->width,
-            'drag' => $this->drag,
-            'class' => Tools::toClass($this->class, true),
-            'attr' => Tools::toAttr($this->attr),
-            'style' => Tools::toStyle($this->style, true),
+        // 元素数据
+        if ($this->element && method_exists($this->element, 'getData')) {
+            $data = array_merge($data, $this->element->getData($rowData, $this->getLabel(), $parsingData));
+        }
 
-        ];
+        if ($this->children) {
+            foreach ($this->children as $item) {
+                $data = array_merge($data, $item->getData($rowData));
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * 列条件
+     * @param $query
+     * @return false|void
+     */
+    public function execute($query)
+    {
+        $sort = request()->get('_sort');
+        $value = $sort && $sort[$this->label] ? $sort[$this->label] : null;
+        if (!$this->sorter || $value === null) {
+            return false;
+        }
+        if ($this->sorter instanceof \Closure) {
+            call_user_func($this->sorter, $query, $value);
+        } elseif ($this->sorter !== false) {
+            $query->orderBy(is_string($this->sorter) ? $this->sorter : $this->label, $value === 'desc' ? 'desc' : 'asc');
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ class Filter
 
     protected string $name;
     protected string $field;
+    protected $default;
     protected $where = true;
     protected Table $layout;
     protected string $type = '';
@@ -34,14 +35,16 @@ class Filter
      * Filter constructor.
      * @param string $name
      * @param string $field
-     * @param callable|string|bool $where
+     * @param bool $where
+     * @param null $default
      */
-    public function __construct(string $name, string $field, $where = true)
+    public function __construct(string $name, string $field, $where = true, $default = null)
     {
         $this->name = $name;
         $this->field = $field;
         $this->where = $where;
-        $this->value = request()->get($field);
+        $this->default = $default;
+        $this->value = request()->get($field, $this->default);
     }
 
     /**
@@ -60,7 +63,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function cascader($data, callable $callback = NULL): self
+    public function cascader($data = [], callable $callback = NULL): self
     {
         $this->data = $data;
         $this->type = 'cascader';
@@ -74,7 +77,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function select($data, callable $callback = NULL): self
+    public function select($data = [], callable $callback = NULL): self
     {
         $this->data = $data;
         $this->type = 'select';
@@ -148,44 +151,112 @@ class Filter
         return $this;
     }
 
+
     /**
+     * 执行筛选
+     * @param $query
+     * @return false
+     */
+    public function execute($query)
+    {
+        if ($this->value === null) {
+            return false;
+        }
+        if ($this->where instanceof \Closure) {
+            call_user_func($this->where, $query, $this->value, $this->data);
+        } elseif ($this->where !== false) {
+            $query->where(is_string($this->where) ? $this->where : $this->field, $this->value);
+        }
+
+    }
+
+    /**
+     * 渲染组件
      * @return array
      */
     public function render(): array
     {
+        if (!$this->type) {
+            $this->layout->filterParams($this->field, $this->value);
+            return [];
+        }
         switch ($this->type) {
             case 'select':
                 $object = new Select($this->name, $this->field, $this->data);
                 $object->tip(true);
+                $object->attr('vOn:dataLabel', "data.show['{$this->field}'] = \$event ? \$event : null");
+                $this->layout->filterShow($this->field, null);
                 break;
             case 'cascader':
                 $object = new Cascader($this->name, $this->field, $this->data);
+                $object->attr('vOn:dataLabel', "data.show['{$this->field}'] = \$event ? \$event : null");
+                $this->layout->filterShow($this->field, null);
                 break;
             case 'date':
                 $object = new Date($this->name, $this->field);
+                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
+                $this->layout->filterShow($this->field, $this->value);
                 break;
             case 'datetime':
                 $object = new Datetime($this->name, $this->field);
+                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
+                $this->layout->filterShow($this->field, $this->value);
                 break;
             case 'daterange':
                 $object = new Daterange($this->name, $this->field);
+                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
+                $this->layout->filterShow($this->field, $this->value);
                 break;
             case 'text':
             default:
                 $object = new Text($this->name, $this->field);
+                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
+                $this->layout->filterShow($this->field, is_integer($this->value) ? (int) $this->value : $this->value);
         }
+
+        $object->model('data.filter.');
+
+
+        $this->layout->filterParams($this->field, $this->value);
+
         if ($this->callback instanceof \Closure) {
             call_user_func($this->callback, $object);
         }
 
-        return [
-            'html' => '<div class="w-full lg:w-44">' . $object->placeholder($this->placeholder)->render($this->value) . '</div>',
+        $data = [
             'status' => $this->value !== null,
             'quick' => $this->quick,
             'where' => $this->where,
             'value' => $this->value,
             'field' => $this->field,
-            'data' => $this->data
+            'data' => $this->data,
+            'name' => $this->name
         ];
+
+        if ($this->quick) {
+            $data['render'] = [
+                'nodeName' => 'div',
+                'class' => 'w-40',
+                'child' => $object->placeholder($this->placeholder)->getRender()
+            ];
+        } else {
+            $data['render'] = [
+                'nodeName' => 'div',
+                'class' => 'my-2',
+                'child' => [
+                    [
+                        'nodeName' => 'div',
+                        'child' => $this->name,
+                    ],
+                    [
+                        'nodeName' => 'div',
+                        'class' => 'mt-2',
+                        'child' => $object->placeholder($this->placeholder)->getRender()
+                    ]
+                ],
+            ];
+        }
+
+        return $data;
     }
 }

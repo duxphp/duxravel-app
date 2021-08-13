@@ -36,12 +36,25 @@ class Composite extends Element
         $data = [];
         foreach ($this->column as $vo) {
             $vo['object']->getElement()->map(function ($item) use (&$data, $time) {
-                if ($item instanceof \Duxravel\Core\UI\Form\Composite) {
-                    foreach ($item->getInput($time) as $k => $v) {
-                        $data[$k] = $v;
-                    }
-                } else {
-                    $data[$item->getField()] = $item->getInput($time);
+                foreach ($item->getInput($time) as $k => $v) {
+                    $data[$k] = $v;
+                }
+            });
+        }
+        return $data;
+    }
+
+    /**
+     * 获取数据
+     * @return mixed|void
+     */
+    public function getData($info)
+    {
+        $data = [];
+        foreach ($this->column as $vo) {
+            $vo['object']->getElement()->map(function ($item) use (&$data, $info) {
+                foreach ($item->getData($info) as $k => $v) {
+                    $data[$k] = $v;
                 }
             });
         }

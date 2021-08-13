@@ -3,6 +3,8 @@
 namespace Duxravel\Core\UI;
 
 use Doctrine\DBAL\Schema\View;
+use Duxravel\Core\UI\Table\Node;
+use Duxravel\Core\UI\Widget\Icon;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -28,22 +30,21 @@ class Table
     protected ?Collection $filtersType = null;
     protected ?Action $action = null;
     protected ?Batch $batch = null;
+    protected array $rows = [];
+    protected array $map = [];
     protected array $filterParams = [];
+    protected array $filterShow = [];
     protected string $ajax = '';
     protected string $key = '';
     protected ?bool $dialog = null;
     protected string $title = '';
-    protected array $headerHtml = [];
-    protected array $toolsHtml = [];
-    protected array $footerHtml = [];
-    protected array $sideHtml = [];
-    protected string $tree = '';
+    protected array $headerNode = [];
+    protected array $footerNode = [];
+    protected array $sideNode = [];
     protected string $sortable = '';
+    protected bool $tree = false;
     protected int $limit = 20;
     protected array $attr = [];
-    protected array $class = [];
-    protected array $style = [];
-    protected array $assign = [];
     protected ?\Closure $dataCallback = null;
     protected $data;
 
@@ -62,6 +63,11 @@ class Table
         $this->columns = Collection::make();
         $this->filters = Collection::make();
         $this->filtersType = Collection::make();
+        $this->filtersCallback = Collection::make();
+
+        if (request()->header('x-dialog')) {
+            $this->dialog = true;
+        }
     }
 
     /**
@@ -69,8 +75,8 @@ class Table
      * @param string $name
      * @param string $label
      * @param null $callback
+     * @param false $multi
      * @return Column
-     * @throws \Exception
      */
     public function column(string $name = '', string $label = '', $callback = null): Column
     {
@@ -149,62 +155,78 @@ class Table
     }
 
     /**
-     * 筛选参数
-     * @param $name
-     * @param $value
+     * 设置行数据
+     * @param \Closure $callback
      * @return $this
      */
-    public function filterParams($name, $value): self
+    public function row(\Closure $callback): self
     {
-        $this->filterParams[] = [
-            'name' => $name,
-            'value' => $value
-        ];
+        $this->rows[] = $callback;
         return $this;
     }
 
     /**
-     * 自定义头html
+     * 设置字段映射
+     * @return $this
+     */
+    public function map(array $map): self
+    {
+        $this->map = array_merge($this->map, $map);
+        return $this;
+    }
+
+    /**
+     * 筛选参数
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function filterParams($key, $value): self
+    {
+        $this->filterParams[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 筛选展示
+     */
+    public function filterShow($key, $value): self
+    {
+        $this->filterShow[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 自定义头
      * @param string|callable|object $callback
      * @return $this
      */
     public function header($callback): self
     {
-        $this->headerHtml[] = $callback;
+        $this->headerNode[] = $callback;
         return $this;
     }
 
     /**
-     * 自定义工具html
-     * @param string|callable $callback
-     * @return $this
-     */
-    public function tools($callback): self
-    {
-        $this->toolsHtml[] = $callback;
-        return $this;
-    }
-
-    /**
-     * 自定义工具html
+     * 自定义底部
      * @param string|callable $callback
      * @return $this
      */
     public function footer($callback): self
     {
-        $this->footerHtml[] = $callback;
+        $this->footerNode[] = $callback;
         return $this;
     }
 
     /**
-     * 自定义侧边html
+     * 自定义侧边
      * @param $callback
      * @param string $direction
      * @return $this
      */
     public function side($callback, string $direction = 'left'): self
     {
-        $this->sideHtml[] = [
+        $this->sideNode[] = [
             'callback' => $callback,
             'direction' => $direction
         ];
@@ -218,9 +240,10 @@ class Table
      * @param callable|string|bool $where
      * @return Filter
      */
-    public function filter(string $name, string $field, $where = true): Filter
+    public function filter(string $name, string $field, $where = true, $default = null): Filter
     {
-        $filter = new \Duxravel\Core\UI\Table\Filter($name, $field, $where);
+        $filter = new \Duxravel\Core\UI\Table\Filter($name, $field, $where, $default);
+        $filter->setLayout($this);
         return tap($filter, function ($value) {
             $this->filters->push($value);
         });
@@ -234,13 +257,13 @@ class Table
      * @param string|null $url
      * @return FilterType
      */
-    public function filterType(string $name, callable $where = null, string $url = null): FilterType
+    public function filterType(string $name, callable $where = null): FilterType
     {
-        $filterType = new \Duxravel\Core\UI\Table\FilterType($name, $where, $url);
+        $filterType = new \Duxravel\Core\UI\Table\FilterType($name, $where);
         $filterType->setLayout($this);
-        $this->filtersType->push($filterType);
-        return $filterType;
-
+        return tap($filterType, function ($value) {
+            $this->filtersType->push($value);
+        });
     }
 
     /**
@@ -269,25 +292,22 @@ class Table
 
     /**
      * 树形表格
-     * @param string $field
-     * @param string $sortable
      * @return $this
      */
-    public function tree(string $field = 'parent_id', string $sortable = ''): self
+    public function tree()
     {
-        $this->tree = $field;
-        $this->sortable = $sortable;
+        $this->tree = true;
         return $this;
     }
 
     /**
      * 表格排序
-     * @param string $sortable
+     * @param string $url
      * @return $this
      */
-    public function sortable(string $sortable = ''): self
+    public function sortable($url): self
     {
-        $this->sortable = $sortable;
+        $this->sortable = $url;
         return $this;
     }
 
@@ -328,29 +348,6 @@ class Table
     public function modelElo(): ?Eloquent
     {
         return $this->model;
-    }
-
-    /**
-     * 设置样式
-     * @param $name
-     * @param $value
-     * @return $this
-     */
-    public function style($name, $value): self
-    {
-        $this->style[$name] = $value;
-        return $this;
-    }
-
-    /**
-     * 设置样式类
-     * @param string $class
-     * @return $this
-     */
-    public function class(string $class): self
-    {
-        $this->class[] = $class;
-        return $this;
     }
 
     /**
@@ -395,7 +392,7 @@ class Table
      */
     public function ajax(string $url = ''): self
     {
-        $this->ajax = $url ?: route(\Str::beforeLast(request()->route()->getName(), '.') . '.' . 'ajax');
+        $this->ajax = $url;
         return $this;
     }
 
@@ -422,18 +419,6 @@ class Table
     }
 
     /**
-     * 指定模板变量
-     * @param string $name
-     * @param null $value
-     * @return $this
-     */
-    public function assign(string $name, $value = null): self
-    {
-        $this->assign[$name] = $value;
-        return $this;
-    }
-
-    /**
      * 数据回调
      * @param callable $callback
      * @return $this
@@ -445,248 +430,196 @@ class Table
     }
 
     /**
+     * 渲染列配置
+     * @return array
+     */
+    public function renderColumn()
+    {
+        $columnNode = $this->getColumns()->map(function ($column, $key) {
+            if (!Tools::isAuth($column->getAuth())) {
+                return null;
+            }
+            $render = $column->getRender();
+            if (!empty($render)) {
+                $render['sort'] = $render['sort'] ?? $key;
+                return $render;
+            }
+        })->filter()->sortBy('sort')->values()->toArray();
+        return $columnNode;
+    }
+
+    /**
      * 渲染表格
      */
     public function render()
     {
-        // 设置筛选信息
+        // 扩展节点
+        $headerNode = [];
+        foreach ($this->headerNode as $vo) {
+            $headerNode[] = is_callable($vo) ? $vo() : $vo;
+        }
+        $footerNode = [];
+        foreach ($this->footerNode as $vo) {
+            $footerNode[] = is_callable($vo) ? $vo() : $vo;
+        }
+        // 动作节点
+        $actionNode = $this->action ? $this->action()->render() : [];
+        // 批处理节点
+        $batchNode = $this->batch ? $this->batch()->render() : [];
+        // 类型筛选
+        $typeNode = $this->filtersType->map(function ($filter, $key) {
+            return $filter->render($key);
+        })->toArray();
+        // 筛选数据
         $filters = $this->filters->map(function ($filter) {
             return $filter->render();
         })->toArray();
-
-        // 设置渲染类型
-        $filterType = $this->filtersType->map(function ($filter, $key) {
-            return $filter->render($key);
-        })->implode('');
-
-        $filter = [];
-        $filterStatus = false;
-        $quick = [];
+        $filterNode = [];
+        $quickNode = [];
         foreach ($filters as $vo) {
             if ($vo['quick']) {
-                $quick[] = $vo['html'];
+                $quickNode[] = $vo['render'];
             } else {
-                $filter[] = $vo['html'];
-                if (!$filterStatus && $vo['status']) {
-                    $filterStatus = true;
-                }
+                $filterNode[] = $vo['render'];
             }
         }
-
-        // 设置样式
-        $style = Tools::toStyle($this->style, true);
-        $class = Tools::toClass($this->class, true);
-        $attr = Tools::toAttr($this->attr);
-
-        // 设置操作
-        $actions = $this->action ? $this->action()->render() : [];
-
-        // 批量操作
-        $batch = $this->batch ? $this->batch()->render() : [];
-        $params = request()->all();
-
-        // 弹窗布局
-        if ($this->dialog === null) {
-            $this->dialog = (bool)request()->get('dialog');
-        }
-
-        // ajax表单
-        $ajax = $this->ajax;
-
-        if (!$ajax) {
-            $table = $this->renderTable($filters);
-            $data = $table['data'];
-            $thead = $table['thead'];
-            $tbody = $table['tbody'];
-        } else {
-            $data = null;
-            $thead = [];
-            $tbody = [];
-        }
-
-
-        //html解析
-        $headerHtml = [];
-        foreach ($this->headerHtml as $vo) {
-            $headerHtml[] = is_callable($vo) ? $vo() : $vo;
-        }
-        $toolsHtml = [];
-        foreach ($this->toolsHtml as $vo) {
-            $toolsHtml[] = is_callable($vo) ? $vo() : $vo;
-        }
-        $footerHtml = [];
-        foreach ($this->footerHtml as $vo) {
-            $footerHtml[] = is_callable($vo) ? $vo() : $vo;
-        }
-
-        $sideLeftHtml = [];
-        $sideRightHtml = [];
-        foreach ($this->sideHtml as $vo) {
-            if ($vo['direction'] === 'left') {
-                $sideLeftHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
-            } else {
-                $sideRightHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
+        // 表格列节点
+        $columnNode = $this->getColumns()->map(function ($column, $key) {
+            if (!Tools::isAuth($column->getAuth())) {
+                return null;
             }
+            $render = $column->getRender();
+            if (!empty($render)) {
+                $render['sort'] = $render['sort'] ?? $key;
+                return $render;
+            }
+        })->filter()->sortBy('sort')->values()->toArray();
+
+        $keyName = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
+        $node = new Node($url ?: url(request()->path() . '/ajax'), $keyName, $this->title);
+        $node->dialog((bool)$this->dialog);
+        $node->params($this->attr);
+        $node->data($this->filterParams, $this->filterShow);
+        $node->columns($columnNode);
+        $node->sortable($this->sortable);
+
+        $node->type($typeNode);
+        $node->quickFilter($quickNode);
+        $node->filter($filterNode);
+        foreach ($this->sideNode as $vo) {
+            $node->side($vo['callback'], $vo['direction']);
         }
-
-        $assign = [
-            'ajax' => $ajax ? $ajax . ($params ? (strpos($ajax, '?') === false ? '?' : '&') . http_build_query($params) : '') : null, // ajax表格
-            'pages' => $data && $data->lastPage() > 1 ? $data->withQueryString()->links('vendor.duxphp.duxravel-app.src.core.UI.View.table-pages') : '', // 分页html
-            'thead' => $thead, // 表头
-            'tbody' => $tbody, // 表数据
-            'style' => $style, // 样式
-            'class' => $class, // 样式类
-            'attr' => $attr, // 附加数据
-            'quick' => $quick, // 快速筛选
-            'filter' => $filter, // 扩展筛选
-            'filterType' => $filterType, // 类型筛选
-            'filterParams' => $this->filterParams, // 筛选参数
-            'filterStatus' => $filterStatus, // 筛选开关
-            'actions' => $actions, // 动作
-            'batch' => $batch, // 批量操作
-            'headerHtml' => $headerHtml, // 头部html
-            'toolsHtml' => $toolsHtml, // 工具html
-            'footerHtml' => $footerHtml, // 底部html
-            'sideLeftHtml' => $sideLeftHtml, // 侧边栏html
-            'sideRightHtml' => $sideRightHtml, // 右侧边栏html
-            'title' => $this->title, // 表格标题
-            'tree' => $this->tree, // 树形表格
-            'sortable' => $this->sortable, // 表格排序
-            'dialog' => $this->dialog
-        ];
-        $assign = array_merge($assign, $this->assign);
-
-        return (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table', $assign))->render($this->dialog ? 'dialog' : 'base');
+        if ($actionNode) {
+            $node->action($actionNode);
+        }
+        if ($batchNode) {
+            $node->bath($batchNode);
+        }
+        return app_success('ok', $node->render());
     }
 
     /**
-     * 表格渲染
-     * @param $filters
-     * @return array
+     * 数据渲染
      */
-    public function renderTable($filters): array
+    public function renderAjax()
     {
-        // 筛选条件
-        foreach ($filters as $vo) {
-            if ($vo['status']) {
-                if ($vo['where'] instanceof \Closure) {
-                    $vo['where']($this->query, $vo['value'], $vo['data']);
-                } elseif ($vo['where'] !== false) {
-                    $this->query->where(is_string($vo['where']) ? $vo['where'] : $vo['field'], $vo['value']);
+        // 筛选数据
+        $this->filters->map(function ($filter) {
+            $filter->execute($this->query);
+        });
+
+        // 列筛选数据
+        if ($this->columns) {
+            $this->columns->map(function ($column) {
+                if (method_exists($column, 'execute')) {
+                    $column->execute($this->query);
                 }
-            }
+            });
         }
 
         //主键
         $key = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
 
+        $limit = request()->get('limit', $this->limit);
+
         // 查询列表
         if ($this->query) {
             $data = $this->query;
-            if ($this->tree) {
+            if ($this->tree || $this->sortable) {
                 $data = $data->paginate(99999)->eloquent();
                 $data->setCollection($data->getCollection()->toTree());
             } else {
-                $data = $data->paginate($this->limit)->eloquent();
+                $data = $data->paginate($limit)->eloquent();
             }
         } else {
-            foreach ($filters as $vo) {
-                if ($vo['status'] && $vo['where'] instanceof \Closure) {
-                    call_user_func($vo['where'], $this->data, $vo['value'], $vo['data']);
-                }
-            }
-            $data = $this->paginateCollection($this->data, $this->limit);
-            if ($this->tree) {
-                $data->setCollection(collect(Tree::arr2table($data->getCollection()->toArray(), $key, $this->tree)));
+            $data = $this->paginateCollection($this->data, $limit);
+            if ($this->tree || $this->sortable) {
+                $data->setCollection(collect(Tree::arr2table($data->getCollection()->toArray(), $key, 'parent_id')));
             }
         }
         if ($this->dataCallback) {
             $data->setCollection(call_user_func($this->dataCallback, $data->getCollection()));
         }
 
-        // 设置表格信息
-        $columns = $this->getColumns()->map(function ($column) {
-            if (!Tools::isAuth($column->getAuth())) {
-                return null;
-            }
-            return $column;
-        })->filter();
-        $thead = $columns->map(function ($column, $key) {
-            $header = $column->getHeader();
-            if (!empty($header)) {
-                $header['sort'] = $header['sort'] ?? $key;
-                return (object)$header;
-            }
-        })->filter()->sortBy('sort');
-
-        $tbody = $this->tbody($data, $columns, $key);
-
-        return [
-            'thead' => $thead,
-            'tbody' => $tbody,
-            'data' => $data,
-            'key' => $key
-        ];
-    }
-
-    /**
-     * Ajax数据输出
-     */
-    public function renderAjax()
-    {
-        $filters = $this->filters->map(function ($filter) {
-            return $filter->render();
-        })->toArray();
-        $table = $this->renderTable($filters);
-        $data = $table['data'];
-        $thead = $table['thead'];
-        $tbody = $table['tbody'];
         $totalPage = $data->lastPage();
         $page = $data->currentPage();
 
-        $assign = [
-            'thead' => $thead,
-            'tbody' => $tbody,
-            'batch' => (bool)$this->batch
-        ];
+        // 设置行数据回调
+        $this->map[] = $key;
+
+        $columns = [];
+        if ($this->columns) {
+            $columns = $this->columns->map(function ($column) {
+                if (!Tools::isAuth($column->getAuth())) {
+                    return null;
+                }
+                return $column;
+            })->filter();
+        }
+        $resetData = $this->formatData($data, $columns);
+
         return app_success('ok', [
-            'html' => (new \Duxravel\Core\Util\View('vendor.duxphp.duxravel-app.src.core.UI.View.table-ajax', $assign))->render(null)->render(),
+            'data' => $resetData,
             'totalPage' => $totalPage,
-            'page' => $page
         ]);
+
     }
 
-
     /**
-     * 渲染表格内容
      * @param $data
      * @param $columns
-     * @param $primaryKey
      * @return array
      */
-    public function tbody($data, $columns, $primaryKey)
+    private function formatData($data, $columns)
     {
-        $tbody = [];
-        foreach ($data as $index => $vo) {
-            $column = $columns->map(function ($column, $key) use ($vo) {
-                $render = $column->render($vo);
-                if (!empty($render)) {
-                    $render['sort'] = $render['sort'] ?? $key;
-                    return (object)$render;
+        $resetData = [];
+        foreach ($data as $vo) {
+            $rowData = [];
+            if ($this->rows) {
+                foreach ($this->rows as $row) {
+                    if ($call = call_user_func($row, $vo)) {
+                        $rowData = $call;
+                    }
                 }
-            })->filter()->sortBy('sort');
-            $array = [
-                'column' => $column,
-                'json' => $column->pluck('original', 'name')->toJson(),
-                'key' => $vo[$index],
-                'id' => $vo[$primaryKey]
-            ];
-            if ($vo->children) {
-                $array['children'] = $this->tbody($vo->children, $columns, $primaryKey);
             }
-            $tbody[] = $array;
+            foreach ($columns as $column) {
+                if ($colData = $column->getData($vo)) {
+                    foreach ($colData as $k => $v) {
+                        $rowData[$k] = $v;
+                    }
+                }
+            }
+            if ($this->map) {
+                foreach ($this->map as $k => $v) {
+                    $rowData[is_int($k) ? $v : $k] = is_callable($v) ? call_user_func($v, $vo) : $vo[$v];
+                }
+            }
+            if ($vo['children']) {
+                $rowData['children'] = $this->formatData($vo['children'], $columns);
+            }
+            $resetData[] = $rowData;
         }
-        return $tbody;
+        return $resetData;
     }
 
     /**

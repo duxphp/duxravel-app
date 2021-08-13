@@ -19,6 +19,16 @@ trait Operate
         $table->model()->where('has_type', $layer);
         $table->model()->orderBy('operate_id', 'desc');
 
+        $table->map([
+            'method',
+            'create_time' => function($item) {
+                return $item->create_time->format('Y-m-d H:i:s');
+            },
+            'update_time' => function($item) {
+                return $item->update_time->format('Y-m-d H:i:s');
+            }
+        ]);
+
         $table->filter('用户', 'user_id', function ($query, $value) {
             $query->where('has_id', $value);
         })->select([], function ($object) use ($route) {
@@ -33,18 +43,8 @@ trait Operate
         })->date();
 
         $table->column('用户', 'username');
-        $table->column('页面', 'desc', function ($value, $item) {
-            return Widget::Badge($item['method'], function (Widget\Badge $badge) use ($item) {
-                    $badge->size('small');
-                    if ($item['method'] === 'GET') {
-                        $badge->color('blue');
-                    } else {
-                        $badge->color('red');
-                    }
-                }) . ' <span class="ml-2">' . $item['desc'] . '</span>';
-        })->desc('name');
+        $table->column('页面', 'desc')->desc('name');
         $table->column('客户端', 'ip')->desc('ua', function ($value, $item) {
-
             $html = [];
             if ($item->mobile) {
                 $html[] = Widget::Icon('fa fa-phone');
@@ -63,25 +63,10 @@ trait Operate
             return $value . 's';
         });
 
-
         $column = $table->column('详情');
-        $column->link('查看数据', $route . '.operate.info', ['id' => 'operate_id'])->type('dialog')->data(['size' => 'large']);
+        $column->link('查看数据', $route . '.operate.info', ['id' => 'operate_id'])->type('dialog');
 
         return $table;
-    }
-
-    public function loadData()
-    {
-        $parser = app_parsing();
-        $layer = strtolower($parser['layer']);
-        $apiList = \Duxravel\Core\Model\VisitorOperate::orderBy('create_time', 'desc')
-            ->where('has_type', $layer)
-            ->where('has_id', auth($layer)->user()->user_id)
-            ->limit(10)
-            ->get(['method', 'name', 'route', 'desc', 'time', 'create_time']);
-
-        $this->assign('apiList', $apiList);
-        return $this->dialogView('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorOperate.loadData');
     }
 
     public function info($id)
@@ -97,12 +82,8 @@ trait Operate
                 'value' => $vo
             ];
         }
-        $table = new \Duxravel\Core\UI\Table(collect($data));
-        $table->limit(50);
-        $table->column('键', 'name');
-        $table->column('值', 'value');
-        $table->dialog(true);
-        return $table->render();
+        $list = (new Widget\Lists($data))->row(false)->getRender();
+        return $this->dialogNode('操作详情', $list);
     }
 
 }

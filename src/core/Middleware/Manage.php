@@ -2,26 +2,27 @@
 
 namespace Duxravel\Core\Middleware;
 
+
 class Manage
 {
     public function handle($request, \Closure $next)
     {
-        // 登录跳转
+        if (!request()->expectsJson()) {
+            return response()->view('manage');
+        }
+
         $layer = strtolower(app_parsing('layer'));
         if (!auth($layer)->check()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                app_error('登录失效', 401, route($layer . '.login'));
+            $guard = config('auth.guards.' . $layer . '.provider');
+            $model = config('auth.providers.' . $guard . '.model');
+            $count = $model::count();
+            if ($count) {
+                app_error('登录失效', 401);
             } else {
-                $guard = config('auth.guards.' . $layer . '.provider');
-                $model = config('auth.providers.' . $guard . '.model');
-                $count = $model::count();
-                if ($count) {
-                    return redirect()->intended(route($layer . '.login'));
-                } else {
-                    return redirect()->intended(route($layer . '.register'));
-                }
+                app_error('请注册用户', 402);
             }
         }
+        // 权限app
         app()->singleton('purview_app', function () use ($layer) {
             return $layer;
         });

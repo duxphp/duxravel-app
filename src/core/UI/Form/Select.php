@@ -107,67 +107,64 @@ class Select extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $values = $this->getValueArray($value);
-
-        $this->class('form-select');
-        $this->attr('data-js', 'form-select');
-        $this->attr('name', $this->multi ? "$this->field[]" : $this->field);
-        $this->attr('data-placeholder', $this->attr['placeholder'] ?: '请选择' . $this->name);
-        if ($this->search) {
-            $this->attr('data-search', $this->search['url']);
-            $this->attr('data-value', is_array($values) ? implode(',', $values) : $values);
-            $this->tip();
-        }
-        if ($this->linkage) {
-            $this->attr('data-linkage', $this->linkage);
-            $this->attr('data-level', $this->level);
-        }
-        if ($this->level) {
-            $this->attr('data-level', $this->level);
-        }
-        if ($this->tip) {
-            $this->attr('data-clear', true);
-        }
-        if ($this->multi) {
-            $this->attr('multiple', '');
-        }
-        if ($this->tags) {
-            $this->attr('data-tags', true);
-        }
-
         $data = [];
         if ($this->data instanceof \Closure) {
-            $data = call_user_func($this->data, $values);
+            $data = call_user_func($this->data);
         }
         if (is_array($this->data)) {
             $data = $this->data;
         }
 
-        $inner = [];
-        $inner[] = $this->tip && !$this->tags ? '<option></option>' : '';
-        if ($this->tags && $values) {
-            foreach ($values as $vo) {
-                $inner[] = "<option selected value='$vo'>$vo</option>";
-            }
-        }
+        $options = [];
         foreach ($data as $key => $vo) {
-            $selected = $value !== null && in_array($key, $values) ? 'selected' : '';
-            $inner[] = "<option $selected value='$key'>$vo</option>";
+            $options[] = [
+                'label' => $vo,
+                'value' => $key
+            ];
         }
-        $innerHtml = implode('', $inner);
-        return <<<HTML
-            <select {$this->toElement()}>
-            $innerHtml
-            </select>
-        HTML;
+
+        $object = [
+            'nodeName' => 'app-select',
+            'class' => 'shadow-sm',
+            'nParams' => [
+                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+                'options' => $options
+            ],
+        ];
+
+        if ($this->model) {
+            $object['vModel:value'] = $this->getModelField();
+        }
+        if ($this->tip) {
+            $object['nParams']['clearable'] = true;
+        }
+        if ($this->multi) {
+            $object['nParams']['multiple'] = true;
+        }
+        if ($this->tags) {
+            $object['nParams']['multiple'] = true;
+            $object['nParams']['tag'] = true;
+        }
+
+        if ($this->search) {
+            $object['nParams']['filterable'] = true;
+            $object['nParams']['remote'] = true;
+            $object['dataUrl'] = $this->search['url'];
+        }
+
+        return $object;
     }
 
-    public function getInputData($data)
+    public function dataValue($value)
+    {
+        return $this->getValueArray($value);
+    }
+
+    public function dataInput($data)
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

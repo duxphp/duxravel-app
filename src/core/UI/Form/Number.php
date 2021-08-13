@@ -15,6 +15,9 @@ use Duxravel\Core\UI\Tools;
 class Number extends Element implements Component
 {
     protected Text $object;
+    protected int $step = 1;
+    protected ?int $max = null;
+    protected ?int $min = 0;
 
     /**
      * Text constructor.
@@ -27,8 +30,6 @@ class Number extends Element implements Component
         $this->name = $name;
         $this->field = $field;
         $this->has = $has;
-        $this->object = new Text($this->name, $this->field, $this->has);
-        $this->object->type('number');
     }
 
     /**
@@ -38,7 +39,7 @@ class Number extends Element implements Component
      */
     public function max(int $default = 0): self
     {
-        $this->object->attr('max', $default);
+        $this->max = $default;
         return $this;
     }
 
@@ -49,7 +50,7 @@ class Number extends Element implements Component
      */
     public function min(int $default = 0): self
     {
-        $this->object->attr('min', $default);
+        $this->min = $default;
         return $this;
     }
 
@@ -58,9 +59,9 @@ class Number extends Element implements Component
      * @param int $default
      * @return $this
      */
-    public function step(int $default = 2): self
+    public function step(int $default = 1): self
     {
-        $this->object->attr('step', $default);
+        $this->step = $default;
         return $this;
     }
 
@@ -69,9 +70,20 @@ class Number extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        return $this->object->render($this->getValue($value));
+        $data = [
+            'nodeName' => 'n-input-number',
+            'class' => 'shadow-sm',
+            'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
+            'step' => $this->step,
+            'min' => $this->min,
+            'max' => $this->max,
+        ];
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
+        }
+        return $data;
     }
 
 }

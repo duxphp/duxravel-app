@@ -9,5 +9,5 @@ namespace Duxravel\Core\UI\Table\Column;
  */
 interface Component
 {
-    public function render($value, $data): string;
+    public function render($label): array;
 }

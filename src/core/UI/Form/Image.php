@@ -17,6 +17,8 @@ class Image extends Element implements Component
 
     private array $thumb = [];
     private array $water = [];
+    protected string $type = 'upload';
+    protected string $url = '';
 
     /**
      * Text constructor.
@@ -63,43 +65,34 @@ class Image extends Element implements Component
         return $this;
     }
 
+    public function type($type = 'manage')
+    {
+        $this->type = $type;
+        return $this;
+    }
+
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $value = $this->getValue($value);
-        $url = $value ?: route('service.image.placeholder', ['w' => 180, 'h' => 180, 't' => $this->attr['placeholder'] ?: '选择图片']);
-
-        $this->class('relative h-32 lg:w-32 lg:h-32 border-2 border-gray-400 border-dashed rounded bg-cover bg-center bg-no-repeat block hover:border-blue-900');
-        $this->style('background-image', "url('$url')");
-        $this->style('background-size', "90% 90%");
-        $imageData = array_merge($this->thumb, $this->water);
-        if ($imageData) {
-            $this->attr('data-image', $imageData);
+        $data = [
+            'nodeName' => 'app-file',
+            'format' => 'image',
+            'image' => true
+        ];
+        if ($this->url) {
+            $data['upload'] = $this->url;
         }
-        return <<<HTML
-            <div  data-js="form-image" {$this->toElement()}>
-                    <div class="opacity-0 hover:opacity-100 absolute flex flex-col gap-2 justify-center w-full h-full bg-blue-200 bg-opacity-90 rounded cursor-pointer">
-                        <div>
-                            <div class="btn-blue mx-4 py-2 text-xs">
-                                上传
-                            </div>
-                            <input name="{$this->field}" type="hidden" value="{$value}">
-                        </div>
-                        <div>
-                            <div class="btn mx-4 py-2 text-xs" data-url>
-                                地址
-                            </div>
-                        </div>
-                    </div>
-
-            </div>
-        HTML;
-
+        if ($this->type) {
+            $data['type'] = $this->type;
+        }
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
+        }
+        return $data;
     }
 
 }

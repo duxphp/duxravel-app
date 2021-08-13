@@ -34,6 +34,6 @@ class Widget
             }
         }
         $object = new $class(...$arguments);
-        return $object->next()->render();
+        return $object->next()->getRender();
     }
 }

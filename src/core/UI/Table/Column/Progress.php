@@ -10,27 +10,25 @@ class Progress implements Component
 {
 
     private string $color;
-    private int $max;
 
     /**
      * Progress constructor.
      * @param string $color
      * @param int $max
      */
-    public function __construct(string $color = 'blue', int $max = 100)
+    public function __construct(string $color = 'default')
     {
         $this->color = $color;
-        $this->max = $max;
     }
 
     /**
      * @param $value
      * @param $data
-     * @return string
+     * @return array
      */
-    public function render($value, $data): string
+    public function render($field): array
     {
-        return (new \Duxravel\Core\UI\Widget\Progress($this->max, (int)$value))->color($this->color)->render();
+        return (new \Duxravel\Core\UI\Widget\Progress("rowData['$field']"))->color($this->color)->render();
     }
 
 }

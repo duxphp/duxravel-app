@@ -13,7 +13,7 @@ if (!function_exists("app_success")) {
     function app_success(string $msg = '', array $data = [], string $url = '', int $code = 200)
     {
         if (request()->expectsJson()) {
-            return Response::success($data, $msg, $code, ['x-location' => $url]);
+            return Response::success($data, $msg, $code, ['x-Location' => $url ?: ''],  JSON_NUMERIC_CHECK);
         } else {
             return response()->view('vendor.duxphp.duxravel-app.src.core.Views.success', [
                 'msg' => $msg,
@@ -22,7 +22,6 @@ if (!function_exists("app_success")) {
         }
     }
 }
-
 
 if (!function_exists("app_error")) {
 
@@ -41,7 +40,6 @@ if (!function_exists("app_error")) {
         }
     }
 }
-
 
 if (!function_exists("app_error_if")) {
 

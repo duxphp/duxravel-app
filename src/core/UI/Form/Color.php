@@ -9,17 +9,7 @@ namespace Duxravel\Core\UI\Form;
  */
 class Color extends Element implements Component
 {
-
-    protected array $color = [
-        'while',
-        'black',
-        'blue',
-        'yellow',
-        'green',
-        'red',
-        'purple',
-    ];
-
+    protected array $color = [];
     protected bool $picker = false;
 
     /**
@@ -56,46 +46,32 @@ class Color extends Element implements Component
         return $this;
     }
 
+
     /**
      * 渲染组件
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $value = $this->getValue($value);
-
-        // 预设选择器
-        if (!$this->picker) {
-            $value = $value ?: $this->color[0];
-            $inner = [];
-            foreach ($this->color as $vo) {
-                $class = '';
-                $style = '';
-                if (strpos($vo, '#') === false) {
-                    $class = $vo === "while" || $vo === 'black' ? $vo : 'bg-'.$vo.'-900  ring-'.$vo.'-900';
-                } else {
-                    $style = 'background-color:'.$vo;
-                }
-                $checked = $vo === $value ? 'checked' : '';
-                $inner[] = <<<HTML
-                    <label class="form-color "><input name="$this->field" type="radio" value="$vo" $checked><span class="form-color-show $class" style="$style"></span></label>
-                HTML;
-            }
-            $innerHtml = implode('', $inner);
-            return <<<HTML
-            <div class="flex flex-row space-x-2">
-            {$innerHtml}
-            </div>
-            HTML;
+        if ($this->picker) {
+            $data = [
+                'nodeName' => 'n-color-picker',
+                'showAlpha' => false,
+                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            ];
+        }else {
+            $data = [
+                'nodeName' => 'app-color',
+                'colors' => $this->color,
+                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            ];
+        }
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
         }
 
-        // 自定义选择器
-        $this->class('form-input');
-        $this->attr('value', $value);
-        $this->attr('name', $this->field);
-        $this->attr('type', 'color');
-        return "<input {$this->toElement()}>";
+        return $data;
     }
 
 }

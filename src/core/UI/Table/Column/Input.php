@@ -10,9 +10,10 @@ use Duxravel\Core\UI\Tools;
 class Input implements Component
 {
 
-    private array $params;
+    private array $params = [];
     private string $field;
     private $url;
+    private string $label;
 
     /**
      * Toggle constructor.
@@ -20,30 +21,42 @@ class Input implements Component
      * @param string|array $url
      * @param array $params
      */
-    public function __construct(string $field = '', $url = '', array $params = [])
+    public function __construct(string $field, $url, array $params = [])
     {
         $this->field = $field;
         $this->url = $url;
         $this->params = $params;
+        $this->label = $url . '?' . http_build_query($params);
     }
 
     /**
-     * @param $value
-     * @param $data
-     * @return string
+     * 获取数据
+     * @param $rowData
+     * @return array
      */
-    public function render($value, $data): string
+    public function getData($rowData, $field)
     {
         $params = [];
         foreach ($this->params as $key => $vo) {
             $params[$key] = Tools::parsingArrData($data, $vo, true);
         }
-        return (new \Duxravel\Core\UI\Form\Text('文本', 'status'))
-            ->attr('data-js', 'form-input')
-            ->attr('data-params', json_encode($params))
-            ->attr('data-field', $this->field)
-            ->attr('data-url', is_array($this->url) ? route(...$this->url) : route($this->url))
-            ->render($value);
+        return [
+            $this->label => route($this->url, $this->params, false)
+        ];
+    }
+
+    /**
+     * @param $field
+     * @return string
+     */
+    public function render($field): array
+    {
+        return [
+            'nodeName' => 'n-input',
+            'class' => 'shadow-sm',
+            'vModel:value' => "rowData['$field']",
+            'vOn:blur' => "editValue(rowData['$this->label'], {'field': '$this->field', '$this->field': rowData['$field']})",
+        ];
     }
 
 }

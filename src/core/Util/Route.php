@@ -87,7 +87,12 @@ class Route
             $collection->add($route);
         }
         $collection->map(function ($item) {
-            \Route::{$item['type']}($item['rule'], ['uses' => $item['uses'], 'desc' => $item['desc'], 'auth_list' => isset($item['auth_list']) ? $item['auth_list'] : []])->name($item['name']);
+            if (!$item[0]) {
+                $item = [$item];
+            }
+            foreach ($item as $vo) {
+                \Route::{$vo['type']}($vo['rule'], ['uses' => $vo['uses'], 'desc' => $vo['desc'], 'auth_list' => isset($vo['auth_list']) ? $vo['auth_list'] : []])->name($vo['name']);
+            }
         });
     }
 
@@ -101,11 +106,20 @@ class Route
     private function addItemIndex($app, $layout, $name, $class)
     {
         return [
-            'type' => 'get',
-            'rule' => $this->prefix,
-            'uses' => $class . '@' . 'index',
-            'desc' => '列表页面',
-            'name' => implode('.', [$layout, $app, $name])
+            [
+                'type' => 'get',
+                'rule' => $this->prefix,
+                'uses' => $class . '@' . 'index',
+                'desc' => '列表页面',
+                'name' => implode('.', [$layout, $app, $name])
+            ],
+            [
+                'type' => 'get',
+                'rule' => $this->prefix . '/ajax',
+                'uses' => $class . '@ajax',
+                'desc' => 'ajax数据',
+                'name' => implode('.', [$layout, $app, $name, 'ajax'])
+            ]
         ];
     }
 
@@ -245,24 +259,6 @@ class Route
             'uses' => $class . '@export',
             'desc' => '导出',
             'name' => implode('.', [$layout, $app, $name, 'export'])
-        ];
-    }
-
-    /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
-     * @return array
-     */
-    private function addItemAjax($app, $layout, $name, $class)
-    {
-        return [
-            'type' => 'get',
-            'rule' => $this->prefix . '/ajax',
-            'uses' => $class . '@ajax',
-            'desc' => 'ajax数据',
-            'name' => implode('.', [$layout, $app, $name, 'ajax'])
         ];
     }
 

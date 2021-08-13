@@ -27,49 +27,38 @@ class Icon extends Widget
         $this->callback = $callback;
     }
 
-    /**
-     * 嵌套元素
-     * @param bool $status
-     * @return $this
-     */
-    public function layout(bool $status = true): self
+    public function size($size = null)
     {
-        $this->layout = $status;
+        $this->size = $size;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function render(): string
+    public function render()
     {
-
-        if (is_file(public_path('static/system/img/svg/' . $this->content . '.svg'))) {
-            $icon = file_get_contents(public_path('static/system/img/svg/' . $this->content . '.svg'));
-        } elseif (strpos($this->content, '<svg') !== false) {
-            $icon = $this->content;
-        } else {
-            $this->class($this->content);
-            $icon = <<<HTML
-                <i {$this->toElement()}></i>
-            HTML;
-        }
-
-        if ($this->layout) {
-            if (strpos($icon, '<svg') !== false) {
-                $icon = preg_replace('/ class="([^\"]*)"/isU', '', $icon);
-                $icon = str_replace('<svg', '<svg class="stroke-current w-full h-full"', $icon);
-            }
-            return <<<HTML
-                <span {$this->toElement()}>$icon</span>
-            HTML;
-        }
-        $this->class('stroke-current w-full h-full');
+        $icon = $this->content;
         if (strpos($icon, '<svg') !== false) {
-            $icon = preg_replace('/ class="([^\"]*)"/isU', '', $icon);
-            return str_replace('<svg', '<svg ' . $this->toElement(), $icon);
+            return [
+                'nodeName' => 'n-icon',
+                'size' => $this->size,
+                'child' => [
+                    'nodeName' => 'rich-text',
+                    'class' => $this->toClass(),
+                    'nodes' => $icon
+                ]
+            ];
+        } else {
+            return [
+                'nodeName' => 'n-icon',
+                'size' => $this->size,
+                'child' => [
+                    'nodeName' => $icon.'-icon',
+                    'class' => $this->toClass(),
+                ]
+            ];
         }
-        return $icon;
     }
 
 }

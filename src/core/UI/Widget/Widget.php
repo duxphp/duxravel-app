@@ -31,25 +31,6 @@ class Widget
     }
 
     /**
-     * 设置js属性
-     * @param $name
-     * @param string|null $value
-     * @return $this
-     */
-    public function data($name, string $value = null): self
-    {
-        if(is_array($name)) {
-            $data = $name;
-        }else {
-            $data = [$name => $value];
-        }
-        foreach ($data as $key => $vo) {
-            $this->attr['data-' . $key] = $vo;
-        }
-        return $this;
-    }
-
-    /**
      * class样式
      * @param string $name
      * @return $this
@@ -166,11 +147,11 @@ class Widget
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function __toString()
+    public function getRender()
     {
-        return $this->render();
+        return array_merge($this->render(), $this->attr);
     }
 
 

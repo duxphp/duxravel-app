@@ -14,18 +14,21 @@ use Duxravel\Core\UI\Tools;
  */
 class Textarea extends Element implements Component
 {
+    protected Text $object;
 
     /**
      * Text constructor.
-     * @param  string  $name
-     * @param  string  $field
-     * @param  string  $has
+     * @param string $name
+     * @param string $field
+     * @param string $has
      */
     public function __construct(string $name, string $field, string $has = '')
     {
         $this->name = $name;
         $this->field = $field;
         $this->has = $has;
+        $this->object = new Text($this->name, $this->field, $this->has);
+        $this->object->attr('type', 'textarea');
     }
 
 
@@ -34,15 +37,9 @@ class Textarea extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $value = $this->getValue($value);
-        $this->class('form-textarea');
-        $this->attr('name', $this->field);
-        $this->attr('placeholder', $this->attr['placeholder'] ?: "请输入$this->name");
-        return <<<HTML
-            <textarea {$this->toElement()}>$value</textarea>
-        HTML;
+        return $this->object->getRender();
     }
 
 }

@@ -20,7 +20,6 @@ class FilterType
 
     protected string $name;
     protected ?\Closure $callback;
-    protected ?string $url;
     protected ?\Closure $where;
     protected string $icon = '';
     protected ?int $num = null;
@@ -33,10 +32,9 @@ class FilterType
      * @param callable|null $where
      * @param string|null $url
      */
-    public function __construct(string $name, callable $where = null, string $url = null)
+    public function __construct(string $name, callable $where = null)
     {
         $this->name = $name;
-        $this->url = $url;
         $this->where = $where;
     }
 
@@ -58,36 +56,31 @@ class FilterType
         return $this;
     }
 
-    public function render($key): string
+    public function render($key)
     {
-        $url = $this->url;
-        if (!$url) {
-            $url = route(request()->route()->getName(), ['type' => $key]);
-        }
-        $type = request()->get('type');
+        $type = request()->get('type', 0);
+
+        $this->layout->filterParams('type', $type);
+
         if ($this->where instanceof \Closure && $type == $key) {
-            $this->layout->filterParams('type', $type);
             call_user_func($this->where, $this->model);
         }
 
-        if ($this->icon instanceof Icon) {
-            $this->icon = $this->icon->class('w-full h-full')->render();
-        }
-        if ($this->icon) {
-            $icon = '<div class="mr-2 w-5 h-5">' . $this->icon . '</div>';
-        }
-        $num = '';
-        if ($this->num !== null) {
-            $num = ' <span class="rounded-full bg-red-900 px-1 py-0 ml-1 text-xs text-white">' . $this->num . '</span>';
-        }
-        $active = $type == $key ? 'border-blue-900 text-blue-900' : '';
-        return <<<HTML
-            <a href="$url" class="border-b-2 border-white  block py-4 flex-shrink-0 flex items-center text-gray-600 hover:text-blue-900 $active">
-            $icon
-            $this->name
-            $num
-            </a>
-        HTML;
+        return [
+            'nodeName' => 'n-radio-button',
+            'value' => $key,
+            'child' => [
+                'nodeName' => 'div',
+                'class' => 'inline-flex items-center gap-2',
+                'child' => [
+                    (new Icon($this->icon))->size(18)->getRender(),
+                    [
+                        'nodeName' => 'div',
+                        'child' => $this->name
+                    ]
+                ]
+            ]
+        ];
 
     }
 }

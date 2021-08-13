@@ -2,6 +2,8 @@
 
 namespace Duxravel\Core\UI\Form;
 
+use Duxravel\Core\UI\Widget\Icon;
+
 /**
  * Class Data
  * 表格数据编辑器
@@ -11,7 +13,7 @@ class Data extends Element implements Component
 {
     protected array $column = [];
     protected bool $option = true;
-    protected int $number = 0;
+    protected ?int $number = null;
 
     /**
      * Text constructor.
@@ -123,18 +125,80 @@ class Data extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render($value)
     {
-        $values = $this->getValueArray($value, true);
+        $url = route('service.image.placeholder', ['w' => 64, 'h' => 64, 't' => $this->attr['placeholder'] ?: '图片']);
 
-        $this->attr('data-js', 'form-list');
-        $this->attr('data-key', $this->getField());
-        $this->attr('data-column', json_encode($this->column));
-        $this->attr('data-data', json_encode($values));
-        $this->attr('data-option', $this->option);
-        $this->attr('data-num', $this->number);
+        $inner = [];
+        $default = [];
+        foreach ($this->column as $column) {
+            $default[$column['key']] = '';
+            $field = "value['{$column['key']}']";
+            if ($column['type'] === 'text') {
+                $inner[] = [
+                    'nodeName' => 'div',
+                    'class' => 'flex-grow',
+                    'child' => [
+                        'nodeName' => 'n-input',
+                        'placeholder' => '请输入' . $column['name'],
+                        'vModel:value' => $field
+                    ]
+                ];
+            }
+            if ($column['type'] === 'image') {
+                $inner[] = [
+                    'nodeName' => 'div',
+                    'class' => 'flex-none',
+                    'child' => [
+                        'nodeName' => 'n-upload',
+                        'action' => $this->uploadUrl,
+                        'class' => 'relative w-9 h-9 border border-gray-400 border-dashed rounded bg-cover bg-center bg-no-repeat block hover:border-blue-900',
+                        'vBind:style' => "{'background-size': '90%', 'background-image': $field || 'url($url)'}",
+                        'child' => [
+                            'nodeName' => 'div',
+                            'class' => 'opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center w-full h-full bg-blue-200 bg-opacity-90 rounded cursor-pointer ',
+                            'child' => (new Icon('plus'))->render(),
+                        ]
+                    ]
+                ];
+            }
+            if ($column['type'] === 'show') {
+                $inner[] = [
+                    'nodeName' => 'div',
+                    'class' => 'flex-grow',
+                    'child' => "{{ $field || '-'}}"
+                ];
+            }
+        }
 
-        return "<div {$this->toElement()}></div>";
+        $create = json_encode($default);
+        $data = [
+            'nodeName' => 'n-dynamic-input',
+            'vModel:value' => $this->getModelField(),
+            'vBind:on-create' => "() => { return $create }",
+            'child' => [
+                'vSlot' => '{ index, value }',
+                'nodeName' => 'div',
+                'class' => 'flex flex-grow gap-4 items-center',
+                'child' => $inner
+            ]
+        ];
+
+        if ($this->number) {
+            $data['max'] = $this->number;
+        }
+
+        if (!$this->option) {
+            $data['min'] = $this->number;
+            $data['max'] = $this->number;
+        }
+
+        return $data;
+    }
+
+    public function dataValue($value)
+    {
+        return $this->getValue($value) ?: [];
     }
 
 }

@@ -30,26 +30,21 @@ class Toggle extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $value = $this->getValue($value);
-
-        $this->class('form-toggle');
-        $this->attr('name', $this->field);
-
-        $checked = $value ? 'checked' : '';
-        return <<<HTML
-            <label {$this->toClass()}>
-                <input class="form-toggle-input" $checked type="checkbox"  value="1" {$this->toStyle()} {$this->toAttr()}>
-                <span class="form-toggle-label"></span>
-            </label>
-        HTML;
+        $data = [
+            'nodeName' => 'n-switch',
+            'vModel:value' => $this->getModelField(),
+        ];
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
+        }
+        return $data;
     }
 
-    public function getInputData($data): int
+    public function dataInput($data): int
     {
         return $data ? 1 : 0;
     }

@@ -36,7 +36,7 @@ trait Role
 
         $column = $table->column('操作')->width(200);
         $column->link('编辑', $parser['route'] . '.page', ['id' => 'role_id']);
-        $column->link('删除', $parser['route'] . '.del')->type('ajax')->data(['type' => 'post']);
+        $column->link('删除', $parser['route'] . '.del')->type('ajax', ['method' => 'post']);
         return $table;
     }
 
@@ -51,35 +51,15 @@ trait Role
             $this->formInner($form, $info);
         });
 
-        $form->script(function () {
-            return <<<JS
-                    $('[auth]').on('click', '[auth-app]', function () {
-                        if($(this).prop('checked')) {
-                            $(this).parents('[auth]').find('[auth-item]').prop('checked', true)
-                        }else {
-                            $(this).parents('[auth]').find('[auth-item]').prop('checked', false)
-                        }
-                    });
-                    $('[auth]').on('click', '[auth-group]', function () {
-                        if($(this).prop('checked')) {
-                            $(this).parents('[group]').find('[auth-item]').prop('checked', true)
-                        }else {
-                            $(this).parents('[group]').find('[auth-item]').prop('checked', false)
-                        }
-                    });
-                JS;
-        });
 
         $form->before(function ($data, $type, $model) {
-            $purview = explode(',', $data['purview']);
-
+            $purview = $data['purview'];
             $purview = array_filter($purview, function ($item) {
                 if (stripos($item, 'desc_', 0) !== false) {
                     return false;
                 }
                 return true;
             });
-
             $model->purview = array_values($purview);
         });
 
@@ -108,7 +88,7 @@ trait Role
                 $i++;
                 $tmp = [
                     'id' => 'desc_' . $i,
-                    'text' => $app['name'],
+                    'name' => $app['name'],
                     'children' => []
                 ];
 
@@ -116,7 +96,7 @@ trait Role
                     $i++;
                     $group = [
                         'id' => 'desc_' . $i,
-                        'text' => $item['name'],
+                        'name' => $item['name'],
                         'children' => []
                     ];
                     foreach ($item['list'] as $vo) {
@@ -124,13 +104,13 @@ trait Role
                             foreach ($vo['auth_list'] as $k => $v) {
                                 $group['children'][] = [
                                     'id' => $vo['value'] . '|' . $k,
-                                    'text' => $v
+                                    'name' => $v
                                 ];
                             }
                         } else {
                             $group['children'][] = [
                                 'id' => $vo['value'],
-                                'text' => $vo['name']
+                                'name' => $vo['name']
                             ];
                         }
                     }

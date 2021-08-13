@@ -8,8 +8,6 @@ namespace Duxravel\Core\UI\Form;
  */
 class Editor extends Element implements Component
 {
-    protected Textarea $object;
-
     /**
      * Text constructor.
      * @param  string  $name
@@ -21,8 +19,6 @@ class Editor extends Element implements Component
         $this->name = $name;
         $this->field = $field;
         $this->has = $has;
-        $this->object = new Textarea($this->name, $this->field, $this->has);
-        $this->object->attr('data-js', 'form-editor');
     }
 
     /**
@@ -30,9 +26,16 @@ class Editor extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render($value)
     {
-        return $this->object->render($this->getValue($value));
+        $data = [
+            'nodeName' => 'app-editor'
+        ];
+
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
+        }
+        return $data;
     }
 
 }

@@ -10,13 +10,30 @@ class Hidden implements Component
 {
 
     /**
-     * @param $value
-     * @param $data
+     * @param $field
      * @return string
      */
-    public function render($value, $data): string
+    public function render($field): array
     {
-        return '<div><span class="mr-2" hidden>' . $value . '</span><span class="border border-blue-900 rounded py-1 px-2 bg-blue-900 text-white cursor-pointer" data-js="show-hidden">显示</span></div>';
+        $name = $field . '_show';
+        return [
+            'nodeName' => 'div',
+            'child' => [
+                [
+                    'nodeName' => 'span',
+                    'class' => 'mr-2',
+                    'vIf' => "rowData['$name']",
+                    'child' => "{{rowData['$field']}}",
+                ],
+                [
+                    'nodeName' => 'n-tag',
+                    'vBind:type' => "rowData['$name'] ? 'warning' : 'info'",
+                    'class' => 'mr-2',
+                    'vOn:click' => "rowData['$name'] = !rowData['$name']",
+                    'child' => "{{rowData['$name'] ? '隐藏' : '显示'}}",
+                ],
+            ]
+        ];
     }
 
 }

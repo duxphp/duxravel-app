@@ -29,6 +29,7 @@ class Password extends Element implements Component
         $this->has = $has;
         $this->object = new Text($this->name, $this->field, $this->has);
         $this->object->type('password');
+        $this->object->attr('show-password-toggle', true);
     }
 
     /**
@@ -36,9 +37,10 @@ class Password extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render($value)
     {
-        return $this->object->render($this->getValue($value));
+        return $this->object->getRender($this->getValue($value));
     }
+    
 
 }

@@ -71,23 +71,25 @@ trait FileManage
             'video' => 'mp4,ogv,webm,ogm',
             'document' => 'doc,docx,xls,xlsx,pptx,ppt,csv,pdf',
         ];
+
         if ($dirId) {
             $data = \Duxravel\Core\Model\File::where('has_type', $this->getHasType())->where('dir_id', $dirId);
             if ($query) {
                 $data = $data->where('title', 'like', '%' . $query . '%');
             }
             if ($filter <> 'all') {
-                if ($filter == 'other') {
-                    $exts = implode(',', $format);
-                    $data->whereNotIn('ext', explode(',', $exts));
+                if ($filter === 'other') {
+
+                    $data->whereNotIn('ext', explode(',', implode(',', $format)));
                 } else {
+
                     $filterData = explode(',', $filter);
                     $exts = [];
                     foreach ($filterData as $vo) {
                         $exts[] = $format[$vo];
                     }
-                    $exts = implode(',', $exts);
-                    $data->whereIn('ext', explode(',', $exts));
+                    $exts = array_filter($exts);
+                    $data->whereIn('ext', explode(',', implode(',', $exts)));
                 }
             }
             $data = $data->orderBy('file_id', 'desc')->paginate(16, [

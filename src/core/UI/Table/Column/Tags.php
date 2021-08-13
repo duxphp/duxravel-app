@@ -25,13 +25,11 @@ class Tags implements Component
     }
 
     /**
-     * @param $value
-     * @param $data
+     * @param $label
      * @return string
      */
-    public function render($value, $data): string
+    public function render($label): array
     {
-        $valueArray = !is_array($value) ? explode(',', $value) : $value;
         $tagsArr = [];
         foreach ($this->map as $key => $vo) {
             $tagsArr[$key]['name'] = $vo;
@@ -39,16 +37,24 @@ class Tags implements Component
         foreach ($this->color as $key => $vo) {
             $tagsArr[$key]['color'] = $vo;
         }
-        $inner = [];
+
+        $node = [];
         foreach ($tagsArr as $key => $vo) {
-            if (in_array($key, $valueArray)) {
-                $inner[] = (new Badge($vo['name']))->color($vo['color'] ?: 'blue')->render();
-            }
+            $item = (new Badge($vo['name']))->color($vo['color'])->render();
+            $item['vIf'] = "~rowData['{$label}'].indexOf(". (is_numeric($key) ? $key : "'$key'") .")";
+            $node[] = $item;
         }
-        $innerHtml = implode(' ', $inner);
-        return <<<HTML
-            <div class="flex align-center space-x-2">$innerHtml</div>
-        HTML;
+
+        return [
+            'nodeName' => 'div',
+            'class' => 'flex gap-2',
+            'child' => $node
+        ];
+    }
+
+    public function getData($rowData, $field, $value)
+    {
+        return [$field => !is_array($value) ? explode(',', $value) : $value];
 
     }
 

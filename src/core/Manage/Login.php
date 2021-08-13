@@ -12,8 +12,6 @@ use Duxravel\Core\Util\View;
 trait Login
 {
 
-
-
     public function index()
     {
         return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.Login.index'))->render('layout');
@@ -23,8 +21,7 @@ trait Login
     {
         $layer = strtolower(app_parsing('layer'));
         $credentials = $request->only('username', 'password');
-        $status = auth($layer)->attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $request->has('remember'));
-        if ($status) {
+        if (auth($layer)->attempt($credentials)) {
             $user = auth($layer)->user();
             return app_success('登录成功', [
                 'userInfo' => [
@@ -32,8 +29,17 @@ trait Login
                     'avatar' => $user->avatar,
                     'username' => $user->username,
                     'nickname' => $user->nickname
+                ],
+                'token' => auth($layer)->tokenById($user->user_id),
+                'token_expire' => auth($layer)->factory()->getTTL() * 60,
+                'menu' => [
+                    [
+                        'name' => '返回首页',
+                        'url' => route('web.index'),
+                        'target' => 'new'
+                    ]
                 ]
-            ], route($layer . '.index'));
+            ]);
         }
         app_error('账号密码错误');
     }
@@ -43,5 +49,14 @@ trait Login
         $layer = strtolower(app_parsing('layer'));
         auth($layer)->logout();
         return redirect(route($layer . '.login'));
+    }
+
+    public function refresh()
+    {
+        $layer = strtolower(app_parsing('layer'));
+        $token = auth($layer)->refresh();
+        return app_success('刷新成功', [
+            'token' => $token
+        ]);
     }
 }

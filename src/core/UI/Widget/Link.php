@@ -20,6 +20,8 @@ class Link extends Widget
     protected ?\Closure $show = null;
     protected string $button = '';
     protected string $type = 'default';
+    protected string $size = 'medium';
+    protected string $model = '';
     protected array $data = [];
     protected array $class = [];
     protected array $typeConfig = [];
@@ -54,6 +56,20 @@ class Link extends Widget
         return $this;
     }
 
+    /**
+     * 数据模型
+     * @param bool $model
+     */
+    public function model($model): self
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    /**
+     * 图标
+     * @param bool $model
+     */
     public function icon($icon): self
     {
         $this->icon = $icon;
@@ -65,9 +81,10 @@ class Link extends Widget
      * @param string $type
      * @return $this
      */
-    public function button(string $type = 'primary'): self
+    public function button(string $type = 'primary', string $size = 'medium'): self
     {
         $this->button = $type;
+        $this->size = $size;
         return $this;
     }
 
@@ -99,20 +116,20 @@ class Link extends Widget
 
     /**
      * @param $data
-     * @return string
+     * @return array
      */
-    public function render($data = null): string
+    public function render($data = null)
     {
-        if (!$this->isAuth()) {
-            return '';
+        if (!$this->model && !$this->isAuth()) {
+            return [];
         }
 
         if ($this->show && !call_user_func($this->show, $data)) {
-            return '';
+            return [];
         }
-        $this->class('inline-flex items-center');
-        $url = 'javascript:;';
-        if ($this->route || $this->params) {
+
+        $url = '';
+        if (!$this->model && ($this->route || $this->params)) {
             $params = [];
             if (!$data) {
                 $params = $this->params;
@@ -121,48 +138,72 @@ class Link extends Widget
                     $params[$k] = Tools::parsingArrData($data, $v, true);
                 }
             }
-            $url = route($this->route, $params);
+            $url = route($this->route, $params, false);
         }
+
+        $object = [
+            'nodeName' => 'route',
+        ];
 
         switch ($this->type) {
             case 'default':
-                $this->attr('href', $url);
+                $object['href'] = $url;
                 break;
             case 'dialog':
-                $this->attr('href', 'javascript:;');
-                $this->attr('data-js', 'dialog-open');
-                $this->attr('data-url', $url);
-                $this->attr('data-title', $this->name);
+                $object['href'] = $url;
+                $object['type'] = 'dialog';
+                $object['title'] = $this->name;
                 break;
             case 'ajax':
-                $this->attr('href', 'javascript:;');
-                $this->attr('data-js', 'dialog-ajax');
-                $this->attr('data-url', $url);
-                $this->attr('data-title', '确认进行' . $this->name . '操作?');
+                $object['href'] = $url;
+                $object['type'] = 'ajax';
+                $object['title'] = '确认进行' . $this->name . '操作?';
                 break;
         }
-        foreach ($this->typeConfig as $key => $vo) {
-            $this->attr('data-' . $key, $vo);
+
+        if ($this->model) {
+            unset($object['href']);
+            $object['vBind:href'] = $this->model . "['$this->route']";
         }
 
+        $object = array_merge($object, $this->typeConfig);
+
+        $name = $this->name;
+
         if ($this->button) {
-            $this->class('btn-' . $this->button);
+            $link = [
+                'nodeName' => 'n-button',
+                'type' => $this->button,
+                'size' => $this->size,
+                'child' => [
+                    $name
+                ]
+            ];
+            if ($this->icon) {
+                $link['child'][] = (new Icon($this->icon))->attr('vSlot:icon', '')->getRender();
+            }
         } else {
-            $this->class('text-blue-900 hover:underline');
+            $link = [
+                'nodeName' => 'div',
+                'class' => 'text-blue-600 hover:underline',
+                'child' => [
+                    $name
+                ]
+            ];
+            if ($this->icon) {
+                $link['child'][] = (new Icon($this->icon))->class('mr-2')->getRender();
+            }
         }
-        $icon = '';
-        if ($this->icon) {
-            $icon = '<div class="w-4 h-4 mr-2 ">' . \Duxravel\Core\UI\Widget::icon($this->icon) . '</div>';
-        }
-        return <<<HTML
-            <a {$this->toElement()}>$icon $this->name</a>
-        HTML;
+
+        $object['child'] = $link;
+
+        return $object;
 
     }
 
     private function isAuth()
     {
-        if(!\Route::has($this->route)) {
+        if (!\Route::has($this->route)) {
             return false;
         }
         $public = \Route::getRoutes()->getByName($this->route)->getAction('public');

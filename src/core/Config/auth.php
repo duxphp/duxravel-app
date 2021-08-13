@@ -4,7 +4,6 @@ return [
 
     'defaults' => [
         'guard' => '',
-        'passwords' => '',
     ],
 
     'guards' => [

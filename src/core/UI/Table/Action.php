@@ -25,7 +25,7 @@ class Action
      * @param string $type
      * @return Link
      */
-    public function button(string $name, string $route = '', array $params = [], $type = 'blue'): Link
+    public function button(string $name, string $route = '', array $params = [], $type = 'primary'): Link
     {
         $link = new Link($name, $route, $params);
         $link->button($type);
@@ -39,7 +39,7 @@ class Action
      * @param string $type
      * @return Menu
      */
-    public function menu(string $name, string $type = 'blue'): Menu
+    public function menu(string $name, string $type = 'default'): Menu
     {
         $menu = new Menu($name, $type);
         $this->menu[] = $menu;
@@ -52,14 +52,14 @@ class Action
      */
     public function render(): array
     {
-        $html = [];
+        $node = [];
         foreach ($this->menu as $menu) {
-            $html[] = $menu->render();
+            $node[] = $menu->getRender();
         }
         foreach ($this->button as $class) {
-            $html[] = $class->render();
+            $node[] = $class->getRender();
         }
-        return $html;
+        return $node;
     }
 
 }
