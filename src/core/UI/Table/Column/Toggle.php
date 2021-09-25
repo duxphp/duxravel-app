@@ -13,37 +13,48 @@ class Toggle implements Component
     private array $params;
     private string $field;
     private string $url;
+    private string $label;
 
     /**
      * Toggle constructor.
-     * @param string $field
      * @param string $url
      * @param array $params
      */
-    public function __construct(string $field = '', string $url = '', array $params = [])
+    public function __construct(string $field, string $url, array $params = [])
     {
         $this->field = $field;
         $this->url = $url;
         $this->params = $params;
+        $this->label = $url . '?' . http_build_query($params);
     }
 
     /**
-     * @param $value
-     * @param $data
-     * @return string
+     * 获取数据
+     * @param $rowData
+     * @return array
      */
-    public function render($value, $data): string
+    public function getData($rowData, $field)
     {
         $params = [];
         foreach ($this->params as $key => $vo) {
             $params[$key] = Tools::parsingArrData($data, $vo, true);
         }
-        return (new \Duxravel\Core\UI\Form\Toggle('状态', 'status'))
-            ->attr('data-js', 'form-switch')
-            ->attr('data-params', json_encode($params))
-            ->attr('data-field', $this->field)
-            ->attr('data-url', route($this->url, $params))
-            ->render($value);
+        return [
+            $this->label => route($this->url, $this->params, false)
+        ];
+    }
+
+    /**
+     * @param $field
+     * @return string
+     */
+    public function render($field): array
+    {
+        return [
+            'nodeName' => 'n-switch',
+            'vModel:value' => "rowData['$field']",
+            'vOn:update:value' => "rowData['$field'] = \$event, editValue(rowData['$this->label'], {'field': '$this->field', '$this->field': rowData['$field']})",
+        ];
     }
 
 }

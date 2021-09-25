@@ -2,6 +2,8 @@
 
 namespace Duxravel\Core\UI;
 
+use Duxravel\Core\UI\Form\Node;
+use Duxravel\Core\UI\Widget\Icon;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +44,7 @@ class Form
     public $modelElo;
     public $info;
     protected $title;
-    protected $bark;
+    protected $back;
     protected $attr = [];
     protected $extend = [];
     protected string $method = 'post';
@@ -52,7 +54,7 @@ class Form
     protected array $flow = [];
     protected array $assign = [];
     protected array $script = [];
-    protected array $sideHtml = [];
+    protected array $sideNode = [];
     protected bool $dialog = false;
     public Collection $element;
 
@@ -77,6 +79,10 @@ class Form
             }
         }
         $this->element = Collection::make();
+
+        if (request()->header('x-dialog')) {
+            $this->dialog = true;
+        }
     }
 
     /**
@@ -151,30 +157,8 @@ class Form
     public function title($title, bool $back = true): self
     {
         $this->title = $title;
-        $this->bark = $back;
+        $this->back = $back;
         return $this;
-    }
-
-    /**
-     * 多行组件
-     * @return Form\Row
-     */
-    public function row(): Form\Row
-    {
-        $data = new Form\Row();
-        $this->element->push($data);
-        return $data;
-    }
-
-    /**
-     * 切换组件
-     * @return Form\Tab
-     */
-    public function tab(): Form\Tab
-    {
-        $data = new Form\Tab();
-        $this->element->push($data);
-        return $data;
     }
 
     /**
@@ -201,6 +185,30 @@ class Form
     }
 
     /**
+     * 多行组件
+     * @return Form\Row
+     */
+    public function row(): Form\Row
+    {
+        $data = new Form\Row();
+        $data->dialog($this->dialog);
+        $this->element->push($data);
+        return $data;
+    }
+
+    /**
+     * 切换组件
+     * @return Form\Tab
+     */
+    public function tab(): Form\Tab
+    {
+        $data = new Form\Tab($this->dialog);
+        $data->dialog($this->dialog);
+        $this->element->push($data);
+        return $data;
+    }
+
+    /**
      * 卡片组件
      * @param $callback
      * @return Form\Card
@@ -208,6 +216,7 @@ class Form
     public function card($callback): Form\Card
     {
         $data = new Form\Card($callback);
+        $data->dialog($this->dialog);
         $this->element->push($data);
         return $data;
     }
@@ -221,6 +230,7 @@ class Form
     public function html($name, $callback): Form\Html
     {
         $data = new Form\Html($name, $callback);
+        $data->dialog($this->dialog);
         $this->element->push($data);
         return $data;
     }
@@ -233,6 +243,7 @@ class Form
     public function layout($callback): Form\Layout
     {
         $data = new Form\Layout($callback);
+        $data->dialog($this->dialog);
         $this->element->push($data);
         return $data;
     }
@@ -240,7 +251,7 @@ class Form
     // 边栏元素
     public function side($callback, string $direction = 'left'): self
     {
-        $this->sideHtml[] = [
+        $this->sideNode[] = [
             'callback' => $callback,
             'direction' => $direction
         ];
@@ -248,45 +259,112 @@ class Form
     }
 
     /**
+     * 获取表单数据
+     */
+    public function renderData($info)
+    {
+        $collection = Collection::make();
+        $this->element->map(function ($item) use ($collection, $info) {
+            $data = $item->getData($info);
+            foreach ($data as $key => $vo) {
+                $collection->put($key, $vo);
+            }
+        });
+        return $collection->toArray();
+    }
+
+    /**
      * 表单渲染
      * @param $info
-     * @return string
      */
-    public function renderForm($info): string
+    public function renderForm()
     {
-        $forms = $this->element->map(function ($vo, $key) use ($info) {
+        $forms = $this->element->map(function ($vo, $key) {
             $sort = $vo->getSort();
             $sort = $sort ?? $key;
             if (!Tools::isAuth($vo->getAuth())) {
                 return false;
             }
+
+            $groupRule = $vo->getGroup();
+            $group = [];
+            foreach ($groupRule as $rule) {
+                $group[] = "data.{$rule['name']} ==  '{$rule['value']}'";
+            }
+            $group = implode(' || ', $group) ?: null;
+
             if ($vo instanceof Form\Composite) {
                 return [
-                    'name' => $vo->getName(),
-                    'layout' => $vo->getLayout(),
-                    'group' => $vo->getGroup(),
-                    'help' => $vo->getHelp(),
-                    'helpLine' => $vo->getHelpLine(),
-                    'prompt' => $vo->getPrompt(),
-                    'must' => $vo->getMust(),
-                    'html' => $vo->render($info),
+                    'nodeName' => 'div',
+                    'child' => $vo->getRender(),
+                    'vIf' => $group,
                     'sort' => $sort,
                 ];
             }
-            return [
-                'name' => $vo->getName(),
-                'layout' => $vo->getLayout(),
-                'group' => $vo->getGroup(),
-                'help' => $vo->getHelp(),
-                'helpLine' => $vo->getHelpLine(),
-                'prompt' => $vo->getPrompt(),
-                'must' => $vo->getMust(),
-                'html' => $vo->render(Tools::parsingArrData($info, $vo->getHas() ?: $vo->getField())),
-                'sort' => $sort,
-            ];
-        })->filter()->sortBy('sort');
 
-        return view('vendor.duxphp.duxravel-app.src.core.UI.View.Form.layout', ['items' => $forms])->render();
+            $helpNode = [];
+            $prompt = $vo->getPrompt();
+            $help = $vo->getHelp();
+            if ($prompt) {
+                $helpNode = [
+                    'nodeName' => 'n-tooltip',
+                    'class' => 'flex-none',
+                    'trigger' => 'hover',
+                    'placement' => 'top-end',
+                    'child' => [
+                        [
+                            'vSlot:trigger' => '',
+                            'nodeName' => 'span',
+                            'class' => 'my-2.5 block cursor-pointer text-center text-white w-4 h-4 text-xs rounded-full bg-gray-500',
+                            'child' => '?'
+                        ],
+                        $vo->getPrompt()
+                    ],
+                ];
+            }
+            if ($help) {
+                $helpNode = [
+                    'nodeName' => 'div',
+                    'class' => 'text-gray-500 pt-2 pb-2 ml-3',
+                    'child' => $help
+                ];
+            }
+
+            return [
+                'nodeName' => 'n-form-item',
+                'label' => $vo->getName(),
+                'path' => $vo->getField(),
+                'vIf' => $group,
+                'sort' => $sort,
+                'child' => [
+                    [
+                        'nodeName' => 'div',
+                        'class' => 'w-full',
+                        'child' => [
+                            [
+                                'nodeName' => 'div',
+                                'class' => 'flex gap-2',
+                                'child' => [
+                                    [
+                                        'nodeName' => 'div',
+                                        'class' => 'flex-grow w-full',
+                                        'child' => $vo->getRender()
+                                    ],
+                                    $helpNode
+                                ]
+                            ],
+                            [
+                                'nodeName' => 'div',
+                                'child' => $vo->getHelpLine()
+                            ]
+                        ]
+                    ]
+                ],
+                //'must' => $vo->getMust(),
+
+            ];
+        })->filter()->sortBy('sort')->values()->toArray();
+        return $forms;
     }
 
     /**
@@ -343,11 +421,16 @@ class Form
     public function dialog($status): self
     {
         $this->dialog = (bool)$status;
-        if ($this->dialog) {
-            $this->attr('data-success-notify', 'false');
-            $this->attr('data-jump', 'false');
-        }
         return $this;
+    }
+
+    /**
+     * 获取弹窗状态
+     * @return bool
+     */
+    public function getDialog()
+    {
+        return $this->dialog;
     }
 
     /**
@@ -366,6 +449,7 @@ class Form
      */
     public function render()
     {
+
         // 提交地址
         if ($this->action) {
             $action = $this->action;
@@ -379,50 +463,28 @@ class Form
             $action = route(\Str::beforeLast(request()->route()->getName(), '.') . '.' . 'save', $params);
         }
 
-        // 渲染表单元素
-        $formHtml = $this->renderForm($this->info);
+        $node = new Node($action, $this->method, $this->title);
+        $node->dialog((bool) $this->dialog);
+        $node->back((bool) $this->back);
 
-        // 处理附加js
-        $script = [];
-        foreach ($this->script as $vo) {
-            if ($vo instanceof \Closure) {
-                $script[] = $vo($this);
-            } else {
-                $script[] = $vo;
-            }
-        }
+        // 表单元素·
+        $node->element($this->renderForm());
+
+
+        // 表单数据
+        $node->data($this->renderData($this->info));
 
         // 边栏元素
-        $sideLeftHtml = [];
-        $sideRightHtml = [];
-        foreach ($this->sideHtml as $vo) {
-            if ($vo['direction'] === 'left') {
-                $sideLeftHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
-            } else {
-                $sideRightHtml[] = is_callable($vo['callback']) ? $vo['callback']() : $vo['callback'];
-            }
+        foreach ($this->sideNode as $vo) {
+            $node->side($vo['callback'], $vo['direction']);
         }
 
-        // 渲染表单页面
-        $assign = [
-            'title' => $this->title,
-            'back' => $this->bark,
-            'keys' => $this->keys,
-            'dialog' => $this->dialog,
-            'formHtml' => $formHtml,
-            'action' => $action,
-            'method' => $this->method,
-            'attr' => $this->attr,
-            'script' => $script,
-            'sideLeftHtml' => $sideLeftHtml,
-            'sideRightHtml' => $sideRightHtml,
-        ];
-        $assign = array_merge($assign, $this->assign);
-
-        if ($this->dialog) {
-            return (new View('vendor.duxphp.duxravel-app.src.core.UI.View.form', $assign))->render('dialog');
+        // 处理附加js
+        foreach ($this->script as $vo) {
+            $node->script($vo);
         }
-        return (new View('vendor.duxphp.duxravel-app.src.core.UI.View.form', $assign))->render();
+
+        return app_success('ok', $node->render());
     }
 
     /**
@@ -431,7 +493,7 @@ class Form
      * @return Collection
      * @throws ValidationException
      */
-    public function getData($time): Collection
+    public function getInput($time): Collection
     {
         // 获取提交数据
         $data = request()->input();
@@ -449,15 +511,12 @@ class Form
                 return false;
             }
             $inputs = $item->getInput($time);
-            $filed = $item->getField();
-            if ($item instanceof Form\Composite) {
-                foreach ($inputs as $key => $vo) {
-                    $collection->put($key, $vo);
-                }
-            } elseif ($filed) {
-                $collection->put($filed, $inputs);
+
+            foreach ($inputs as $key => $vo) {
+                $collection->put($key, $vo);
             }
         });
+
 
         //验证数据
         $rules = [];
@@ -510,7 +569,7 @@ class Form
         $type = $id ? 'edit' : 'add';
 
         // 获取提交数据
-        $data = $this->getData($type);
+        $data = $this->getInput($type);
 
         // 提取提交数据
         $formatData = [];
@@ -666,6 +725,7 @@ class Form
             }
         }
         $object = new $class(...$arguments);
+        $object->dialog($this->dialog);
         $this->element->push($object);
         return $object;
     }

@@ -20,34 +20,24 @@ class Batch
     /**
      * 普通按钮
      * @param string $name
+     * @param string $type
      * @param string $route
      * @param array $params
      * @param string $type
-     * @return Link
+     * @return $this
      */
-    public function button(string $name, string $route = '', array $params = [], string $type = 'primary'): Link
+    public function button(string $name, $type = '', string $route = '', array $params = [], string $btnType = 'default'): self
     {
-        $link = new Link($name, $route, $params);
-        $link->button($type);
-        $link->attr('data-link', '');
-        $this->button[] = $link;
-        return $link;
-    }
-
-    /**
-     * 菜单按钮
-     * @param  string  $name
-     * @param  string  $route
-     * @param  array   $data
-     * @return Select
-     */
-    public function select(string $name, string $route = '', array $data = []): Select
-    {
-        $data = array_merge([null => $name], $data);
-        $select = (new Select($name, 'type', $data));
-        $this->select[] = $select;
-        $this->url[] = route($route);
-        return $select;
+        $params['bath_type'] = $type;
+        $url = route($route, $params);
+        $this->button[] = [
+            'nodeName' => 'n-button',
+            'type' => $btnType,
+            'size' => 'small',
+            'child' => $name,
+            'vOn:click' => "checkAction('$url')"
+        ];
+        return $this;
     }
 
     /**
@@ -56,7 +46,8 @@ class Batch
      */
     public function render(): array
     {
-        $data = request()->all();
+        return $this->button;
+
         $html = [];
         foreach ($this->select as $key => $select) {
             $inner = $select->class('custom-select')->render(null);

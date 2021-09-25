@@ -13,6 +13,7 @@ class Status implements Component
     private array $map;
     private array $color;
     private string $type;
+    private string $field;
 
     /**
      * Status constructor.
@@ -28,11 +29,10 @@ class Status implements Component
     }
 
     /**
-     * @param $value
-     * @param $data
+     * @param $label
      * @return string
      */
-    public function render($value, $data): string
+    public function render($label): array
     {
         $statusArr = [];
         foreach ($this->map as $key => $vo) {
@@ -41,14 +41,23 @@ class Status implements Component
         foreach ($this->color as $key => $vo) {
             $statusArr[$key]['color'] = $vo;
         }
-        $statusRaw = $statusArr[$value];
-        $statusColor = $statusRaw['color'] ?: 'blue';
-        if ($this->type === 'badge') {
-            return (new Badge($statusRaw['name']))->color($statusColor)->render();
+
+        $node = [];
+        foreach ($statusArr as $key => $vo) {
+
+            if ($this->type == 'badge') {
+                $item = (new Badge($vo['name']))->color($vo['color'])->render();
+                $item['vIf'] = "rowData['{$label}'] == " . (is_numeric($key) ? $key : "'$key'");
+            } else {
+                $item = [
+                    'nodeName' => 'div',
+                    'class' => 'text-' . ($vo['color'] ?: 'blue') . '-900',
+                    'child' => $vo['name']
+                ];
+            }
+            $node[] = $item;
         }
-        if ($this->type === 'text') {
-            return '<span class="text-' . $statusColor . '-900">' . $statusRaw['name'] . '</span>';
-        }
+        return $node;
     }
 
 }

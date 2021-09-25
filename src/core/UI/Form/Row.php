@@ -40,25 +40,25 @@ class Row extends Composite implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render($value)
     {
-        $this->class('grid lg:grid-flow-col gap-x-4');
+        $this->class('grid lg:grid-flow-col gap-4');
         $inner = [];
         foreach ($this->column as $vo) {
             $width = $vo['width'] ? "lg:row-span-{$vo['width']}" : '';
             $form = $vo['object']->renderForm($value);
-            $inner[] = <<<HTML
-                <div class="$width">
-                    $form
-                </div>
-            HTML;
+            $inner[] = [
+                'nodeName' => 'div',
+                'class' => $width,
+                'child' => $form
+            ];
         }
-        $innerHtml = implode('', $inner);
-        return <<<HTML
-            <div {$this->toElement()}>
-                $innerHtml
-            </div>
-        HTML;
+
+        return [
+            'nodeName' => 'div',
+            'class' => $this->getClass(),
+            'child' => $inner
+        ];
     }
 
 }

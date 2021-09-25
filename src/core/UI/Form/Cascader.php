@@ -5,6 +5,8 @@ namespace Duxravel\Core\UI\Form;
 use Duxravel\Core\UI\Form\Component;
 use Duxravel\Core\UI\Form\Element;
 use Duxravel\Core\UI\Tools;
+use Duxravel\Core\UI\Widget\TreeList;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Class Cascader
@@ -14,6 +16,7 @@ class Cascader extends Element implements Component
 {
     protected bool $tip = false;
     protected bool $multi = false;
+    protected bool $leaf = true;
     protected string $url = '';
     protected $data;
 
@@ -72,44 +75,76 @@ class Cascader extends Element implements Component
     }
 
     /**
+     * 多选组件
+     * @return $this
+     */
+    public function leaf(bool $leaf): self
+    {
+        $this->leaf = $leaf;
+        return $this;
+    }
+
+    /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $values = $this->getValueArray($value);
-        $this->class[] = 'form-select';
-        $this->attr['data-js'] = 'form-cascader';
-        $this->attr['data-url'] = $this->url;
-        $this->attr['name'] = $this->multi ? $this->field . '[]' : $this->field;
-        $this->attr['data-placeholder'] = $this->attr['placeholder'] ?: '请选择' . $this->name;
-        if ($this->multi) {
-            $this->attr['multiple'] = '';
-        }
+
         $data = [];
         if ($this->data instanceof \Closure) {
-            $data = call_user_func($this->data, [$values]);
+            $data = call_user_func($this->data, $this);
         }
         if (is_array($this->data)) {
             $data = $this->data;
         }
 
-        $inner = [];
+        $options = [];
         foreach ($data as $vo) {
-            $selected = $values !== null && in_array($vo['id'], $values) ? 'selected' : '';
-            $inner[] = <<<HTML
-                <option $selected data-pid="{$vo['pid']}" value="{$vo['id']}">{$vo['name']}</option>
-            HTML;
+            $options[] = [
+                'id' => $vo['id'],
+                'pid' => $vo['pid'],
+                'value' => $vo['id'],
+                'label' => $vo['name'],
+            ];
         }
-        $innerHtml = implode('', $inner);
 
-        return <<<HTML
-            <select {$this->toElement()}>
-                <option></option>
-                $innerHtml
-            </select>
-        HTML;
+        $options = \Duxravel\Core\Util\Tree::arr2tree($options, 'id', 'pid', 'children');
+
+        $data = [
+            'nodeName' => 'app-cascader',
+            'class' => 'shadow-sm',
+            'nParams' => [
+                'cascade' => true,
+                'show-path' => true,
+                'filterable' => false,
+                'clearable' => true,
+                'leaf-only' => $this->leaf,
+                'multiple' => $this->multi,
+                'options' => $options,
+                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            ]
+        ];
+
+        if ($this->url) {
+            $data['dataUrl'] = $this->url;
+        }
+
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
+        }
+
+        return $data;
+    }
+
+    /**
+     * 获取数据值
+     * @param $value
+     * @return array|false|string[]|null
+     */
+    public function dataValue($value)
+    {
+        return $this->multi ? $this->getValueArray($value) : $this->getValue($value);
     }
 
     /**
@@ -117,7 +152,7 @@ class Cascader extends Element implements Component
      * @param $data
      * @return string
      */
-    public function getInputData($data): ?string
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

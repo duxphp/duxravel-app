@@ -72,7 +72,17 @@ trait Expend
         if ($data instanceof Collection && method_exists($this, 'storeData')) {
             $this->storeData($data, $id);
         }
-        $action = $this->indexUrl !== null ? $this->indexUrl : url(\Str::beforeLast(request()->path(), '/save'));
+
+        if ($this->indexUrl === null) {
+            if ($form->getDialog()) {
+                $action = "routerPush:";
+            }else {
+                $action = '/' . \Str::beforeLast(request()->path(), '/save');
+            }
+        }
+        else {
+            $action = $this->indexUrl;
+        }
         return app_success('保存记录成功', [], $action);
     }
 
@@ -183,9 +193,6 @@ trait Expend
         $name = request()->get('query');
         $limit = request()->get('limit', 10);
         $id = request()->get('id');
-        $type = request()->get('type');
-        $parentId = request()->get('parent');
-        $level = request()->get('level');
         $data = new $this->model();
         $key = $data->getKeyName();
         if ($name) {
@@ -203,8 +210,6 @@ trait Expend
             if ($ids) {
                 $data = $data->whereIn($key, $ids);
             }
-        } elseif ($type == 'linkage' && $level) {
-            $data = $data->where($level, $parentId ?: 0);
         }
 
         if (method_exists($this, 'dataWhere')) {

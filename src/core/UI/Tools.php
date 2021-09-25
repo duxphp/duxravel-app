@@ -80,7 +80,7 @@ class Tools
      * @param false $inner
      * @return string
      */
-    public static function toClass($class, bool $inner = false): string
+    public static function toClass($class, bool $inner = true): string
     {
         return $inner ? implode(' ', $class) : 'class="' . implode(' ', $class) . '"';
     }
@@ -91,7 +91,7 @@ class Tools
      * @param false $inner
      * @return string
      */
-    public static function toStyle($data, bool $inner = false): string
+    public static function toStyle($data, bool $inner = true): string
     {
         $style = [];
         foreach ($data as $name => $value) {

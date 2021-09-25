@@ -11,9 +11,9 @@ use Duxravel\Core\UI\Form;
  */
 class Tab extends Composite implements Component
 {
-    public function __construct()
+    public function __construct($dialog = false)
     {
-        $this->layout = false;
+        $this->dialog = $dialog;
     }
 
     /**
@@ -26,6 +26,7 @@ class Tab extends Composite implements Component
     public function column($name, callable $callback, string $title = '', string $desc = ''): self
     {
         $form = new Form();
+        $form->dialog($this->dialog);
         $callback($form);
         $this->column[] = [
             'name' => $name,
@@ -38,55 +39,54 @@ class Tab extends Composite implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $this->class('tabs');
 
-        $ul = [];
-        $body = [];
+        $nodes = [];
+
         foreach ($this->column as $key => $vo) {
-            // ul
-            $ul[] = <<<HTML
-                <li>
-                    <a class="tabs-item"  :class="{'tabs-active': tab == $key}" href="javascript:;" @click="tab = $key">{$vo['name']}</a>
-               </li>
-            HTML;
-            // body
+
+            $child = [];
             if ($vo['title']) {
-                if ($vo['desc']) {
-                    $desc = "<p class='text-gray-500'>{$vo['desc']}</p>";
-                }else {
-                    $desc = '';
-                }
-                $title = "<div class='mb-6'><div class='text-xl'>{$vo['title']}</div>$desc</div>";
-            }else {
-                $title = '';
+                $child[] = [
+                    'nodeName' => 'div',
+                    'class' => 'py-4 flex flex-col gap-2',
+                    'child' => [
+                        [
+                            'nodeName' => 'div',
+                            'class' => 'text-xl',
+                            'child' => $vo['title'],
+                        ],
+                        [
+                            'nodeName' => 'div',
+                            'class' => 'text-gray-500',
+                            'child' => $vo['desc'],
+                        ]
+                    ]
+                ];
             }
-            $inner = $vo['object']->renderForm($value);
-            $body[] = <<<HTML
-                <div x-show="tab == $key" x-cloak>
-                    $title
-                    $inner
-                </div>
-            HTML;
+            $child[] = [
+                'nodeName' => 'div',
+                'class' => 'pt-2',
+                'child' => $vo['object']->renderForm($value)
+            ];
 
+            $nodes[] = [
+                'nodeName' => 'n-tab-pane',
+                'name' => $vo['name'],
+                'tab' => $vo['name'],
+                'child' => $child
+            ];
         }
-        $ulHtml = implode('', $ul);
-        $bodyHtml = implode('', $body);
 
-        return <<<HTML
-            <div x-data="{tab: 0}" {$this->toElement()}>
-                <ul class="tabs-nav">
-                $ulHtml
-                </ul>
-                <div class="px-6 lg:px-8 py-6">
-                $bodyHtml
-                </div>
-            </div>
-        HTML;
+        return [
+            'nodeName' => 'n-tabs',
+            'class' => !$this->dialog ? 'mb-3 bg-white rounded shadow px-6 lg:px-8 py-2' : '',
+            'type' => 'line',
+            'child' => $nodes
+        ];
 
     }
 

@@ -18,10 +18,10 @@ class Checkbox extends Element implements Component
 
     /**
      * Select constructor.
-     * @param  string  $name
-     * @param  string  $field
-     * @param  null|array|callable  $data
-     * @param  string  $has
+     * @param string $name
+     * @param string $field
+     * @param null|array|callable $data
+     * @param string $has
      */
     public function __construct(string $name, string $field, $data = null, string $has = '')
     {
@@ -59,16 +59,10 @@ class Checkbox extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $values = $this->getValueArray($value);
-
-        $this->class('flex gap-4 flex-col lg:flex-row');
-        $this->attr('name', "$this->field[]");
-
         $data = [];
         if ($this->data instanceof \Closure) {
             $data = call_user_func($this->data);
@@ -77,28 +71,30 @@ class Checkbox extends Element implements Component
             $data = $this->data;
         }
 
-        if ($this->switch) {
-            $this->attr('data-js', 'form-change');
-            $this->attr('data-group', $this->switch);
-        }
-        $values = $values ?: array_key_first((array) $data);
-
-        $inner = [];
+        $child = [];
         foreach ($data as $key => $vo) {
-            $selected = $value !== null && in_array($key, $values) ? 'checked' : '';
-            $inner[] = <<<HTML
-                    <label class="flex items-center ">
-                        <input type="checkbox" class="form-checkbox text-blue-900 border-gray-400 focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"  {$selected} {$this->toStyle()} {$this->toAttr()} value="{$key}">
-                        <div class="ml-2">$vo</div>
-                    </label>
-            HTML;
+            $child[] = [
+                'nodeName' => 'n-checkbox',
+                'value' => $key,
+                'label' => $vo
+            ];
         }
-        $innerHtml = implode('', $inner);
-        return <<<HTML
-            <div {$this->toClass()}>
-                $innerHtml
-            </div>
-        HTML;
+
+        $data = [
+            'nodeName' => 'n-checkbox-group',
+            'name' => $this->field,
+            'child' => [
+                'nodeName' => 'n-space',
+                'class' => 'flex',
+                'child' => $child
+            ]
+        ];
+
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
+        }
+
+        return $data;
     }
 
     /**
@@ -106,9 +102,15 @@ class Checkbox extends Element implements Component
      * @param $data
      * @return string
      */
-    public function getInputData($data): ?string
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
+    }
+
+    public function dataValue($value)
+    {
+        $value = $this->getValue($value);
+        return $value ? explode(',', $value) : [];
     }
 
 }

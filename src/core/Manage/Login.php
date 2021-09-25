@@ -21,8 +21,7 @@ trait Login
     {
         $layer = strtolower(app_parsing('layer'));
         $credentials = $request->only('username', 'password');
-        $status = auth($layer)->attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $request->has('remember'));
-        if ($status) {
+        if (auth($layer)->attempt($credentials)) {
             $user = auth($layer)->user();
             return app_success('登录成功', [
                 'userInfo' => [
@@ -30,8 +29,16 @@ trait Login
                     'avatar' => $user->avatar,
                     'username' => $user->username,
                     'nickname' => $user->nickname
+                ],
+                'token' => 'Bearer ' . auth($layer)->tokenById($user->user_id),
+                'menu' => [
+                    [
+                        'name' => '返回首页',
+                        'url' => route('web.index'),
+                        'target' => 'new'
+                    ]
                 ]
-            ], route($layer . '.index'));
+            ]);
         }
         app_error('账号密码错误');
     }

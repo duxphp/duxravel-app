@@ -2,6 +2,8 @@
 
 namespace Duxravel\Core\Util;
 
+use Duxravel\Core\UI\Widget\Icon;
+
 /**
  * 菜单工具
  */
@@ -64,6 +66,8 @@ class Menu
                 'name' => $appList['name'],
                 'icon' => $appList['icon'],
                 'url' => $url,
+                'route' => $appList['side'] ? route($layout . '.side', ['app' => $app], false) : '',
+                'data' => $appList['data'],
                 'topic' => $appList['topic'],
                 'hidden' => (bool)$appList['hidden'],
                 'target' => $appList['target'],
@@ -131,6 +135,16 @@ class Menu
 
     }
 
+    public function getSide($layout, $app)
+    {
+        $list = app_hook('Menu', 'get' . ucfirst($layout) . 'Side', [$app]);
+        $data = [];
+        foreach ((array)$list as $value) {
+            $data = array_merge_recursive((array)$data, (array)$value);
+        }
+        return $data;
+    }
+
     /**
      * 菜单路由转换
      * @param $url
@@ -145,6 +159,52 @@ class Menu
         } else {
             return true;
         }
+    }
+
+    /**
+     * 渲染折叠菜单
+     * @param $data
+     * @return array [[label, key, children]]
+     */
+    public static function renderCollapse($title, $icon, $data)
+    {
+
+        return [
+            'node' => [
+                [
+                    'nodeName' => 'div',
+                    'class' => 'flex items-center p-4',
+                    'child' => [
+                        [
+                            'nodeName' => 'div',
+                            'class' => 'flex-none bg-blue-900 rounded-l text-white flex items-center justify-center w-10 h-10',
+                            'child' => (new Icon('academic-cap'))->class('flex-none')->size(20)->getRender()
+                        ],
+                        [
+                            'nodeName' => 'div',
+                            'class' => 'flex-grow bg-gray-300 h-10 flex rounded-r items-center pl-4',
+                            'child' => '新闻分类'
+                        ]
+                    ]
+                ],
+                [
+                    'nodeName' => 'n-menu',
+                    'root-indent' => 20,
+                    'indent' => 20,
+                    'class' => 'w-48',
+                    'vBind:default-value' => 'location.href.substr(location.origin.length)',
+                    'render-label:option' => [
+                        'nodeName' => 'route',
+                        'vBind:href' => 'option.key',
+                        'child' => [
+                            'nodeName' => 'n-ellipsis',
+                            'child' => '{{option.label}}'
+                        ]
+                    ],
+                    'options' => $data
+                ]
+            ]
+        ];
     }
 
 }

@@ -1,6 +1,8 @@
 <?php
 
 namespace Duxravel\Core\Util;
+
+use ArielMejiaDev\LarapexCharts\LarapexChart;
 /**
  * Class ApexCharts
  * @package Duxravel\Core\Util
@@ -15,9 +17,15 @@ class ApexCharts
 
     /**
      * 原始数据
-     * @var array
+     * @var string
      */
-    private $data = [];
+    private $type = '';
+
+    /**
+     * 高度
+     * @var int
+     */
+    private $height = 300;
 
     /**
      * 图标配置
@@ -60,30 +68,13 @@ class ApexCharts
         ]
     ]];
 
-    /**
-     * 渲染图表
-     * @param string $id
-     * @param array $config
-     * @return string
-     */
-    public function render(string $id, callable $callback = null): string
+    private $chartObj;
+    private $chart;
+
+
+    public function __construct(LarapexChart $chart)
     {
-        list($labels, $series) = $this->apexData->data($this->data);
-        $this->config['labels'] = $labels;
-        $this->config['series'] = $series;
-        $config = $this->config;
-        if(is_callable($callback)) {
-            $config = call_user_func($callback, $config);
-        }
-        $config = json_encode($config);
-        return <<<HTML
-            <script>
-            Do('chart', function () {
-                window['chart-$id'] = new ApexCharts(document.querySelector('#$id'), $config);
-                window['chart-$id'].render()
-            })
-            </script>
-            HTML;
+        $this->chart = $chart;
     }
 
     /**
@@ -93,6 +84,7 @@ class ApexCharts
      */
     public function area(array $data)
     {
+        $this->type = 'area';
         $this->data = $data;
         $config = [
             'chart' => [
@@ -100,7 +92,7 @@ class ApexCharts
                 'type' => "area",
                 'fontFamily' => 'inherit',
                 'defaultLocale' => 'zh-CN',
-                'height' => 100,
+
                 'sparkline' => [
                     'enabled' => false // 隐藏轴线
                 ],
@@ -166,6 +158,7 @@ class ApexCharts
      */
     public function line(array $data): ApexCharts
     {
+        $this->type = 'line';
         $this->data = $data;
         $config = [
             'chart' => [
@@ -238,14 +231,21 @@ class ApexCharts
      */
     public function bar(array $data): ApexCharts
     {
+        $this->type = 'bar';
         $this->data = $data;
+
+        $this->chartObj = $this->chart->barChart()->setGrid(true)->setTitle('');
+
+
+        return $this;
+
         $config = [
             'chart' => [
                 'locales' => $this->lang,
                 'type' => "bar",
                 'fontFamily' => 'inherit',
                 'defaultLocale' => 'zh-CN',
-                'height' => 100,
+
                 'sparkline' => [
                     'enabled' => false
                 ],
@@ -314,6 +314,7 @@ class ApexCharts
      */
     public function heatmap(array $data): ApexCharts
     {
+        $this->type = 'heatmap';
         $this->data = $data;
         $config = [
             'chart' => [
@@ -352,5 +353,46 @@ class ApexCharts
     {
         $this->apexData = new Charts\ApexData($type, $config);
         return $this;
+    }
+
+
+
+    public function height($height)
+    {
+        $this->height = $height;
+        return $this;
+
+    }
+
+    /**
+     * 渲染图表
+     * @param string $id
+     * @param array $config
+     */
+    public function render(string $id, callable $callback = null)
+    {
+
+        $chat = $this->chartObj;
+
+        list($labels, $series) = $this->apexData->data($this->data);
+
+        foreach ($series as $item) {
+            $chart = $chat->addData($item['name'] ?: '', $item['data']);
+        }
+        $chart = $chat->setLabels($labels);
+
+        $config = $chart->setHeight($this->height)->toVue();
+
+        $option = json_encode($config['options']);
+        $series = json_encode($config['series'] ?: []);
+        return <<<HTML
+            <apexchart
+              width="{$config['width']}"
+              height="{$config['height']}"
+              type="{$config['type']}"
+              :options='{$option}'
+              :series='{$series}'
+            ></apexchart>
+            HTML;
     }
 }

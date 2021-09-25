@@ -11,20 +11,20 @@ use Duxravel\Core\UI\Tools;
  */
 class Element
 {
-
     protected string $name = '';
     protected string $field = '';
     protected string $has = '';
     protected string $help = '';
     protected string $helpLine = '';
     protected string $prompt = '';
+    protected string $model = 'data.';
     protected array $class = [];
     protected array $attr = [];
     protected array $style = [];
     protected array $verify = [];
     protected array $verifyMsg = [];
     protected array $format = [];
-    protected bool $layout = true;
+    protected bool $dialog = true;
     protected bool $label = true;
     protected bool $component = false;
     protected bool $must = false;
@@ -36,23 +36,32 @@ class Element
 
 
     /**
-     * 获取布局状态
-     * @return bool
+     * 设置弹窗
+     * @param $bool
+     * @return $this
      */
-    public function getLayout(): bool
+    public function dialog($bool): self
     {
-        return $this->layout;
+        $this->dialog = $bool;
+        return $this;
     }
 
     /**
-     * 设置布局
-     * @param $layout
-     * @return $this
+     * 设置数据前缀
      */
-    public function layout($layout): self
+    public function model($model)
     {
-        $this->layout = $layout;
+        $this->model = $model;
         return $this;
+    }
+
+    /**
+     * 获取模型字段
+     * @return string
+     */
+    public function getModelField()
+    {
+        return $this->model . $this->field;
     }
 
     /**
@@ -73,7 +82,6 @@ class Element
     {
         return $this->field;
     }
-
 
     /**
      * 获取关联模型
@@ -209,7 +217,9 @@ class Element
      */
     public function placeholder($name): self
     {
-        $this->attr['placeholder'] = $name;
+        if ($name) {
+            $this->attr['placeholder'] = $name;
+        }
         return $this;
     }
 
@@ -371,6 +381,15 @@ class Element
     }
 
     /**
+     * 获取class
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return implode(' ', $this->class);
+    }
+
+    /**
      * 设置字段验证
      * @param  $rule
      * @param array $msg
@@ -422,6 +441,7 @@ class Element
         return (array)$this->format['all'] + (array)$this->format[$time];
     }
 
+
     /**
      * 获取提交数据
      * @param string $time
@@ -430,13 +450,20 @@ class Element
     public function getInput(string $time = 'add'): array
     {
         $data = request()->input($this->field);
-        if (method_exists($this, 'input')) {
-            $data = $this->input($data);
+        $inputs = [];
+        if (method_exists($this, 'appendInput') && !$this->has) {
+            $appendData = $this->appendInput($data);
+            foreach ($appendData as $key => $vo) {
+                $inputs[$key] = ['value' => $vo];
+            }
         }
-        if (method_exists($this, 'getInputData') && !$this->has) {
-            $data = $this->getInputData($data);
+
+        if (method_exists($this, 'dataInput') && !$this->has) {
+            $data = $this->dataInput($data);
         }
-        return ['value' => $data, 'has' => $this->has, 'format' => $this->getFormat($time), 'verify' => $this->getVerify($time)];
+        $inputs[$this->field] = ['value' => $data, 'has' => $this->has, 'format' => $this->getFormat($time), 'verify' => $this->getVerify($time)];
+
+        return $inputs;
     }
 
     /**
@@ -465,4 +492,40 @@ class Element
     {
         return $this->component;
     }
+
+    /**
+     * 获取渲染组件
+     * @return array
+     */
+    public function getRender()
+    {
+        return array_merge($this->render(null), $this->attr);
+    }
+
+
+    /**
+     * 获取数据值
+     * @return mixed
+     */
+    public function getData($info)
+    {
+        $field = $this->getHas() ?: $this->getField();
+        $value = Tools::parsingArrData($info, $field);
+
+        $data = [];
+        if (method_exists($this, 'appendValue')) {
+            $appendValue = $this->appendValue($info);
+            foreach ($appendValue as $key => $vo) {
+                $data[$key] = $vo;
+            }
+        }
+        if (method_exists($this, 'dataValue')) {
+            $value = $this->dataValue($value);
+        }
+        $data[$this->getField()] = $this->getValue($value);
+
+        return $data;
+    }
+
+
 }

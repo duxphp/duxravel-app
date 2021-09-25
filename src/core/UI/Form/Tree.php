@@ -34,46 +34,52 @@ class Tree extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $values = $this->getValueArray($value);
-
-        $data = [];
+        $data = $this->data;
         if ($this->data instanceof \Closure) {
-            $data = call_user_func($this->data, $values);
+            $data = call_user_func($this->data);
         }
         if ($data instanceof \Illuminate\Database\Eloquent\Collection) {
             $data = $data->toArray();
         }
 
-        $data = $this->loop($data, $values);
-
-        $json = json_encode($data, JSON_THROW_ON_ERROR);
-        $value = is_array($values) ? implode(',', $values) : '';
-        return <<<HTML
-            <div {$this->toElement()} data-js="form-tree" data-data='$json' >
-                <form-tree value="$value" name="$this->field"></form-tree>
-            </div>
-        HTML;
-    }
-
-    protected function loop($data, $values)
-    {
-        foreach ($data as $key => $item) {
-            if (array_key_exists('parent', $item)) {
-                $data[$key]['parent'] = $item['parent'] ?: '#';
-            }
-            $data[$key]['state'] = [
-                'selected' => $item['id'] !== null && in_array($item['id'], (array)$values) ? true : false
-            ];
-            if ($item['children']) {
-                $data[$key]['children'] = $this->loop($item['children'], $values);
-            }
+        $data = $this->loop($data);
+        $data = [
+            'nodeName' => 'n-tree',
+            'class' => 'border border-gray-300 p-2 rounded',
+            'block-line' => true,
+            'cascade' => true,
+            'checkable' => true,
+            'data' => $data,
+        ];
+        if ($this->model) {
+            $data['vModel:checked-keys'] = $this->getModelField();
         }
         return $data;
+    }
+
+    public function dataValue($value)
+    {
+        return array_filter((array) $this->getValue($value)) ?: [];
+    }
+
+    protected function loop($data)
+    {
+        $newData = [];
+        foreach ($data as $key => $item) {
+            $tmpData = [
+                'label' => $item['name'],
+                'key' => $item['id'],
+            ];
+            if ($item['children']) {
+                $tmpData['children'] = $this->loop($item['children']);
+            }
+            $newData[] = $tmpData;
+        }
+        return $newData;
     }
 
 }

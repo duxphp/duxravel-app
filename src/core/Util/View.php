@@ -40,47 +40,9 @@ class View
         $view = '';
 
         $parsing = app_parsing();
-        $isSfc = request()->header('x-dux-sfc');
-        if ($type === 'base' || $type === 'layout' || $type === 'dialog') {
-            if (!$this->tpl) {
-                $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
-                $this->tpl = implode('.', $view);
-            }
-            $assign['manage'] = strtolower($parsing['layer']);
-
-            if (!$isSfc) {
-                $assign['layout'] = $this->tpl;
-            } else {
-                $view = $this->tpl;
-            }
-        }
-        if ($type === 'base' && !$isSfc) {
-
-            $list = app(\Duxravel\Core\Util\Menu::class)->getManage($parsing['layer'] ?: '', $this->route);
-            $list = array_values($list);
-            $menuActive = 0;
-            foreach ($list as $key => $app) {
-                if ($app['cur']) {
-                    $menuActive = $key;
-                }
-            }
-            $assign['menuList'] = $list;
-            $assign['menuActive'] = $menuActive;
-            $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.base';
-
-        }
-
-        if ($type === 'layout' && !$isSfc) {
-            $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.layout';
-        }
-
-        if ($type === 'dialog' && !$isSfc) {
-            $view = 'vendor.duxphp.duxravel-app.src.core.UI.View.dialog';
-        }
 
         if ($type === 'web') {
             $agent = new Agent();
-
             $theme = config('theme.default');
             $mobileTheme = config('theme.mobile');
             if ($mobileTheme && ($agent->isMobile() || $agent->isTablet())) {
@@ -92,6 +54,13 @@ class View
             foreach ($assign as $key => $vo) {
                 \View::share($key, $vo);
             }
+            $view = $this->tpl;
+        } else {
+            if (!$this->tpl) {
+                $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
+                $this->tpl = implode('.', $view);
+            }
+            $assign['manage'] = strtolower($parsing['layer']);
             $view = $this->tpl;
         }
         return view($view ?: $this->tpl, $assign);

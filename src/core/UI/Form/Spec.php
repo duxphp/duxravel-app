@@ -40,7 +40,7 @@ class Spec extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render($value)
     {
         $value = $this->getValue($value);
 

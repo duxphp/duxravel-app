@@ -13,21 +13,18 @@ class Progress extends Widget
 {
     use Element;
 
-    private int $max;
-    private int $value;
-    private int $color;
+    private $value;
+    private string $color = 'default';
     private bool $number = true;
 
 
     /**
      * Progress constructor.
-     * @param int $max
-     * @param int $value
+     * @param $value
      * @param callable|null $callback
      */
-    public function __construct(int $max, int $value, callable $callback = NULL)
+    public function __construct($value, callable $callback = NULL)
     {
-        $this->max = $max;
         $this->value = $value;
         $this->callback = $callback;
     }
@@ -45,20 +42,21 @@ class Progress extends Widget
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function render(): string
+    public function render(): array
     {
-        $rate = round($this->value / $this->max * 100);
-        $number = $this->number ? "<span class='flex-none w-8 ml-4 text-gray-500'>$rate%</span>" : '';
-        return <<<HTML
-            <div class="flex items-center">
-                <div class="flex-grow rounded-full h-3 box-border border border-gray-300 relative ">
-                    <div class="bg-$this->color-900  h-3 rounded-l-full absolute  -top-px -left-px" style="width: $rate% "></div>
-                </div>
-            </div>
-            $number
-        HTML;
+        $node = [
+            'nodeName' => 'n-progress',
+            'type' => 'line',
+            'status' => $this->color,
+        ];
+        if (is_numeric($this->value)) {
+            $node['percentage'] = $this->value;
+        }else {
+            $node['vBind:percentage'] = $this->value;
+        }
+        return $node;
 
     }
 

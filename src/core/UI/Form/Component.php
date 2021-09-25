@@ -9,5 +9,4 @@ namespace Duxravel\Core\UI\Form;
  */
 interface Component
 {
-    public function render($value): string;
 }

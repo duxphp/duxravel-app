@@ -40,7 +40,7 @@ trait User
 
         $column = $table->column('操作')->width(200);
         $column->link('编辑', $parser['route'] . '.page', ['id' => 'user_id'])->type('dialog');
-        $column->link('删除', $parser['route'] . '.del', ['id' => 'user_id'])->type('ajax')->data(['type' => 'post']);
+        $column->link('删除', $parser['route'] . '.del', ['id' => 'user_id'])->type('ajax', ['method' => 'post']);
 
         $table->filter('用户名', 'username', function ($query, $value) {
             $query->where('username', 'like', '%' . $value . '%');
@@ -55,6 +55,7 @@ trait User
         $parser = $this->parserData();
         $form = new \Duxravel\Core\UI\Form(new $parser['model']());
         $form->dialog(true);
+        $form->setKey('user_id', $id);
 
         $form->text('用户名', 'username')->verify([
             'required',

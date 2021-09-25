@@ -3,6 +3,7 @@
 namespace Duxravel\Core\UI\Form;
 
 use Duxravel\Core\UI\Widget\Icon;
+use Duxravel\Database\Seeders\DatabaseSeeder;
 
 /**
  * Class Text
@@ -12,10 +13,8 @@ use Duxravel\Core\UI\Widget\Icon;
 class Text extends Element implements Component
 {
     protected string $type = 'text';
-    protected string $beforeIcon = '';
-    protected string $afterIcon = '';
-    protected string $beforeText = '';
-    protected string $afterText = '';
+    protected array $before = [];
+    protected array $after = [];
 
     /**
      * Text constructor.
@@ -48,7 +47,7 @@ class Text extends Element implements Component
      */
     public function beforeIcon($content): self
     {
-        $this->beforeIcon = '<div class="form-input-icon">' . (new Icon($content))->class('w-full h-full')->render() . '</div>';
+        $this->before = (new Icon($content))->attr('vSlot:prefix', '')->getRender();
         return $this;
     }
 
@@ -59,7 +58,7 @@ class Text extends Element implements Component
      */
     public function afterIcon($content): self
     {
-        $this->afterIcon = '<div class="form-input-icon">' . (new Icon($content))->class('w-full h-full')->render() . '</div>';
+        $this->after = (new Icon($content))->attr('vSlot:suffix', '')->getRender();
         return $this;
     }
 
@@ -70,9 +69,11 @@ class Text extends Element implements Component
      */
     public function beforeText($content): self
     {
-        $this->beforeText = <<<HTML
-            <span class="form-input-label-before">$content</span>
-          HTML;
+        $this->before = [
+            'vSlot:prefix' => '',
+            'nodeName' => 'span',
+            'child' => $content
+        ];
         return $this;
     }
 
@@ -83,59 +84,43 @@ class Text extends Element implements Component
      */
     public function afterText($content): self
     {
-        $this->afterText = <<<HTML
-            <span class="form-input-label-after">$content</span>
-          HTML;
+        $this->after = [
+            'vSlot:suffix' => '',
+            'nodeName' => 'span',
+            'child' => $content
+        ];
         return $this;
     }
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render(): array
     {
-        $value = $this->getValue($value);
 
-        $this->attr['name'] = $this->field;
-        $this->attr['value'] = $value;
-        $this->attr['placeholder'] = $this->attr['placeholder'] ?: '请输入' . $this->name;
-
-        $this->class('form-input');
-
-        $textLayout = '';
-        $iconLayout = '';
-        $iconLayoutEnd = '';
-        $textLayoutEnd = '';
-        if ($this->afterText || $this->beforeText) {
-            if ($this->afterText) {
-                $class = 'form-input-group-after';
-            }
-            if ($this->beforeText) {
-                $class = 'form-input-group-before';
-            }
-            $textLayout = "<div class='form-input-group $class'>";
-            $textLayoutEnd = "</div>";
+        $child = [];
+        if ($this->before || $this->after) {
+            $child = [
+                $this->before,
+                $this->after
+            ];
         }
 
-        if ($this->afterIcon || $this->beforeIcon) {
-            $iconLayout = '<div class="form-input-suffix">';
-            $iconLayoutEnd = '</div>';
+        $data = [
+            'nodeName' => 'n-input',
+            'vModel:value' => $this->getModelField(),
+            'class' => 'shadow-sm',
+            'child' => $child,
+            'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
+        ];
+
+        if ($this->model) {
+            $data['vModel:value'] = $this->getModelField();
         }
 
-        return <<<HTML
-            $textLayout
-            $this->beforeText
-            $iconLayout
-            $this->afterIcon
-            <input type="$this->type" {$this->toElement()}>
-            $this->afterIcon
-            $iconLayoutEnd
-            $this->afterText
-            $textLayoutEnd
-        HTML;
-
+        return $data;
     }
+
 
 }

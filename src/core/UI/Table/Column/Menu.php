@@ -5,9 +5,9 @@ namespace Duxravel\Core\UI\Table\Column;
 use Duxravel\Core\UI\Tools;
 
 /**
- * Class Link
+ * Class Menu
  */
-class Link implements Component
+class Menu implements Component
 {
 
     private array $link;
@@ -58,18 +58,48 @@ class Link implements Component
      */
     public function render($label): array
     {
-        $link = [];
-        foreach ($this->link as $class) {
-            $link[] = [
-                'nodeName' => 'span',
-                'child' => $class->render()
+        $options = [];
+        foreach ($this->link as $key => $class) {
+            $data = $class->render();
+
+            $route = [
+                'nodeName' => 'route',
+                'type' => $data['type'],
+                'title' => $data['title'],
+                'href' => $class->getRoute(),
+            ];
+
+            $options[] = [
+                'label' => $data['name'],
+                'key' => $key,
+                'route' =>$route,
             ];
         }
-        $link = array_filter($link);
+        $options = array_filter($options);
+
         return [
-            'nodeName' => 'div',
-            'class' => 'inline-flex gap-4',
-            'child' => $link
+            'nodeName' => 'n-dropdown',
+            'width' => '80',
+            'placement' => 'right-start',
+            'overlap' => true,
+            'trigger' => 'click',
+            'options' => $options,
+            'render-label:option' => [
+                'nodeName' => 'route',
+                'class' => 'block',
+                'vBind:href' => 'rowData[option.route.href]',
+                'vBind:title' => 'option.route.title',
+                'vBind:type' => 'option.route.type',
+                'child' => '{{option.label}}'
+            ],
+            'child' => [
+                'nodeName' => 'n-icon',
+                'class' => 'cursor-pointer',
+                'size' => 16,
+                'child' => [
+                    'nodeName' => 'dots-vertical-icon'
+                ]
+            ],
         ];
     }
 

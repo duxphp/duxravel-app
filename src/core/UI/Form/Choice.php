@@ -2,6 +2,8 @@
 
 namespace Duxravel\Core\UI\Form;
 
+use Duxravel\Core\UI\Widget\Icon;
+
 /**
  * 表格关联选择器
  * Class Choice
@@ -126,28 +128,12 @@ class Choice extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return string
      */
-    public function render($value): string
+    public function render()
     {
-        $value = $this->getValue($value);
-        if ($value instanceof \Illuminate\Database\Eloquent\Collection && $value->count()) {
-            $values = $value->toArray();
-        } elseif (is_array($value)) {
-            $values = $value;
-        } else {
-            $values = [];
-        }
+        $url = route('service.image.placeholder', ['w' => 64, 'h' => 64, 't' => $this->attr['placeholder'] ?: '图片']);
 
-        $this->attr('data-js', 'form-choice');
-        $this->attr('data-only', $this->ajax['key']);
-        $this->attr('data-key', $this->getField());
-        $this->attr('data-column', json_encode($this->column));
-        $this->attr('data-data', json_encode($values));
-        $this->attr('data-ajax-url', $this->ajax['url']);
-        $this->attr('data-option', $this->option);
-        $this->attr('data-num', $this->number);
 
         $ajaxColumn = $this->ajax['column'] ?: [];
         if (is_callable($ajaxColumn)) {
@@ -157,9 +143,32 @@ class Choice extends Element implements Component
             }
             $ajaxColumn = $ajaxColumn->getData();
         }
-        $this->attr('data-ajax-column', json_encode($ajaxColumn));
 
-        return "<div {$this->toElement()}></div>";
+
+        return [
+            'nodeName' => 'app-choice',
+            'vModel:value' => $this->getModelField(),
+            'column' => $this->column,
+            'ajaxColumn' => $ajaxColumn,
+            'only' => $this->ajax['key'],
+            'url' => $this->ajax['url'],
+            'number' => $this->number,
+            'option' => $this->option,
+        ];
+
+    }
+
+    public function dataValue($value)
+    {
+        $value = $this->getValue($value);
+        if ($value instanceof \Illuminate\Database\Eloquent\Collection && $value->count()) {
+            $values = $value->toArray();
+        } elseif (is_array($value)) {
+            $values = $value;
+        } else {
+            $values = [];
+        }
+        return $values;
     }
 
 }

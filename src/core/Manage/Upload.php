@@ -59,7 +59,9 @@ trait Upload
             'alpha' => $request->get('alpha'),
             'source' => resource_path(config('image.water_image'))
         ],$dirId, $this->driver);
-
+        if (empty($data)) {
+            app_error('上传文件失败');
+        }
         return app_success('上传成功', $data);
     }
 

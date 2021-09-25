@@ -12,7 +12,7 @@ class Lists extends Widget
 {
 
     private array $data;
-    private int $col;
+    private bool $row = true;
 
     /**
      * Lists constructor.
@@ -20,48 +20,85 @@ class Lists extends Widget
      * @param int $col
      * @param callable|null $callback
      */
-    public function __construct($data, int $col = 2, callable $callback = NULL)
+    public function __construct($data, callable $callback = NULL)
     {
         $this->data = $data;
-        $this->col = $col;
         $this->callback = $callback;
+    }
+
+    /**
+     * @param $bool
+     * @return $this
+     */
+    public function row($bool)
+    {
+        $this->row = $bool;
+        return $this;
     }
 
 
     /**
-     * @return string
+     * @return array
      */
-    public function render(): string
+    public function render(): array
     {
 
         $inner = [];
         $count = count($this->data);
         $i = 0;
         foreach ($this->data as $item) {
-            $i++;
-            if ($count === $i) {
-                $border = '';
-            } else {
-                $border = 'border-b border-gray-300';
-            }
-            $inner[] = "<div class='grid grid-cols-{$this->col} gap-4 py-4 px-4 $border'>";
-            if (is_array($item)) {
-                foreach ($item as $vo) {
-                    $inner[] = "<div>$vo</div>";
+            $items = [];
+            if ($this->row) {
+                if (is_array($item)) {
+                    foreach ($item as $vo) {
+                        $items[] = [
+                            'nodeName' => 'div',
+                            'child' => $vo
+                        ];
+                    }
+                    $col = count($item);
+                } else {
+                    $items[] = [
+                        'nodeName' => 'div',
+                        'child' => $item
+                    ];
+                    $col = 1;
                 }
+                $inner[] = [
+                    'nodeName' => 'div',
+                    'class' => "grid grid-cols-{$col} gap-4 p-4 bg-white $border shadow rounded",
+                    'child' => $items
+                ];
             } else {
-                $inner[] = "<div>$item</div>";
+                $items = [
+                    [
+                        'nodeName' => 'div',
+                        'class' => 'text-gray-900 text-base',
+                        'child' => $item['name']
+                    ],
+                    [
+                        'nodeName' => 'div',
+                        'class' => 'text-gray-400',
+                        'child' => $item['value']
+                    ]
+                ];
+                $inner[] = [
+                    'nodeName' => 'div',
+                    'class' => "p-4 bg-white $border shadow rounded",
+                    'child' => $items
+                ];
             }
-            $inner[] = '</div>';
         }
-        $innerHtml = implode('', $inner);
 
-
-        return <<<HTML
-            <div {$this->toElement()}>
-                    $innerHtml
-            </div>
-        HTML;
+        return $inner ? [
+            'nodeName' => 'div',
+            'class' => 'p-4 bg-gray-100 flex flex-col gap-2',
+            'child' => $inner
+        ] : [
+            'nodeName' => 'app-empty',
+            'title' => '暂无数据',
+            'content' => '当前列表暂无数据记录',
+        ];
     }
 
 }
