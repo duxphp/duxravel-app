@@ -123,7 +123,7 @@ class Node
                 'class' => 'flex-grow w-10',
                 'title' => $this->title ?: '信息详情',
                 'form' => true,
-                'vBind:loading' => 'loading',
+                'vBind:formLoading' => 'loading',
                 'child' => [
                     [
                         'nodeName' => 'div',
