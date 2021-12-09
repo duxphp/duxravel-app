@@ -17,7 +17,7 @@ trait Operate
         $table = new \Duxravel\Core\UI\Table(new \Duxravel\Core\Model\VisitorOperate());
         $table->title('操作日志');
         $table->model()->where('has_type', $layer);
-        $table->model()->orderBy('operate_id', 'desc');
+        $table->model()->orderBy('update_time', 'desc');
 
         $table->map([
             'method',
@@ -64,7 +64,7 @@ trait Operate
         });
 
         $column = $table->column('详情');
-        $column->link('查看数据', $route . '.operate.info', ['id' => 'operate_id'])->type('dialog');
+        $column->link('查看数据', $route . '.operate.info', ['id' => 'uuid'])->type('dialog');
 
         return $table;
     }
@@ -77,12 +77,9 @@ trait Operate
 
         $data = [];
         foreach ($params as $key => $vo) {
-            $data[] = [
-                'name' => $key,
-                'value' => $vo
-            ];
+            $data[] = $key . ' : ' . $vo;
         }
-        $list = (new Widget\Lists($data))->row(false)->getRender();
+        $list = (new Widget\Lists($data))->getRender();
         return $this->dialogNode('操作详情', $list);
     }
 

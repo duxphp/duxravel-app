@@ -49,7 +49,6 @@ trait Role
 
     public function form(int $id = 0): Form
     {
-        $parser = $this->parserData();
         $form = new Form(new AuthRole());
         $form->title('角色信息');
         $form->card(function ($form) {
@@ -67,7 +66,6 @@ trait Role
             });
             $model->purview = array_values($purview);
         });
-
 
         return $form;
     }

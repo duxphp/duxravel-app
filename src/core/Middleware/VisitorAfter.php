@@ -72,8 +72,8 @@ class VisitorAfter
             'time' => round(microtime(true) - START_TIME, 3)
         ];
         DB::beginTransaction();
+        $model->create($data);
         try {
-            $model->create($data);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
