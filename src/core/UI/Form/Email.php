@@ -22,7 +22,7 @@ class Email extends Element implements Component
         $this->field = $field;
         $this->has = $has;
         $this->object = new Text($this->name, $this->field, $this->has);
-        $this->object->afterIcon('mail');
+        $this->object->afterIcon('email');
     }
 
     /**

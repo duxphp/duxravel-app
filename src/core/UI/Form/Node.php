@@ -17,6 +17,7 @@ class Node
     private ?string $title = '';
     private bool $back = false;
     private bool $dialog = false;
+    private bool $vertical = false;
     private array $element = [];
     private array $data = [];
     private array $side = [];
@@ -64,6 +65,17 @@ class Node
     public function dialog(bool $bool)
     {
         $this->dialog = $bool;
+        $this->vertical = true;
+        return $this;
+    }
+
+    /**
+     * @param bool $bool
+     * @return $this
+     */
+    public function vertical(bool $bool)
+    {
+        $this->vertical = $bool;
         return $this;
     }
 
@@ -106,18 +118,22 @@ class Node
         if ($this->dialog) {
             return [
                 'nodeName' => 'div',
-                'class' => 'flex items-center p-4 border-b border-gray-200',
+                'class' => 'arco-modal-header',
                 'child' => [
                     [
                         'nodeName' => 'div',
-                        'class' => 'flex-grow text-xl',
+                        'class' => 'arco-modal-title',
                         'child' => $this->title ?: '信息详情'
                     ],
                     [
                         'nodeName' => 'route',
                         'type' => 'back',
-                        'class' => 'flex items-center',
-                        'child' => (new Icon('x'))->size(20)->class('cursor-pointer text-gray-600 hover:text-red-600')->getRender()
+                        'class' => 'arco-modal-close-btn',
+                        'child' => [
+                            'nodeName' => 'span',
+                            'class' => 'arco-icon-hover arco-icon-hover-size-medium',
+                            'child' => (new Icon('close'))->getRender()
+                        ]
                     ]
                 ]
             ];
@@ -125,7 +141,7 @@ class Node
 
         return [
             'nodeName' => 'div',
-            'class' => ' flex items-center p-4 border-b border-gray-300 bg-white shadow-sm z-10',
+            'class' => ' flex items-center p-4 border-b border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 shadow-sm z-10',
             'child' => [
                 [
                     'nodeName' => 'div',
@@ -172,48 +188,119 @@ class Node
         ];
     }
 
-    public function footNode()
+    private function renderPage()
     {
-        if ($this->dialog) {
-            return [
+        return [
+            $this->side['left'] ? [
                 'nodeName' => 'div',
-                'class' => 'pt-0 flex items-center justify-end gap-2 flex-col-reverse lg:flex-row ',
+                'class' => 'flex-none flex h-screen  flex-col',
+                'child' => $this->side['left']
+            ] : [],
+            [
+                'nodeName' => 'app-layout',
+                'class' => 'flex-grow w-10',
+                'title' => $this->title ?: '信息详情',
+                'form' => true,
                 'child' => [
                     [
-                        'nodeName' => 'route',
-                        'type' => 'back',
+                        'nodeName' => 'div',
+                        'class' => 'p-5',
                         'child' => [
-                            'nodeName' => 'n-button',
-                            'child' => '取消'
-                        ]
+                            [
+                                'nodeName' => 'div',
+                                'child' => $this->element
+                            ],
+                            [
+                                'nodeName' => 'div',
+                                'class' => 'flex items-center justify-end gap-2 flex-row ',
+                                'child' => [
+
+                                    [
+                                        'nodeName' => 'route',
+                                        'type' => 'back',
+                                        'child' => [
+                                            'type' => "outline",
+                                            'nodeName' => 'a-button',
+                                            'child' => '返回',
+                                        ]
+                                    ],
+                                    [
+                                        'nodeName' => 'a-button',
+                                        'html-type' => 'submit',
+                                        'type' => 'primary',
+                                        'child' => '提交',
+                                    ],
+                                ]
+                            ],
+
+                        ],
                     ],
-                    [
-                        'nodeName' => 'n-button',
-                        'type' => 'primary',
-                        'attr-type' => 'submit',
-                        'child' => '提交'
-                    ],
-                ]
-            ];
-        }
+                ],
+            ],
+            $this->side['right'] ? [
+                'nodeName' => 'div',
+                'class' => 'flex-none flex h-screen  flex-col',
+                'child' => $this->side['right']
+            ] : [],
+        ];
+    }
+
+    private function renderDialog()
+    {
+
         return [
-            'nodeName' => 'div',
-            'class' => 'pt-2 flex items-center justify-end gap-2 flex-col-reverse lg:flex-row ',
+            'nodeName' => 'app-dialog',
+            'title' => $this->title ?: '信息详情',
+            'class' => 'flex-grow',
             'child' => [
                 [
-                    'nodeName' => 'n-button',
-                    'type' => 'default',
-                    'attr-type' => 'reset',
-                    'child' => '重置',
+                    'nodeName' => 'div',
+                    'vSlot:default' => '',
+                    'class' => 'flex',
+                    'child' => [
+                        $this->side['left'] ? [
+                            'nodeName' => 'div',
+                            'class' => 'flex-none',
+                            'child' => $this->side['left']
+                        ] : [],
+                        [
+                            'nodeName' => 'div',
+                            'class' => 'flex-grow p-5 pb-0',
+                            'child' => $this->element
+                        ],
+                        $this->side['right'] ? [
+                            'nodeName' => 'div',
+                            'class' => 'flex-none',
+                            'child' => $this->side['right']
+                        ] : []
+                    ]
                 ],
                 [
-                    'nodeName' => 'n-button',
-                    'attr-type' => 'submit',
-                    'type' => 'primary',
-                    'child' => '提交',
-                ],
+                    'nodeName' => 'div',
+                    'vSlot:footer' => '',
+                    'class' => 'arco-modal-footer',
+                    'child' => [
+                        [
+                            'nodeName' => 'route',
+                            'type' => 'back',
+                            'child' => [
+                                'nodeName' => 'a-button',
+                                'child' => '取消'
+                            ]
+                        ],
+                        [
+                            'nodeName' => 'a-button',
+                            'type' => 'primary',
+                            'html-type' => 'submit',
+                            'vBind:loading'=>"loading",
+                            'child' => '提交'
+                        ],
+                    ]
+                ]
             ]
+
         ];
+
     }
 
     public function render()
@@ -224,42 +311,12 @@ class Node
                 'url' => $this->url,
                 'method' => $this->method,
                 'value' => $this->data,
+                'layout' => $this->vertical ? 'vertical' : 'horizontal',
                 'child' => [
                     'nodeName' => 'div',
                     'class' => 'flex',
-                    'vSlot' => '{value: data}',
-                    'child' => [
-                        $this->side['left'] ?: [],
-                        [
-                            'nodeName' => 'div',
-                            'class' => 'flex-grow ' . (!$this->dialog ? 'flex h-screen  flex-col' : ''),
-                            'child' => [
-                                [
-                                    'nodeName' => 'div',
-                                    'class' => 'flex-none ',
-                                    'child' => $this->headNode()
-                                ],
-                                [
-                                    'nodeName' => 'n-layout-content',
-                                    'style' => '--color: initial',
-                                    'native-scrollbar' => false,
-                                    'class' => 'flex-grow ',
-                                    'child' => [
-                                        'nodeName' => 'div',
-                                        'class' => 'p-5 ',
-                                        'child' => [
-                                            [
-                                                'nodeName' => 'div',
-                                                'child' => $this->element
-                                            ],
-                                            $this->footNode()
-                                        ]
-                                    ]
-                                ],
-                            ],
-                        ],
-                        $this->side['right'] ?: [],
-                    ]
+                    'vSlot' => '{value: data, submitStatus: loading}',
+                    'child' => $this->dialog ? $this->renderDialog() : $this->renderPage()
                 ]
             ],
             'setupScript' => implode("\n", $this->script)

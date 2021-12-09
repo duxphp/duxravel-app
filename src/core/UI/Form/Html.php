@@ -31,7 +31,7 @@ class Html extends Element implements Component
     {
         $callback = is_callable($this->callback) ? call_user_func($this->callback) : $this->callback;
         return <<<HTML
-            <div {$this->toElement()}>$callback</div>
+            <div>$callback</div>
         HTML;
 
     }

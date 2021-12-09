@@ -383,6 +383,7 @@ class ApexCharts
 
         $config = $chart->setHeight($this->height)->toVue();
 
+        $config['options']['tooltip']['theme'] = 'window.derkMode ? "dark" : ""';
         $option = json_encode($config['options']);
         $series = json_encode($config['series'] ?: []);
         return <<<HTML

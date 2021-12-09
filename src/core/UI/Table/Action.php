@@ -57,7 +57,7 @@ class Action
             $node[] = $menu->getRender();
         }
         foreach ($this->button as $class) {
-            $node[] = $class->class('flex w-full lg:inline-flex lg:w-auto')->getRender();
+            $node[] = $class->getRender();
         }
         return $node;
     }

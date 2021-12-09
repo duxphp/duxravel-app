@@ -2,7 +2,6 @@
 
 namespace Duxravel\Core\Util;
 
-use ArielMejiaDev\LarapexCharts\LarapexChart;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -37,37 +36,6 @@ class Charts
     private $title = [];
     private $subtitle = [];
 
-    private $color = [
-        '#005dff',
-        '#d5e1ed',
-        '#00d586'
-    ];
-
-    /**
-     * 语言配置
-     * @var array[]
-     */
-    private $lang = [[
-        "name" => "zh-CN",
-        "options" => [
-            "months" => ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-            "shortMonths" => ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-            "days" => ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
-            "shortDays" => ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
-            "toolbar" => [
-                "exportToSVG" => "下载 SVG",
-                "exportToPNG" => "下载 PNG",
-                "exportToCSV" => "下载 CSV",
-                "menu" => "菜单",
-                "selection" => "选择",
-                "selectionZoom" => "选择大小",
-                "zoomIn" => "放大",
-                "zoomOut" => "缩小",
-                "pan" => "移动",
-                "reset" => "重置"
-            ]
-        ]
-    ]];
 
     /**
      * @param $width
@@ -276,13 +244,11 @@ class Charts
 
         $option = call_user_func($this->option);
 
+
         $option['chart'] = [
             'id' => 'vuechart-' . get_uuid(10),
-            'locales' => $this->lang,
-            'fontFamily' => 'inherit',
-            'defaultLocale' => 'zh-CN',
         ];
-        $option['colors'] = $this->color;
+
         $option['grid'] = [
             'strokeDashArray' => 4,
         ];
@@ -294,7 +260,6 @@ class Charts
                 'style' => [
                     'fontSize' => '16px',
                     'fontWeight' => 'normal',
-                    'color' => '#1F2937'
                 ]
             ];
         }
@@ -305,7 +270,6 @@ class Charts
                 'style' => [
                     'fontSize' => '14px',
                     'fontWeight' => 'normal',
-                    'color' => '#6B7280'
                 ]
             ];
         }
@@ -347,17 +311,19 @@ class Charts
 
         if ($html) {
             return $this->renderHtml($option);
-        }else {
+        } else {
             return $this->renderNode($option);
         }
 
     }
 
-    private function renderHtml($option) {
+    private function renderHtml($option)
+    {
         $option = json_encode($option);
         $series = json_encode($this->series);
         return <<<HTML
             <apexchart
+              ref="chart"
               width="$this->width"
               height="$this->height"
               type="$this->type"
@@ -367,14 +333,16 @@ class Charts
         HTML;
     }
 
-    private function renderNode($option) {
+    private function renderNode($option)
+    {
         return [
-          'nodeName' => 'apexchart',
-          'width' => $this->width,
-          'height' => $this->height,
-          'type' => $this->type,
-          'options' => $option,
-          'series' => $this->series
+            'nodeName' => 'apexchart',
+            'ref' => 'chart',
+            'width' => $this->width,
+            'height' => $this->height,
+            'type' => $this->type,
+            'options' => $option,
+            'series' => $this->series
         ];
     }
 

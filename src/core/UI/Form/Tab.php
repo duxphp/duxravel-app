@@ -11,9 +11,8 @@ use Duxravel\Core\UI\Form;
  */
 class Tab extends Composite implements Component
 {
-    public function __construct($dialog = false)
+    public function __construct()
     {
-        $this->dialog = $dialog;
     }
 
     /**
@@ -27,6 +26,7 @@ class Tab extends Composite implements Component
     {
         $form = new Form();
         $form->dialog($this->dialog);
+        $form->vertical($this->vertical);
         $callback($form);
         $this->column[] = [
             'name' => $name,
@@ -74,17 +74,22 @@ class Tab extends Composite implements Component
             ];
 
             $nodes[] = [
-                'nodeName' => 'n-tab-pane',
-                'name' => $vo['name'],
-                'tab' => $vo['name'],
-                'child' => $child
+                'nodeName' => 'a-tab-pane',
+                'title' => $vo['name'],
+                'key' => $key,
+                'class' => !$this->dialog ? ' border-t border-gray-200 dark:border-blackgray-1 px-3 pt-4 pb-0' : '',
+                'child' => [
+                    'nodeName' => 'div',
+                    'class' => '',
+                    'child' => $child
+                ]
             ];
         }
 
         return [
-            'nodeName' => 'n-tabs',
-            'class' => !$this->dialog ? 'mb-3 bg-white rounded shadow px-6 lg:px-8 py-2' : '',
-            'type' => 'line',
+            'nodeName' => 'a-tabs',
+            'class' => !$this->dialog ? 'mb-4 bg-white dark:bg-blackgray-4 rounded shadow p-4 pb-1' : '',
+            'type' => 'rounded',
             'child' => $nodes
         ];
 

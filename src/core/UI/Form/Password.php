@@ -27,9 +27,6 @@ class Password extends Element implements Component
         $this->name = $name;
         $this->field = $field;
         $this->has = $has;
-        $this->object = new Text($this->name, $this->field, $this->has);
-        $this->object->type('password');
-        $this->object->attr('show-password-toggle', true);
     }
 
     /**
@@ -37,10 +34,16 @@ class Password extends Element implements Component
      * @param $value
      * @return string
      */
-    public function render($value)
+    public function render()
     {
-        return $this->object->getRender($this->getValue($value));
+        $data = [
+            'nodeName' => 'a-input-password',
+            'vModel:modelValue' => $this->getModelField(),
+            'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
+            'allowClear' => true,
+        ];
+        return $data;
     }
-    
+
 
 }

@@ -74,16 +74,6 @@ class Area extends Element implements Component
         return $data;
     }
 
-    /**
-     * 获取数据值
-     * @param $value
-     * @return array|false|string[]|null
-     */
-    public function dataValue($value)
-    {
-        return $value;
-    }
-
     public function appendInput($data)
     {
         $info = \Duxravel\Core\Model\Area::where(['code' => $data])->first();
@@ -111,16 +101,6 @@ class Area extends Element implements Component
             $data[$this->map['province']] = $province->code;
         }
         return $data;
-    }
-
-    /**
-     * 获取输入内容
-     * @param $data
-     * @return string
-     */
-    public function dataInput($data): ?string
-    {
-        return is_array($data) ? implode(',', $data) : $data;
     }
 
 }

@@ -85,7 +85,7 @@ class RichText implements Component
                 $imageNode[] = [
                     'nodeName' => 'div',
                     'class' => "flex-none bg-cover  w-{$vo['width']} h-{$vo['height']}",
-                    'vBind:style' => "{'background-image': 'url(' + rowData['{$vo['label']}'] + ')'}"
+                    'vBind:style' => "{'background-image': 'url(' + rowData.record['{$vo['label']}'] + ')'}"
                 ];
             }
         }
@@ -96,7 +96,7 @@ class RichText implements Component
                 $descNode[] = [
                     'nodeName' => 'div',
                     'class' => "text-gray-500 overflow-ellipsis max-w-md",
-                    'child' => "{{rowData['{$vo['label']}']}}"
+                    'child' => "{{rowData.record['{$vo['label']}']}}"
                 ];
             }
         }
@@ -115,7 +115,7 @@ class RichText implements Component
                         [
                             'nodeName' => 'div',
                             'class' => 'overflow-ellipsis max-w-md',
-                            'child' => '{{rowData["'.$label.'"]}}'
+                            'child' => '{{rowData.record["'.$label.'"]}}'
                         ],
                         ...$descNode
                     ]

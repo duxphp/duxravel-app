@@ -14,6 +14,7 @@ class Route
     private string $name;
     private string $class;
     private string $prefix;
+    private array $extend = [];
 
     public function __construct(string $class, string $name = '')
     {
@@ -278,6 +279,41 @@ class Route
             'desc' => '排序',
             'name' => implode('.', [$layout, $app, $name, 'sortable'])
         ];
+    }
+
+
+    /**
+     * 自定义方法
+     */
+    public function add($type, $action, $name)
+    {
+        $this->extend['addItem' . ucfirst($action)] = [
+            'type' => $type,
+            'action' => $action,
+            'name' => $name,
+        ];
+        $this->action = array_merge($this->action, [$action]);
+        return $this;
+    }
+
+    public function __call($method, $arguments)
+    {
+        if (!isset($this->extend[$method])) {
+            throw new \Exception('There is no route method "' . $method . '"');
+        }
+
+        [$app, $layout, $name, $class] = $arguments;
+
+        $info = $this->extend[$method];
+        unset($this->extend[$method]);
+        return [
+            'type' => $info['type'],
+            'rule' => $this->prefix . '/' . $info['action'],
+            'uses' => $class . '@' . $info['action'],
+            'desc' => $info['name'],
+            'name' => implode('.', [$layout, $app, $name, $info['action']])
+        ];
+
     }
 
 }

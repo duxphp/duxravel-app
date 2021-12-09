@@ -74,27 +74,28 @@ class Checkbox extends Element implements Component
         $child = [];
         foreach ($data as $key => $vo) {
             $child[] = [
-                'nodeName' => 'n-checkbox',
+                'nodeName' => 'a-checkbox',
                 'value' => $key,
-                'label' => $vo
+                'child' => $vo,
             ];
         }
 
         $data = [
-            'nodeName' => 'n-checkbox-group',
-            'name' => $this->field,
-            'child' => [
-                'nodeName' => 'n-space',
-                'class' => 'flex',
-                'child' => $child
-            ]
+            'nodeName' => 'a-checkbox-group',
+            'child' => $child
         ];
 
         if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
+            $data['vModel:model-value'] = $this->getModelField();
         }
 
         return $data;
+    }
+
+    public function dataValue($value)
+    {
+        $value = $this->getValue($value);
+        return $value ? explode(',', $value) : [];
     }
 
     /**
@@ -105,12 +106,6 @@ class Checkbox extends Element implements Component
     public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
-    }
-
-    public function dataValue($value)
-    {
-        $value = $this->getValue($value);
-        return $value ? explode(',', $value) : [];
     }
 
 }

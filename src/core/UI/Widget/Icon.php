@@ -45,18 +45,14 @@ class Icon extends Widget
                 'size' => $this->size,
                 'child' => [
                     'nodeName' => 'rich-text',
-                    'class' => $this->toClass(),
+                    'class' => implode(' ', $this->class),
                     'nodes' => $icon
                 ]
             ];
         } else {
             return [
-                'nodeName' => 'n-icon',
-                'size' => $this->size,
-                'child' => [
-                    'nodeName' => $icon.'-icon',
-                    'class' => $this->toClass(),
-                ]
+                'nodeName' => 'icon-' . $icon,
+                'class' => implode(' ', $this->class),
             ];
         }
     }

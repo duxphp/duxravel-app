@@ -55,8 +55,9 @@ class Color extends Element implements Component
     public function render()
     {
         if ($this->picker) {
+            // 暂无组件
             $data = [
-                'nodeName' => 'n-color-picker',
+                'nodeName' => 'a-color-picker',
                 'showAlpha' => false,
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
             ];

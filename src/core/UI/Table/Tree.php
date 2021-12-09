@@ -76,7 +76,7 @@ class Tree
             $suffix = $this->link->render('');
         }
         return [
-            'node' => $this->node ?: ['nodeName' => 'div', 'child' => "{{rowData['$this->label']}}"],
+            'node' => $this->node ?: ['nodeName' => 'div', 'child' => "{{rowData.record['$this->label']}}"],
             'prefix' => $this->prefix,
             'suffix' => $suffix
         ];

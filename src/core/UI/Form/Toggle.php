@@ -35,12 +35,9 @@ class Toggle extends Element implements Component
     public function render()
     {
         $data = [
-            'nodeName' => 'n-switch',
-            'vModel:value' => $this->getModelField(),
+            'nodeName' => 'a-switch',
+            'vModel:modelValue' => $this->getModelField(),
         ];
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
-        }
         return $data;
     }
 

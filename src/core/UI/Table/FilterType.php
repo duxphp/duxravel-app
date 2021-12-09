@@ -25,6 +25,7 @@ class FilterType
     protected ?int $num = null;
     protected ?Table $layout;
     protected $model;
+    protected $value;
 
     /**
      * FilterType constructor.
@@ -32,10 +33,11 @@ class FilterType
      * @param callable|null $where
      * @param string|null $url
      */
-    public function __construct(string $name, callable $where = null)
+    public function __construct(string $name, callable $where = null, int $value = 0)
     {
         $this->name = $name;
         $this->where = $where;
+        $this->value = $value;
     }
 
     public function setLayout(Table $layout): void
@@ -56,28 +58,26 @@ class FilterType
         return $this;
     }
 
-    public function render($key)
+    public function execute($query, $key)
     {
-        $type = request()->get('type', 0);
-
-        $this->layout->filterParams('type', $type);
-
-        if ($this->where instanceof \Closure && $type == $key) {
+        if ($this->where instanceof \Closure && $this->value == $key) {
             call_user_func($this->where, $this->model);
         }
+    }
 
+    public function render($key)
+    {
         return [
-            'nodeName' => 'n-radio-button',
+            'nodeName' => 'a-radio',
             'value' => $key,
+            'child' => $this->name,
             'child' => [
-                'nodeName' => 'div',
-                'class' => 'inline-flex items-center gap-2',
-                'child' => [
-                    (new Icon($this->icon))->size(18)->getRender(),
-                    [
-                        'nodeName' => 'div',
-                        'child' => $this->name
-                    ]
+                $this->icon ? [
+                    'nodeName' => $this->icon
+                ]: [],
+                [
+                    'nodeName' => 'span',
+                    'child' => ' ' . $this->name
                 ]
             ]
         ];

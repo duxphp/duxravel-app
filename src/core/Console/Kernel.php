@@ -27,8 +27,6 @@ class Kernel extends ConsoleKernel
         \Duxravel\Core\Console\AppModel::class,
         \Duxravel\Core\Console\Install::class,
         \Duxravel\Core\Console\Uninstall::class,
-        \Duxravel\Core\Console\InstallStatic::class,
-        \Duxravel\Core\Console\UninstallStatic::class,
         \Duxravel\Core\Console\Operate::class,
         \Duxravel\Core\Console\Visitor::class,
     ];

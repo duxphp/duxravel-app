@@ -87,7 +87,7 @@ class Menu implements Component
             'render-label:option' => [
                 'nodeName' => 'route',
                 'class' => 'block',
-                'vBind:href' => 'rowData[option.route.href]',
+                'vBind:href' => 'rowData.record[option.route.href]',
                 'vBind:title' => 'option.route.title',
                 'vBind:type' => 'option.route.type',
                 'child' => '{{option.label}}'

@@ -2,15 +2,21 @@
 
 namespace Duxravel\Core\Manage;
 
+use Duxravel\Core\Facades\Permission;
 use Duxravel\Core\UI\Form;
 use Duxravel\Core\UI\Table;
+use Duxravel\Core\Model\Role as AuthRole;
 
 trait Role
 {
+    private $config = [];
 
     private function parserData()
     {
         $parsing = app_parsing();
+
+        $this->config['layer'] = $parsing['layer'];
+
         $route = strtolower($parsing['layer']) . '.' . strtolower($parsing['app']) . '.role';
         $app = $parsing['app'];
         $model = '\\Modules\\' . $app . '\\Model\\' . $app . 'Role';
@@ -23,19 +29,20 @@ trait Role
     protected function table(): Table
     {
         $parser = $this->parserData();
-        $table = new Table(new $parser['model']());
+        $table = new Table(new AuthRole());
+        $table->model()->where('guard', $this->config['layer']);
         $table->title('角色管理');
 
         $table->filter('角色名称', 'name', function ($query, $value) {
             $query->where('name', 'like', '%' . $value . '%');
         })->text('请输入角色名称')->quick();
 
-        $table->action()->button('添加', $parser['route'] . '.page');
+        $table->action()->button('添加', $parser['route'] . '.page')->type('dialog');
 
         $table->column('角色名称', 'name');
 
         $column = $table->column('操作')->width(200);
-        $column->link('编辑', $parser['route'] . '.page', ['id' => 'role_id']);
+        $column->link('编辑', $parser['route'] . '.page', ['id' => 'role_id'])->type('dialog');
         $column->link('删除', $parser['route'] . '.del')->type('ajax', ['method' => 'post']);
         return $table;
     }
@@ -43,17 +50,15 @@ trait Role
     public function form(int $id = 0): Form
     {
         $parser = $this->parserData();
-        $form = new Form(new $parser['model']());
-        $form->setKey('role_id', $id);
+        $form = new Form(new AuthRole());
         $form->title('角色信息');
-        $info = $form->info();
-        $form->card(function ($form) use ($info) {
-            $this->formInner($form, $info);
+        $form->card(function ($form) {
+            $this->formInner($form);
         });
 
-
         $form->before(function ($data, $type, $model) {
-            $purview = $data['purview'];
+            $model->guard = strtolower($this->config['layer']);
+            $purview = explode(',', $data['purview']);
             $purview = array_filter($purview, function ($item) {
                 if (stripos($item, 'desc_', 0) !== false) {
                     return false;
@@ -63,8 +68,10 @@ trait Role
             $model->purview = array_values($purview);
         });
 
+
         return $form;
     }
+
 
     public function formInner($form)
     {
@@ -76,11 +83,8 @@ trait Role
             'min' => '用户名不能少于2位',
         ]);
 
-
         $form->tree('权限选择', 'purview', function () {
-
-            $parsing = app_parsing();
-            $data = $this->getAuthAll(strtolower($parsing['layer']));
+            $data =  Permission::getPermissions();
 
             $purviewData = [];
             $i = 0;
@@ -125,34 +129,5 @@ trait Role
         return $form;
     }
 
-    public function getAuthAll($has = 'admin'): array
-    {
-        $app = app();
-        $routes = $app->routes->getRoutes();
-        $data = [];
-        foreach ($routes as $vo) {
-            if ($vo->action['auth_has'] <> $has || $vo->action['public']) {
-                continue;
-            }
-            if (!$data[$vo->action['auth_app']]) {
-                $data[$vo->action['auth_app']] = [
-                    'name' => $vo->action['auth_app'],
-                    'group' => []
-                ];
-            }
-            if (!$data[$vo->action['auth_app']]['group'][$vo->action['auth_group']]) {
-                $data[$vo->action['auth_app']]['group'][$vo->action['auth_group']] = [
-                    'name' => $vo->action['auth_group'],
-                    'list' => []
-                ];
-            }
-            $data[$vo->action['auth_app']]['group'][$vo->action['auth_group']]['list'][] = [
-                'name' => $vo->action['desc'],
-                'value' => $vo->action['as'],
-                'auth_list' => $vo->action['auth_list']
-            ];
-        }
-        return $data;
-    }
 
 }

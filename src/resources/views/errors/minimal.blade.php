@@ -14,9 +14,9 @@
     <meta name="MobileOptimized" content="320"/>
     <meta name="robots" content="noindex,nofollow,noarchive"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="/static/system/css/base.min.css"/>
+  <link crossorigin="anonymous" href="https://lib.baomitu.com/tailwindcss/2.2.15/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="border-t-2 border-blue-900 flex flex-col bg-gray-100 h-screen">
+<body class="border-t-2 border-blue-600 flex flex-col bg-gray-100 h-screen">
 <div class="flex items-center justify-center flex-auto">
     <div class="max-w-2xl py-6">
         <div class="flex items-center justify-center flex-col">
@@ -26,7 +26,7 @@
                 很抱歉，该页面暂时无法访问，请检查页面信息
             </p>
             <div class="mt-10">
-                <a href="javascript:window.history.back();" class="btn-blue flex items-center space-x-3 text-sm">
+                <a href="javascript:window.history.back();" class="bg-blue-600 text-white text-sm px-4 py-3  rounded shadow items-center inline-flex hover:shadow-md space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>

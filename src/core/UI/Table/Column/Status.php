@@ -47,7 +47,7 @@ class Status implements Component
 
             if ($this->type == 'badge') {
                 $item = (new Badge($vo['name']))->color($vo['color'])->render();
-                $item['vIf'] = "rowData['{$label}'] == " . (is_numeric($key) ? $key : "'$key'");
+                $item['vIf'] = "rowData.record['{$label}'] == " . (is_numeric($key) ? $key : "'$key'");
             } else {
                 $item = [
                     'nodeName' => 'div',

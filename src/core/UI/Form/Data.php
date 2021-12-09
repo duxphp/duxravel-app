@@ -13,7 +13,8 @@ class Data extends Element implements Component
 {
     protected array $column = [];
     protected bool $option = true;
-    protected ?int $number = null;
+    protected ?int $numberMax = null;
+    protected ?int $numberMin = null;
 
     /**
      * Text constructor.
@@ -114,9 +115,20 @@ class Data extends Element implements Component
      * @param int $num
      * @return $this
      */
-    public function num(int $num = 0): self
+    public function max(int $num = 0): self
     {
-        $this->number = $num;
+        $this->numberMax = $num;
+        return $this;
+    }
+
+    /**
+     * 最小数量
+     * @param int $num
+     * @return $this
+     */
+    public function min(int $num = 0): self
+    {
+        $this->numberMin = $num;
         return $this;
     }
 
@@ -139,9 +151,9 @@ class Data extends Element implements Component
                     'nodeName' => 'div',
                     'class' => 'flex-grow',
                     'child' => [
-                        'nodeName' => 'n-input',
+                        'nodeName' => 'a-input',
                         'placeholder' => '请输入' . $column['name'],
-                        'vModel:value' => $field
+                        'vModel:model-value' => $field
                     ]
                 ];
             }
@@ -150,15 +162,11 @@ class Data extends Element implements Component
                     'nodeName' => 'div',
                     'class' => 'flex-none',
                     'child' => [
-                        'nodeName' => 'n-upload',
-                        'action' => $this->uploadUrl,
-                        'class' => 'relative w-9 h-9 border border-gray-400 border-dashed rounded bg-cover bg-center bg-no-repeat block hover:border-blue-900',
-                        'vBind:style' => "{'background-size': '90%', 'background-image': $field || 'url($url)'}",
-                        'child' => [
-                            'nodeName' => 'div',
-                            'class' => 'opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center w-full h-full bg-blue-200 bg-opacity-90 rounded cursor-pointer ',
-                            'child' => (new Icon('plus'))->render(),
-                        ]
+                        'nodeName' => 'app-file',
+                        'image' => 'true',
+                        'mini' => true,
+                        'size' => 8,
+                        'vModel:value' => $field
                     ]
                 ];
             }
@@ -173,7 +181,7 @@ class Data extends Element implements Component
 
         $create = json_encode($default);
         $data = [
-            'nodeName' => 'n-dynamic-input',
+            'nodeName' => 'app-dynamic-data',
             'vModel:value' => $this->getModelField(),
             'vBind:on-create' => "() => { return $create }",
             'child' => [
@@ -184,21 +192,27 @@ class Data extends Element implements Component
             ]
         ];
 
-        if ($this->number) {
-            $data['max'] = $this->number;
+        if ($this->numberMax) {
+            $data['max'] = $this->numberMax;
         }
 
-        if (!$this->option) {
-            $data['min'] = $this->number;
-            $data['max'] = $this->number;
+        if ($this->numberMin) {
+            $data['min'] = $this->numberMin;
         }
 
         return $data;
     }
 
+    /*public function dataInput($data)
+    {
+        clock($this->modelElo);
+        return is_array($data) ? json_encode($data, JSON_UNESCAPED_UNICODE) : [];
+    }
+
     public function dataValue($value)
     {
-        return $this->getValue($value) ?: [];
-    }
+        clock($value);
+        return array_filter(json_decode($this->getValue($value), true));
+    }*/
 
 }

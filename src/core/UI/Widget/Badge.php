@@ -13,7 +13,7 @@ class Badge extends Widget
 
     private string $content;
     private string $url = '';
-    private string $size = 'base';
+    private string $size = 'medium';
     private string $type;
 
     /**
@@ -66,8 +66,8 @@ class Badge extends Widget
     public function render()
     {
         return [
-            'nodeName' => 'n-tag',
-            'type' => $this->type,
+            'nodeName' => 'a-tag',
+            'color' => $this->type,
             'size' => $this->size,
             'child' => $this->content
         ];

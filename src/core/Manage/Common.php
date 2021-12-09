@@ -43,33 +43,18 @@ trait Common
     {
         return app_success('ok', [
             'node' => [
-                [
-                    'nodeName' => 'div',
-                    'class' => 'flex items-center p-4 border-b border-gray-200',
-                    'child' => [
-                        [
-                            'nodeName' => 'div',
-                            'class' => 'flex-grow text-xl',
-                            'child' => $title ?: '信息详情'
-                        ],
-                        [
-                            'nodeName' => 'route',
-                            'type' => 'back',
-                            'class' => 'flex items-center',
-                            'child' => (new Icon('x'))->size(20)->class('cursor-pointer text-gray-600 hover:text-red-600')->getRender()
-                        ]
-                    ]
-                ],
-                $node
+                'nodeName' => 'app-dialog',
+                'title' => $title,
+                'child' => $node
             ]
         ]);
     }
 
     public function can($name)
     {
+        $parsing = app_parsing();
         $route = request()->route()->getName();
-        $purview = app()->make('purview');
-        if ($purview && !in_array($route . '|' . $name, $purview)) {
+        if (!auth(strtolower($parsing['layer']))->user()->can($route . '|' . $name)) {
             app_error('没有权限使用该功能', 403);
         }
     }

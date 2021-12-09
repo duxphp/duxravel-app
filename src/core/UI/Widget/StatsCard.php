@@ -75,7 +75,7 @@ class StatsCard extends Widget
             HTML;
         }
         return <<<HTML
-            <div {$this->toElement()}>
+            <div>
                 {$this->mergeArray($inner)}
             </div>
         HTML;

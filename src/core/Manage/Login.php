@@ -27,17 +27,12 @@ trait Login
                 'userInfo' => [
                     'user_id' => $user->user_id,
                     'avatar' => $user->avatar,
+                    'avatar_text' => strtoupper(substr($user->username, 0, 1)),
                     'username' => $user->username,
-                    'nickname' => $user->nickname
+                    'nickname' => $user->nickname,
+                    'rolename' => $user->roles[0]['name'],
                 ],
                 'token' => 'Bearer ' . auth($layer)->tokenById($user->user_id),
-                'menu' => [
-                    [
-                        'name' => '返回首页',
-                        'url' => route('web.index'),
-                        'target' => 'new'
-                    ]
-                ]
             ]);
         }
         app_error('账号密码错误');

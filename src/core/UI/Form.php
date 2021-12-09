@@ -33,8 +33,12 @@ use Duxravel\Core\Util\View;
  * @method Form\Password password(string $name, string $field, string $has = '')
  * @method Form\Radio radio(string $name, string $field, $data = null, string $has = '')
  * @method Form\Select select(string $name, string $field, $data = null, string $has = '')
+ * @method Form\Tree tree(string $name, string $field, $data = null, string $has = '')
+ * @method Form\Toggle toggle(string $name, string $field, string $has = '')
+ * @method Form\Tags tags(string $name, string $field, string $has = '')
  * @method Form\Tel tel(string $name, string $field, string $has = '')
  * @method Form\Text text(string $name, string $field, string $has = '')
+ * @method Form\Number number(string $name, string $field, string $has = '')
  * @method Form\Time time(string $name, string $field, string $has = '')
  * @method Form\Url url(string $name, string $field, string $has = '')
  */
@@ -56,6 +60,7 @@ class Form
     protected array $script = [];
     protected array $sideNode = [];
     protected bool $dialog = false;
+    protected bool $vertical = false;
     public Collection $element;
 
     /**
@@ -192,6 +197,7 @@ class Form
     {
         $data = new Form\Row();
         $data->dialog($this->dialog);
+        $data->vertical($this->vertical);
         $this->element->push($data);
         return $data;
     }
@@ -202,8 +208,9 @@ class Form
      */
     public function tab(): Form\Tab
     {
-        $data = new Form\Tab($this->dialog);
+        $data = new Form\Tab();
         $data->dialog($this->dialog);
+        $data->vertical($this->vertical);
         $this->element->push($data);
         return $data;
     }
@@ -217,6 +224,7 @@ class Form
     {
         $data = new Form\Card($callback);
         $data->dialog($this->dialog);
+        $data->vertical($this->vertical);
         $this->element->push($data);
         return $data;
     }
@@ -231,6 +239,7 @@ class Form
     {
         $data = new Form\Html($name, $callback);
         $data->dialog($this->dialog);
+        $data->vertical($this->vertical);
         $this->element->push($data);
         return $data;
     }
@@ -282,9 +291,6 @@ class Form
         $forms = $this->element->map(function ($vo, $key) {
             $sort = $vo->getSort();
             $sort = $sort ?? $key;
-            if (!Tools::isAuth($vo->getAuth())) {
-                return false;
-            }
 
             $groupRule = $vo->getGroup();
             $group = [];
@@ -307,62 +313,59 @@ class Form
             $help = $vo->getHelp();
             if ($prompt) {
                 $helpNode = [
-                    'nodeName' => 'n-tooltip',
-                    'class' => 'flex-none',
-                    'trigger' => 'hover',
-                    'placement' => 'top-end',
+                    'nodeName' => 'a-tooltip',
+                    'class' => 'ml-3',
+                    'position' => 'top',
+                    'content' => $vo->getPrompt(),
                     'child' => [
-                        [
-                            'vSlot:trigger' => '',
-                            'nodeName' => 'span',
-                            'class' => 'my-2.5 block cursor-pointer text-center text-white w-4 h-4 text-xs rounded-full bg-gray-500',
-                            'child' => '?'
-                        ],
-                        $vo->getPrompt()
+                        'nodeName' => 'span',
+                        'child' => [
+                            'nodeName' => 'icon-question-circle'
+                        ]
                     ],
                 ];
             }
             if ($help) {
                 $helpNode = [
                     'nodeName' => 'div',
-                    'class' => 'text-gray-500 pt-2 pb-2 ml-3',
+                    'class' => 'text-gray-300 pt-2 pb-2 ml-3',
                     'child' => $help
                 ];
             }
 
-            return [
-                'nodeName' => 'n-form-item',
+            $helpLine = $vo->getHelpLine();
+            $must = $vo->getMust();
+
+            $item = [
+                'nodeName' => 'a-form-item',
                 'label' => $vo->getName(),
-                'path' => $vo->getField(),
+                'field' => $vo->getField(),
                 'vIf' => $group,
                 'sort' => $sort,
                 'child' => [
-                    [
+                    $vo->getRender(),
+                    $helpLine ? [
+                        'vSlot:help' => '',
                         'nodeName' => 'div',
-                        'class' => 'w-full',
-                        'child' => [
-                            [
-                                'nodeName' => 'div',
-                                'class' => 'flex gap-2',
-                                'child' => [
-                                    [
-                                        'nodeName' => 'div',
-                                        'class' => 'flex-grow w-full',
-                                        'child' => $vo->getRender()
-                                    ],
-                                    $helpNode
-                                ]
-                            ],
-                            [
-                                'nodeName' => 'div',
-                                'child' => $vo->getHelpLine()
-                            ]
-                        ]
-                    ]
-                ],
-                //'must' => $vo->getMust(),
-
+                        'child' => $helpLine
+                    ] : [],
+                    $helpNode ? [
+                        'nodeName' => 'div',
+                        'class' => 'ml-2',
+                        'child' => $helpNode
+                    ] : []
+                ]
             ];
+
+            if ($must) {
+                $item['rules'] = [
+                    [
+                        'required' => true,
+                        'message' => '请填写' . $vo->getName()
+                    ]
+                ];
+            }
+            return $item;
         })->filter()->sortBy('sort')->values()->toArray();
         return $forms;
     }
@@ -421,6 +424,18 @@ class Form
     public function dialog($status): self
     {
         $this->dialog = (bool)$status;
+        $this->vertical = true;
+        return $this;
+    }
+
+    /**
+     * 纵向表单
+     * @param $status
+     * @return $this
+     */
+    public function vertical($status): self
+    {
+        $this->vertical = (bool)$status;
         return $this;
     }
 
@@ -454,7 +469,7 @@ class Form
         if ($this->action) {
             $action = $this->action;
         } else {
-            $params = [];
+            $params = request()->all();
             if ($this->modelElo) {
                 $key = $this->modelElo->getKeyName();
                 $id = $this->info->$key;
@@ -464,8 +479,9 @@ class Form
         }
 
         $node = new Node($action, $this->method, $this->title);
-        $node->dialog((bool) $this->dialog);
-        $node->back((bool) $this->back);
+        $node->dialog((bool)$this->dialog);
+        $node->vertical((bool)$this->vertical);
+        $node->back((bool)$this->back);
 
         // 表单元素·
         $node->element($this->renderForm());
@@ -507,16 +523,12 @@ class Form
         // 过滤数据
         $collection = Collection::make();
         $this->element->map(function ($item) use ($collection, $time) {
-            if (!Tools::isAuth($item->getAuth())) {
-                return false;
-            }
             $inputs = $item->getInput($time);
 
             foreach ($inputs as $key => $vo) {
                 $collection->put($key, $vo);
             }
         });
-
 
         //验证数据
         $rules = [];
@@ -529,9 +541,14 @@ class Form
                 $msgs = $msgs + $item['verify']['msg'];
             }
         });
-        if ($rules) {
-            \Validator::make($data, $rules, $msgs)->validate();
+        $validator = \Validator::make($data, $rules, $msgs);
+
+        if ($this->flow['validator']) {
+            foreach ($this->flow['validator'] as $vo) {
+                $vo($validator);
+            }
         }
+        $validator->validate();
 
         // 格式化数据
         return $collection->map(function ($item) {
@@ -550,6 +567,8 @@ class Form
      * @var array
      */
     protected array $prepared = [];
+
+    protected $modelId = null;
 
     /**
      * 保存数据
@@ -650,7 +669,8 @@ class Form
                 }
             }
         });
-        return $model->getKey();
+        $this->modelId = $model->getKey();
+        return $this->modelId;
     }
 
     /**
@@ -661,6 +681,12 @@ class Form
     public function front($callback): Form
     {
         $this->flow['front'][] = $callback;
+        return $this;
+    }
+
+    public function validator($callback): Form
+    {
+        $this->flow['validator'][] = $callback;
         return $this;
     }
 
@@ -705,6 +731,34 @@ class Form
     public function extend($method, $className): void
     {
         $this->extend[$method] = $className;
+    }
+
+
+    /**
+     * 回调前端事件
+     * @param $table
+     * @param $name
+     * @return false|void
+     */
+    public function callbackEvent($table, $name, $type)
+    {
+        if (!$this->modelId) {
+            return false;
+        }
+        $rowsData = $this->modelElo->where($this->modelElo->getKeyName(), $this->modelId)->get();
+        $list = $table->renderRowData($rowsData, false);
+
+        $parentKey = null;
+        if ($table->getTree()) {
+            $parentKey = $this->modelElo->find($this->modelId)->parent_id;
+        }
+
+        $event = new Event($name);
+        foreach ($list as $item) {
+            $event->add($type, $this->modelId, $item, $parentKey !== false ? ['parentKey' => $parentKey] : []);
+        }
+        return $event->render();
+
     }
 
     /**

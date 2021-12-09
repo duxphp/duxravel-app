@@ -26,6 +26,7 @@ class Filter
     protected string $type = '';
     protected string $placeholder = '';
     protected bool $quick = false;
+    protected string $condition = '';
     protected ?\Closure $callback;
     protected $data;
     protected $model;
@@ -151,6 +152,17 @@ class Filter
         return $this;
     }
 
+    /**
+     * 筛选条件
+     * @param $type
+     * @return $this
+     */
+    public function condition($type): self
+    {
+        $this->condition = $type;
+        return $this;
+    }
+
 
     /**
      * 执行筛选
@@ -168,7 +180,17 @@ class Filter
         if ($this->where instanceof \Closure) {
             call_user_func($this->where, $query, $this->value, $this->data);
         } elseif ($this->where !== false) {
-            $query->where(is_string($this->where) ? $this->where : $this->field, $this->value);
+
+            $field = is_string($this->where) ? $this->where : $this->field;
+            $condition = '=';
+            $value = $this->value;
+
+            if ($this->condition === 'like') {
+                $condition = 'like';
+                $value = '%' . $value . '%';
+            }
+
+            $query->where($field, $condition, $value);
         }
 
     }
@@ -187,34 +209,22 @@ class Filter
             case 'select':
                 $object = new Select($this->name, $this->field, $this->data);
                 $object->tip(true);
-                $object->attr('vOn:dataLabel', "data.show['{$this->field}'] = \$event ? \$event : null");
-                $this->layout->filterShow($this->field, null);
                 break;
             case 'cascader':
                 $object = new Cascader($this->name, $this->field, $this->data);
-                $object->attr('vOn:dataLabel', "data.show['{$this->field}'] = \$event ? \$event : null");
-                $this->layout->filterShow($this->field, null);
                 break;
             case 'date':
                 $object = new Date($this->name, $this->field);
-                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
-                $this->layout->filterShow($this->field, $this->value);
                 break;
             case 'datetime':
                 $object = new Datetime($this->name, $this->field);
-                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
-                $this->layout->filterShow($this->field, $this->value);
                 break;
             case 'daterange':
                 $object = new Daterange($this->name, $this->field);
-                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
-                $this->layout->filterShow($this->field, $this->value);
                 break;
             case 'text':
             default:
                 $object = new Text($this->name, $this->field);
-                $object->attr('vOn:input', "data.show['{$this->field}'] = \$event");
-                $this->layout->filterShow($this->field, is_integer($this->value) ? (int) $this->value : $this->value);
         }
 
         $object->model('data.filter.');

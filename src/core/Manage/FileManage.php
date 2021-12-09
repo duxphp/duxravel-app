@@ -95,7 +95,7 @@ trait FileManage
             $data = $data->orderBy('file_id', 'desc')->paginate(16, [
                 'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'create_time'
             ]);
-            $totalPage = $data->lastPage();
+            $total = $data->total();
             $page = $data->currentPage();
             $data = $data->map(function ($item) use ($format) {
                 $item->size = app_filesize($item['size']);
@@ -132,8 +132,9 @@ trait FileManage
         }
         return [
             'data' => $data,
-            'total' => $totalPage,
-            'page' => $page
+            'total' => $total ?: 0,
+            'page' => $page,
+            'pageSize' => 16
         ];
     }
 

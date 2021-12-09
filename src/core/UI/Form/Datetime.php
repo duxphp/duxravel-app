@@ -10,10 +10,10 @@ namespace Duxravel\Core\UI\Form;
 class Datetime extends Element implements Component
 {
 
-    protected Text $object;
+    protected string $string = 'YYYY-MM-DD hh:mm';
 
     /**
-     * Text constructor.
+     * Datetime constructor.
      * @param  string  $name
      * @param  string  $field
      * @param  string  $has
@@ -26,6 +26,17 @@ class Datetime extends Element implements Component
     }
 
     /**
+     * 日期格式
+     * @param string $format
+     * @return $this
+     */
+    public function string(string $format): self
+    {
+        $this->string = $format;
+        return $this;
+    }
+
+    /**
      * 渲染组件
      * @param $value
      * @return string
@@ -33,17 +44,14 @@ class Datetime extends Element implements Component
     public function render()
     {
         $data = [
-            'nodeName' => 'n-date-picker',
+            'nodeName' => 'a-date-picker',
             'vModel:value' => $this->getModelField(),
-            'class' => 'shadow-sm',
-            'type' => 'datetime',
-            'clearable' => true,
+            'showTime' => true,
+            'allowClear' => true,
+            'format' => $this->string,
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            'vModel:modelValue' => $this->getModelField(),
         ];
-
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
-        }
 
         return $data;
     }
@@ -55,6 +63,11 @@ class Datetime extends Element implements Component
     public function dataInput($data)
     {
         return $data ? strtotime($data) : null;
+    }
+
+    public function dataValue($data)
+    {
+        return $data ? date('Y-m-d H:i:s', $data) : null;
     }
 
 }

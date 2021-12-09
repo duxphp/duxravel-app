@@ -23,7 +23,7 @@ class Url extends Element implements Component
         $this->field = $field;
         $this->has = $has;
         $this->object = new Text($this->name, $this->field, $this->has);
-        $this->object->afterIcon('http(s)');
+        $this->object->beforeText('http(s)');
     }
 
     /**
@@ -33,6 +33,7 @@ class Url extends Element implements Component
      */
     public function render()
     {
+        $this->object->attrArray($this->attr);
         return $this->object->getRender();
     }
 

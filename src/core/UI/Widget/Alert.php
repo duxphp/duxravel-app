@@ -43,7 +43,7 @@ class Alert extends Widget
     public function render(): array
     {
         return [
-            'nodeName' => 'n-alert',
+            'nodeName' => 'a-alert',
             'title' => $this->title,
             'type' => $this->type,
             'child' => $this->content

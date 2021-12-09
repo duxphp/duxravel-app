@@ -18,11 +18,11 @@ class Node
     private bool $tree = false;
     private bool $back = false;
     private string $mode = 'table';
-    private string $sortable = '';
     private string $class = '';
     private array $params = [];
     private array $data = [];
     private array $columns = [];
+    private array $expand = [];
     private array $filter = [];
     private array $quickFilter = [];
     private array $showFilter = [];
@@ -30,10 +30,12 @@ class Node
     private array $bath = [];
     private array $type = [];
     private array $side = [];
+    private array $sideSize = [];
     private array $header = [];
     private array $footer = [];
     private array $script = [];
     private array $scriptReturn = [];
+    private array $scriptData = [];
 
     /**
      * Node constructor.
@@ -57,10 +59,10 @@ class Node
     {
         $this->mode = $mode;
         if ($mode === 'list') {
-            $this->class .= 'table-list';
+            //$this->class .= 'table-list';
         }
         if ($mode === 'list-nohead') {
-            $this->class .= 'table-list table-nohead';
+            //$this->class .= 'table-list table-nohead';
         }
         return $this;
     }
@@ -96,13 +98,12 @@ class Node
     }
 
     /**
-     * @param array $node
+     * @param array $filter
      * @return $this
      */
-    public function data(array $filter, $show)
+    public function data(array $filter)
     {
         $this->data['filter'] = $filter;
-        $this->data['show'] = $show;
         return $this;
     }
 
@@ -121,18 +122,29 @@ class Node
         return $this;
     }
 
+    /**
+     * @param $data
+     */
+    public function scriptData($data)
+    {
+        $this->scriptData = array_merge($this->scriptData, $data);
+        return $this;
+    }
+
+    /**
+     * @param $config
+     * @return $this
+     */
     public function tree($config)
     {
         $this->tree = $config;
         return $this;
     }
 
-    public function sortable($bool)
-    {
-        $this->sortable = $bool;
-        return $this;
-    }
-
+    /**
+     * @param bool $bool
+     * @return $this
+     */
     public function back($bool = true)
     {
         $this->back = $bool;
@@ -146,6 +158,16 @@ class Node
     public function columns(array $node)
     {
         $this->columns = $node;
+        return $this;
+    }
+
+    /**
+     * @param array $node
+     * @return $this
+     */
+    public function expand(array $node)
+    {
+        $this->expand = $node;
         return $this;
     }
 
@@ -207,9 +229,6 @@ class Node
      */
     public function bath(array $node)
     {
-        array_unshift($this->columns, [
-            'type' => 'selection'
-        ]);
         $this->bath = $node;
         return $this;
     }
@@ -217,11 +236,16 @@ class Node
     /**
      * @param $node
      * @param string $type
+     * @param false $resize
+     * @param string $width
      * @return $this
      */
-    public function side($node, $type = 'left')
+    public function side($node, $type = 'left', bool $resize = false, string $width = '100px')
     {
         $this->side[$type] = is_callable($node) ? $node() : $node;
+        if ($resize) {
+            $this->sideSize[$type] = $width;
+        }
         return $this;
     }
 
@@ -253,29 +277,6 @@ class Node
     }
 
     /**
-     * @return array
-     */
-    private function showNode()
-    {
-        $node = [];
-        foreach ($this->data['show'] as $key => $vo) {
-            $node[] = [
-                'nodeName' => 'n-tag',
-                'closable' => true,
-                'type' => 'success',
-                'vIf' => "data.show['$key']",
-                'vOn:close' => "data.show['$key'] = null, data.filter['$key'] = null",
-                'child' => [
-                    'nodeName' => 'div',
-                    'class' => 'max-w-xs truncate',
-                    'child' => "{{data.show['$key']}}"
-                ]
-            ];
-        }
-        return $node;
-    }
-
-    /**
      * @return array[]
      */
     private function headNode()
@@ -283,36 +284,32 @@ class Node
 
         if ($this->filter) {
             $this->quickFilter[] = [
-                'nodeName' => 'n-popover',
-                'placement' => 'bottom-end',
+                'nodeName' => 'a-trigger',
+                'position' => 'br',
                 'trigger' => 'click',
-                'displayDirective' => 'show',
-                'width' => 300,
-                'class' => 'filter-popover hidden',
-                'vBind:ref' => <<<JS
+                //'popupVisible' => 'show',
+                //'width' => 300,
+                //'class' => 'filter-popover',
+                /*'vBind:ref' => <<<JS
                             el => dataRef.value = el
-                            JS,
+                            JS,*/
                 'child' => [
                     [
-                        'vSlot:trigger' => '',
-                        'nodeName' => 'n-button',
-                        'type' => 'default',
-                        'attr-type' => 'button',
-                        'class' => 'shadow-sm bg-white',
+                        'nodeName' => 'a-button',
+                        'type' => 'secondary',
+                        //'attr-type' => 'button',
                         'child' => [
                             '筛选',
                             [
                                 'vSlot:icon' => '',
-                                'nodeName' => 'n-icon',
-                                'child' => [
-                                    'nodeName' => 'filter-icon'
-                                ]
+                                'nodeName' => 'icon-filter',
                             ]
                         ]
                     ],
                     [
+                        'vSlot:content' => '',
                         'nodeName' => 'div',
-                        'class' => 'flex flex-col',
+                        'class' => 'flex flex-col rounded shadow bg-white dark:bg-blackgray-1 dark:text-gray-400 p-2 w-56',
                         'child' => $this->filter
                     ]
                 ]
@@ -321,35 +318,11 @@ class Node
 
         if ($this->type) {
             $header = [
-                'nodeName' => 'n-radio-group',
+                'nodeName' => 'a-radio-group',
                 'name' => 'type',
-                'size' => 'medium',
-                'vModel:value' => 'data.filter.type',
+                'type' => 'button',
+                'vModel:modelValue' => 'data.filter.type',
                 'child' => $this->type
-            ];
-        } else {
-
-            $header = [
-                'nodeName' => 'flex-grow',
-                'child' => [
-                    $this->back ? [
-                        'nodeName' => 'route',
-                        'type' => 'back',
-                        'class' => 'text-xs items-center text-gray-500 hidden lg:flex',
-                        'child' => [
-                            [
-                                'nodeName' => 'rich-text',
-                                'nodes' => '<svg xmlns="http://www.w3.org/2000/svg" class="icon w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><line x1="5" y1="12" x2="19" y2="12"></line><line x1="5" y1="12" x2="11" y2="18"></line><line x1="5" y1="12" x2="11" y2="6"></line></svg>'
-                            ],
-                            '返回'
-                        ]
-                    ] : [],
-                    [
-                        'nodeName' => 'div',
-                        'class' => 'text-base lg:block hidden',
-                        'child' => $this->title ?: '列表数据'
-                    ]
-                ]
             ];
         }
 
@@ -361,40 +334,8 @@ class Node
             ],
             [
                 'nodeName' => 'div',
-                'class' => 'flex-none flex lg:flex-row flex-col gap-4 bg-white p-4 rounded shadow-sm lg:shadow-none lg:p-0 mt-1 lg:mt-0',
-                'child' => [
-                    $this->quickFilter ? [
-                        'nodeName' => 'div',
-                        'class' => 'flex gap-2 lg:flex-row flex-col',
-                        'child' => $this->quickFilter
-                    ] : [],
-                    $this->action ? [
-                        'nodeName' => 'div',
-                        'class' => 'flex gap-2 lg:flex-row flex-col',
-                        'child' => $this->action
-                    ] : []
-                ]
-            ]
-        ];
-    }
-
-    public function sortableNode()
-    {
-        $this->params['selectable'] = true;
-        $this->params['draggable'] = true;
-        $this->params['default-expand-all'] = true;
-        
-        $this->class .= ' mt-4';
-        return [
-            'nodeName' => 'div',
-            'child' => [
-                'nodeName' => 'app-tree',
-                'class' => $this->class,
-                'n-params' => $this->params,
-                'url' => $this->url,
-                'sortUrl' => $this->sortable,
-                'columns' => $this->columns,
-                'vBind:filter' => 'data.filter',
+                'class' => 'flex-none flex gap-2',
+                'child' => array_filter(array_merge($this->quickFilter, $this->action))
             ]
         ];
     }
@@ -404,26 +345,44 @@ class Node
      */
     public function tableNode()
     {
-        $this->params['vBind:row-key'] = "row => row['$this->key']";
-        $this->params['bottom-bordered'] = false;
+        // 指定行key
+        $this->params['row-key'] = $this->key;
+
+        // 设置扩展行
+        if ($this->expand) {
+            $this->params['vChild:expandable'] = $this->expand;
+        }
+
+        // 分组表头线
+        $children = false;
+        foreach ($this->columns as $col) {
+            if ($col['children']) {
+                $children = true;
+                break;
+            }
+        }
+        if ($children) {
+            $this->params['bordered'] = [
+                'headerCell' => true
+            ];
+        }
+
         return [
             'nodeName' => 'app-table',
+            'requestEventName' => url_class($this->url)['class'],
             'class' => $this->class,
             'url' => $this->url,
             'urlBind' => true,
             'n-params' => $this->params,
             'columns' => $this->columns,
             'vBind:filter' => 'data.filter',
-            'page-prefix' => $this->bath,
-            'table-layout' => 'fixed',
+            'select' => $this->bath ? true : false,
+            'table-layout-fixed' => true,
             'child' => [
-                [
-                    'vSlot:empty' => '',
-                    'nodeName' => 'app-empty',
-                    'title' => '暂无数据',
-                    'content' => '暂未找到数据，您可以尝试重新加载'
-
-                ]
+                'vSlot:footer' => 'footer',
+                'nodeName' => 'div',
+                'class' => 'flex gap-2',
+                'child' => $this->bath
             ]
         ];
     }
@@ -434,87 +393,73 @@ class Node
      */
     public function render()
     {
-        $this->script[] = <<<JS
-            const dataRef = {}
-            setTimeout(() => {
-                if (dataRef.value) {
-                    dataRef.value.setShow(true)
-                    setTimeout(() => {
-                        const filter = document.querySelector('.filter-popover')
-                        setTimeout(() => {
-                            if (filter) {
-                                filter.classList.remove('hidden')
-                            }
-                        }, 300);
-                    dataRef.value.setShow(false)
-                    }, 50)
-                }
-            }, 50)
-        JS;
-        $this->scriptReturn[] = 'dataRef';
 
-        $showNode = $this->showNode();
+        clock($this->sideSize);
+        /*$this->script[] = <<<JS
+        JS;
+        $this->scriptReturn[] = 'dataRef';*/
+
+        $value = [
+            'filter' => $this->data['filter'] ?: [],
+            'show' => $this->data['show'] ?: []
+        ];
+        $value = array_merge($this->scriptData, $value);
+
+
+
         return [
             'node' => [
                 'nodeName' => 'app-form',
-                'value' => [
-                    'filter' => $this->data['filter'] ?: [],
-                    'show' => $this->data['show'] ?: []
-                ],
+                'value' => $value,
                 'child' => [
                     'nodeName' => 'div',
-                    'class' => 'flex lg:h-screen',
+                    'class' => 'flex h-screen',
                     'vSlot' => '{value: data}',
                     'child' => [
                         $this->side['left'] ? [
-                            'nodeName' => 'div',
-                            'class' => 'border-r border-gray-200 flex-none bg-white overflow-auto app-scrollbar',
+                            'nodeName' => isset($this->sideSize['left']) ? 'a-resize-box' : 'div',
+                            'style' => $this->sideSize['left'] ? 'width:' . $this->sideSize['left'] : '',
+                            'directions' => ['right'],
+                            'class' => 'border-r border-gray-200 dark:border-gray-700 flex-none bg-white dark:bg-blackgray-4 h-screen',
                             'child' => $this->side['left']
                         ] : [],
+
                         [
-                            'nodeName' => 'div',
-                            'class' => 'flex-grow w-10 flex flex-col',
+                            'nodeName' => 'app-layout',
+                            'class' => 'flex-grow w-10',
+                            'title' => $this->title ?: '列表数据',
                             'child' => [
                                 [
+                                    'vSlot' => '',
                                     'nodeName' => 'div',
-                                    'class' => 'flex-none flex lg:flex-row flex-col gap-2 lg:items-center p-4 pb-0 lg:pb-4 lg:border-b lg:border-gray-300 lg:bg-white lg:shadow-sm z-10',
-                                    'child' => $this->headNode()
-                                ],
-                                [
-                                    'nodeName' => 'div',
-                                    'class' => 'flex-grow bg-gray-100 overflow-auto app-scrollbar',
+                                    'class' => 'flex flex-row items-start gap-4 p-4',
                                     'child' => [
-                                        'nodeName' => 'div',
-                                        'class' => 'p-5',
-                                        'child' => [
-                                            $this->header,
-                                            [
-                                                'nodeName' => 'div',
-                                                'class' => 'hidden lg:flex justify-end gap-2',
-                                                'child' => $showNode
+                                        $this->page['left'] ?: [],
+                                        [
+                                            'nodeName' => 'div',
+                                            'class' => 'flex-grow lg:w-10 p-4 bg-white dark:bg-blackgray-4 rounded shadow',
+                                            'child' => [
+                                                [
+                                                    'nodeName' => 'div',
+                                                    'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
+                                                    'child' => $this->headNode()
+
+                                                ],
+                                                $this->tableNode()
                                             ],
-                                            [
-                                                'nodeName' => 'div',
-                                                'class' => 'flex flex-col lg:flex-row lg:items-start gap-4',
-                                                'child' => [
-                                                    $this->page['left'] ?: [],
-                                                    [
-                                                        'nodeName' => 'div',
-                                                        'class' => 'flex-grow lg:w-10',
-                                                        'child' => $this->sortable ? $this->sortableNode() : $this->tableNode(),
-                                                    ],
-                                                    $this->page['right'] ?: [],
-                                                ]
-                                            ],
-                                            $this->footer,
-                                        ]
+                                        ],
+                                        $this->page['right'] ?: [],
                                     ]
                                 ]
                             ]
                         ],
+
+
                         $this->side['right'] ? [
-                            'nodeName' => 'div',
-                            'class' => 'overflow-auto app-scrollbar border-l border-gray-200 flex-none bg-white',
+                            'nodeName' => isset($this->sideSize['right']) ? 'a-resize-box' : 'div',
+                            'style' => $this->sideSize['right'] ? 'width:' . $this->sideSize['left'] : '',
+                            'directions' => ['left'],
+                            'class' => 'border-l border-gray-200 dark:border-gray-700 flex-none bg-white dark:bg-blackgray-4 h-screen',
                             'child' => $this->side['right']
                         ] : [],
                     ]

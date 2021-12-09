@@ -17,7 +17,9 @@ class Cascader extends Element implements Component
     protected bool $tip = false;
     protected bool $multi = false;
     protected bool $leaf = true;
+    protected bool $treeData = false;
     protected string $url = '';
+    protected string $route = '';
     protected $data;
 
     /**
@@ -65,6 +67,18 @@ class Cascader extends Element implements Component
     }
 
     /**
+     * 搜索选择
+     * @param string $route
+     * @return $this
+     */
+    public function route(string $route, $params = []): self
+    {
+        $this->route = $route;
+        $this->url = app_route($route, $params);
+        return $this;
+    }
+
+    /**
      * 多选组件
      * @return $this
      */
@@ -84,6 +98,12 @@ class Cascader extends Element implements Component
         return $this;
     }
 
+    public function tree($bool = true)
+    {
+        $this->treeData = $bool;
+        return $this;
+    }
+
     /**
      * 渲染组件
      * @return string
@@ -99,34 +119,43 @@ class Cascader extends Element implements Component
             $data = $this->data;
         }
 
-        $options = [];
-        foreach ($data as $vo) {
-            $options[] = [
-                'id' => $vo['id'],
-                'pid' => $vo['pid'],
-                'value' => $vo['id'],
-                'label' => $vo['name'],
-            ];
+        if (!$this->treeData) {
+            $options = [];
+            foreach ($data as $vo) {
+                $options[] = [
+                    'id' => $vo['id'],
+                    'pid' => $vo['pid'],
+                    'value' => $vo['id'],
+                    'label' => $vo['name'],
+                ];
+            }
+
+            $options = \Duxravel\Core\Util\Tree::arr2tree($options, 'id', 'pid', 'children');
+
+        } else {
+            $options = $data;
         }
 
-        $options = \Duxravel\Core\Util\Tree::arr2tree($options, 'id', 'pid', 'children');
 
         $data = [
             'nodeName' => 'app-cascader',
-            'class' => 'shadow-sm',
+            //'class' => 'shadow-sm',
             'nParams' => [
-                'cascade' => true,
-                'show-path' => true,
-                'filterable' => false,
-                'clearable' => true,
-                'leaf-only' => $this->leaf,
+                //'cascade' => true,
+                //'show-path' => true,
+                //'filterable' => false,
+                //'clearable' => true,
+                //'leaf-only' => $this->leaf,
                 'multiple' => $this->multi,
                 'options' => $options,
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+
             ]
         ];
 
-        if ($this->url) {
+        if ($this->route) {
+            $data['vBind:dataUrl'] = $this->url;
+        } else {
             $data['dataUrl'] = $this->url;
         }
 
@@ -137,24 +166,15 @@ class Cascader extends Element implements Component
         return $data;
     }
 
-    /**
-     * 获取数据值
-     * @param $value
-     * @return array|false|string[]|null
-     */
     public function dataValue($value)
     {
-        return $this->multi ? $this->getValueArray($value) : $this->getValue($value);
+        return $this->multi ? array_values(array_filter((array)$this->getValueArray($value))) : $this->getValue($value);
     }
 
-    /**
-     * 获取输入内容
-     * @param $data
-     * @return string
-     */
-    public function dataInput($data): ?string
+    public function dataInput($data)
     {
         return is_array($data) ? implode(',', $data) : $data;
     }
+
 
 }

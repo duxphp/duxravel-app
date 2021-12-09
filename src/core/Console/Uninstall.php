@@ -54,6 +54,13 @@ class Uninstall extends Command
                 ]);
             }
         }
+
+        // 静态文件卸载
+        $dir = public_path('static/' . strtolower($name));
+        if (is_dir($dir)) {
+            \File::deleteDirectory($dir);
+        }
+
         $this->callSilent('app:build');
         $this->info('Application uninstalled successfully');
     }

@@ -46,7 +46,7 @@ class Images extends Widget
         }
         $innerHtml = implode('', $inner);
         return <<<HTML
-            <div {$this->toElement()}>
+            <div>
                 $innerHtml
             </div>
         HTML;

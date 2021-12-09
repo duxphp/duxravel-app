@@ -66,5 +66,16 @@ class View
         return view($view ?: $this->tpl, $assign);
     }
 
+    public static function manage()
+    {
+        $manifest = json_decode(file_get_contents(public_path('static/manage-manifest.json')), true);
 
+        $mainJs = $manifest['src/main.js']['file'];
+        $mainCss = $manifest['src/main.js']['css'][0];
+
+        return response()->view('vendor.duxphp.duxravel-app.src.core.Views.manage', [
+            'mainJs' => $mainJs,
+            'mainCss' => $mainCss
+        ]);
+    }
 }

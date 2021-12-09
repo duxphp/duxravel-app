@@ -11,7 +11,19 @@ class Link implements Component
 {
 
     private array $link;
+    private array $fields;
     private array $routes = [];
+
+    /**
+     * 设置数据列字段
+     * @param array $fields
+     * @return void
+     */
+    public function fields(Array $fields = [])
+    {
+        $this->fields = $fields;
+        return $this;
+    }
 
     /**
      * 添加条目
@@ -23,33 +35,11 @@ class Link implements Component
     {
         $label = $route . '?' . http_build_query($params);
         $link = new \Duxravel\Core\UI\Widget\Link($name, $route, $params);
-        $link = $link->model('rowData');
+        $link->fields($this->fields);
+        $link = $link->model('rowData.record');
         $this->link[] = $link;
-        $this->routes[$label] = [
-            'route' => $route,
-            'params' => $params
-        ];
         return $link;
     }
-
-    /**
-     * 获取数据
-     * @param $rowData
-     * @return array
-     */
-    public function getData($rowData)
-    {
-        $urls = [];
-        foreach ($this->routes as $key => $vo) {
-            $params = [];
-            foreach ($vo['params'] as $k => $v) {
-                $params[$k] = Tools::parsingArrData($rowData, $v, true);
-            }
-            $urls[$key] = route($vo['route'], $params, false);
-        }
-        return $urls;
-    }
-
 
     /**
      * @param $value
@@ -60,16 +50,35 @@ class Link implements Component
     {
         $link = [];
         foreach ($this->link as $class) {
+
+            $type = $class->getType();
+            $typeConfig = $class->getTypeConfig();
+
+            $data = $class->render();
+
+            if ($type === 'ajax' && (!$data['vBind:before'] || !$data['before'])) {
+                $data['vBind:before'] = "() => rowData.record.__loading = true";
+            }
+
+            if ($type === 'ajax' && (!$data['vBind:after'] || !$data['after'])) {
+                $data['vBind:after'] = "() => rowData.record.__loading = false";
+            }
+
             $link[] = [
                 'nodeName' => 'span',
-                'child' => $class->render()
+                'child' => $data
             ];
         }
+
         $link = array_filter($link);
         return [
-            'nodeName' => 'div',
-            'class' => 'inline-flex gap-4',
-            'child' => $link
+            'nodeName' => 'a-spin',
+            'vBind:loading' => 'rowData.record.__loading',
+            'child' => [
+                'nodeName' => 'div',
+                'class' => 'inline-flex gap-2',
+                'child' => $link
+            ]
         ];
     }
 

@@ -85,27 +85,19 @@ class Radio extends Element implements Component
         $child = [];
         foreach ($data as $key => $vo) {
             $child[] = [
-                'nodeName' => 'n-radio',
+                'nodeName' => 'a-radio',
                 'child' => $vo,
-                'key' => $key,
+                //'key' => $key,
                 'value' => $key,
             ];
         }
 
         $data = [
-            'nodeName' => 'n-radio-group',
+            'nodeName' => 'a-radio-group',
             'name' => $this->field,
-            'vModel:value' => $this->getModelField(),
-            'child' => [
-                'nodeName' => 'n-space',
-                'class' => 'flex',
-                'child' => $child
-            ]
+            'vModel:modelValue' => $this->getModelField(),
+            'child' => $child
         ];
-
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
-        }
 
         return $data;
     }

@@ -2,6 +2,14 @@
 
 namespace Duxravel\Core\Manage;
 
+use Duxravel\Core\Events\ManageTable;
+use Duxravel\Core\Events\ManageForm;
+use Duxravel\Core\Events\ManageStatus;
+use Duxravel\Core\Events\ManageClear;
+use Duxravel\Core\Events\ManageRecovery;
+use Duxravel\Core\Events\ManageExport;
+use Duxravel\Core\Events\ManageDel;
+use Duxravel\Core\UI\Event;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -30,14 +38,14 @@ trait Expend
     public function index()
     {
         $table = $this->table();
-        app_hook('Manage', 'table', ['class' => get_called_class(), 'table' => &$table]);
+        event(new ManageTable(get_called_class(), $table));
         return $table->render();
     }
 
     public function ajax()
     {
         $table = $this->table();
-        app_hook('Manage', 'table', ['class' => get_called_class(), 'table' => &$table]);
+        event(new ManageTable(get_called_class(), $table));
         return $table->renderAjax();
     }
 
@@ -45,14 +53,14 @@ trait Expend
     {
         if ($id) {
             $this->can('edit');
-        }else {
+        } else {
             $this->can('add');
         }
         $form = $this->form($id);
         if ($id && $form->modelElo()) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
-        app_hook('Manage', 'form', ['class' => get_called_class(), 'table' => &$form]);
+        event(new ManageForm(get_called_class(), $form));
         return $form->render();
     }
 
@@ -60,30 +68,35 @@ trait Expend
     {
         if ($id) {
             $this->can('edit');
-        }else {
+        } else {
             $this->can('add');
         }
         $form = $this->form($id);
         if ($id && $form->modelElo) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
-        app_hook('Manage', 'form', ['class' => get_called_class(), 'table' => &$form]);
+        event(new ManageForm(get_called_class(), $form));
         $data = $form->save();
         if ($data instanceof Collection && method_exists($this, 'storeData')) {
-            $this->storeData($data, $id);
+            $data = $this->storeData($data, $id);
+        }
+
+        $data = [];
+        if (method_exists($this, 'table')) {
+            $data = $form->callbackEvent($this->table(), get_called_class(), $id ? 'edit' : 'add');
         }
 
         if ($this->indexUrl === null) {
             if ($form->getDialog()) {
-                $action = "routerPush:";
-            }else {
+                $action = $data ? '' : "routerPush:";
+            } else {
                 $action = '/' . \Str::beforeLast(request()->path(), '/save');
             }
-        }
-        else {
+        } else {
             $action = $this->indexUrl;
         }
-        return app_success('保存记录成功', [], $action);
+
+        return app_success('保存记录成功', $data, $action);
     }
 
     public function del($id = 0)
@@ -103,22 +116,26 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
-        app_hook('Manage', 'del', ['class' => get_called_class(), 'id' => $id]);
+        event(new ManageDel(get_called_class(), $id));
         if ($this->model) {
-            $status = $this->model::find($id)->destroy($id);
+            $status = $this->model::destroy($id);
         }
         if (!$status) {
             DB::rollBack();
             app_error('删除记录失败');
         }
         DB::commit();
-        return app_success('删除记录成功');
+
+        $action = '';
+        //$action = "routerPush:";
+
+        return app_success('删除记录成功', (new Event(get_called_class()))->add('del', $id)->render(), $action);
     }
 
     public function export()
     {
         $table = $this->table();
-        app_hook('Manage', 'export', ['class' => get_called_class(), 'table' => &$table]);
+        event(new ManageExport(get_called_class(), $table));
         if (!method_exists($this, 'exportData')) {
             app_error('', 404);
         }
@@ -135,7 +152,7 @@ trait Expend
         if (!$id) {
             app_error('参数错误');
         }
-        app_hook('Manage', 'recovery', ['class' => get_called_class(), 'id' => $id]);
+        event(new ManageRecovery(get_called_class(), $id));
         if ($this->model) {
             $this->model::withTrashed()->find($id)->restore();
         }
@@ -159,7 +176,7 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
-        app_hook('Manage', 'clear', ['class' => get_called_class(), 'id' => $id]);
+        event(new ManageClear(get_called_class(), $id));
         if ($this->model) {
             $info->forceDelete();
         }
@@ -183,7 +200,7 @@ trait Expend
         $model = $this->model::find($id);
         $model->{$field} = $value;
         $model->save();
-        app_hook('Manage', 'status', ['class' => get_called_class(), 'id' => $id]);
+        event(new ManageStatus(get_called_class(), $id));
         return app_success('更改状态成功');
     }
 
@@ -191,7 +208,7 @@ trait Expend
     public function data()
     {
         $name = request()->get('query');
-        $limit = request()->get('limit', 10);
+        $limit = request()->get('limit', 20);
         $id = request()->get('id');
         $data = new $this->model();
         $key = $data->getKeyName();
@@ -225,6 +242,7 @@ trait Expend
 
         $totalPage = $data->lastPage();
         $data = $data->toArray();
+        $total = $data['total'];
 
         $manageUrl = false;
         if (method_exists($this, 'dataManageUrl')) {
@@ -245,8 +263,9 @@ trait Expend
 
         return app_success('ok', [
             'data' => $data['data'],
-            'total' => $data['total'],
-            'page' => $totalPage
+            'total' => $total,
+            'pageSize' => $limit,
+            'totalPage' => $totalPage,
         ]);
     }
 }

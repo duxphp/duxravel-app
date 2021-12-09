@@ -32,7 +32,7 @@ class Installer extends LibraryInstaller
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
         if (!$repo->hasPackage($initial)) {
-            throw new \InvalidArgumentException('Package is not installed: '.$initial);
+            throw new \InvalidArgumentException('Package is not installed: ' . $initial);
         }
 
         $this->initializeVendorDir();
@@ -51,14 +51,8 @@ class Installer extends LibraryInstaller
             $repo->removePackage($initial);
             if (!$repo->hasPackage($target)) {
                 $repo->addPackage(clone $target);
-
                 $config = $this->getAppConfig($target);
-                if ($config['type'] === 'app') {
-                    $this->process->execute('php artisan app:install ' . $config['name']);
-                }
-                if ($config['type'] === 'static') {
-                    $this->process->execute('php artisan app:install-static ' . $config['name']);
-                }
+                $this->process->execute('php artisan app:install ' . $config['name']);
             }
         });
     }
@@ -66,12 +60,7 @@ class Installer extends LibraryInstaller
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         $config = $this->getAppConfig($package);
-        if ($config['type'] === 'app') {
-            $this->process->execute('php artisan app:uninstall ' . $config['name']);
-        }
-        if ($config['type'] === 'static') {
-            $this->process->execute('php artisan app:uninstall-static ' . $config['name']);
-        }
+        $this->process->execute('php artisan app:uninstall ' . $config['name']);
         return parent::uninstall($repo, $package);
     }
 
@@ -83,13 +72,7 @@ class Installer extends LibraryInstaller
     public function getInstallPath(PackageInterface $package)
     {
         $config = $this->getAppConfig($package);
-
-        if ($config['type'] === 'app') {
-            return './modules/' . ucfirst($config['name']);
-        }
-        if ($config['type'] === 'theme') {
-            return './public/themes/' . strtolower($config['name']);
-        }
+        return './modules/' . ucfirst($config['name']);
         return parent::getInstallPath($package);
     }
 
@@ -104,8 +87,7 @@ class Installer extends LibraryInstaller
             throw new \InvalidArgumentException('Duxravel extension information does not exist');
         }
         $name = $extra['name'];
-        $type = $extra['type'];
-        if (!$name || !$type) {
+        if (!$name) {
             throw new \InvalidArgumentException('Duxravel is missing an extension parameter');
         }
         $this->config = $extra;

@@ -25,18 +25,19 @@ class Table
 {
     public ?Eloquent $model = null;
     public ?ModelAgent $query = null;
+    public array $fields = [];
     protected ?Collection $columns = null;
     protected ?Collection $filters = null;
     protected ?Collection $filtersType = null;
     protected ?Action $action = null;
     protected ?Batch $batch = null;
+    protected array $expand = [];
     protected string $tableMode = 'list';
     protected array $class = [];
     protected array $rows = [];
     protected array $map = [];
     protected array $filterParams = [];
-    protected array $filterShow = [];
-    protected string $ajax = '';
+    protected string $url = '';
     protected string $key = '';
     protected ?bool $dialog = null;
     protected string $title = '';
@@ -44,13 +45,13 @@ class Table
     protected array $footerNode = [];
     protected array $sideNode = [];
     protected array $pageNode = [];
-    protected string $sortable = '';
     protected bool $tree = false;
     protected bool $back = false;
     protected int $limit = 20;
     protected array $attr = [];
     protected $script = [];
     protected $scriptReturn = [];
+    protected $scriptData = [];
     protected ?\Closure $dataCallback = null;
     protected $data;
 
@@ -63,6 +64,7 @@ class Table
         if ($data instanceof Eloquent) {
             $this->model = $data;
             $this->query = new ModelAgent($data);
+            $this->fields = \Schema::getColumnListing($data->getTable());
         } else {
             $this->data = $data;
         }
@@ -106,6 +108,22 @@ class Table
     }
 
     /**
+     * 展开行
+     * @param string $title
+     * @param array $node
+     * @param int $width
+     */
+    public function expand($title = '', $node = [], $width = 100)
+    {
+        $this->expand = [
+            'title' => $title,
+            'width' => $width,
+            'vRender:expandedRowRender:rowData' => $node
+
+        ];
+    }
+
+    /**
      * 添加列参数
      * @param $name
      * @param $label
@@ -115,6 +133,7 @@ class Table
     protected function addColumn($name, $label, $callback): Column
     {
         $column = new Column($name, $label, $callback);
+        $column->setLayout($this);
         return tap($column, function ($value) {
             $this->columns->push($value);
         });
@@ -194,15 +213,6 @@ class Table
     }
 
     /**
-     * 筛选展示
-     */
-    public function filterShow($key, $value): self
-    {
-        $this->filterShow[$key] = $value;
-        return $this;
-    }
-
-    /**
      * 自定义头
      * @param string|callable|object $callback
      * @return $this
@@ -228,13 +238,17 @@ class Table
      * 自定义侧边
      * @param $callback
      * @param string $direction
+     * @param false $resize
+     * @param string $width
      * @return $this
      */
-    public function side($callback, string $direction = 'left'): self
+    public function side($callback, string $direction = 'left', bool $resize = false, string $width = '100px'): self
     {
         $this->sideNode[] = [
             'callback' => $callback,
-            'direction' => $direction
+            'direction' => $direction,
+            'resize' => $resize,
+            'width' => $width
         ];
         return $this;
     }
@@ -301,7 +315,10 @@ class Table
      */
     public function filterType(string $name, callable $where = null): FilterType
     {
-        $filterType = new \Duxravel\Core\UI\Table\FilterType($name, $where);
+        if (!isset($this->filterParams['type'])) {
+            $this->filterParams('type', request()->get('type', 0));
+        }
+        $filterType = new \Duxravel\Core\UI\Table\FilterType($name, $where, $this->filterParams['type']);
         $filterType->setLayout($this);
         return tap($filterType, function ($value) {
             $this->filtersType->push($value);
@@ -343,14 +360,12 @@ class Table
     }
 
     /**
-     * 表格排序
-     * @param string $url
-     * @return $this
+     * 树形状态
+     * @return bool
      */
-    public function sortable($url): self
+    public function getTree()
     {
-        $this->sortable = $url;
-        return $this;
+        return $this->tree;
     }
 
     /**
@@ -439,20 +454,44 @@ class Table
     }
 
     /**
-     * ajax表单
+     * url数据
      * @param string $url
      * @return $this
      */
-    public function ajax(string $url = ''): self
+    public function url(string $url = ''): self
     {
-        $this->ajax = $url;
+        $this->url = $url;
         return $this;
     }
 
+    /**
+     * 获取Url
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $content
+     * @param string $return
+     * @return $this
+     */
     public function script($content = '', $return = ''): self
     {
         $this->script[] = $content;
         $this->scriptReturn[] = $return;
+        return $this;
+    }
+
+    /**
+     * @param $data
+     * @return $this
+     */
+    public function scriptData($data): self
+    {
+        $this->scriptData = array_merge($this->scriptData, $data);
         return $this;
     }
 
@@ -496,9 +535,6 @@ class Table
     public function renderColumn()
     {
         $columnNode = $this->getColumns()->map(function ($column, $key) {
-            if (!Tools::isAuth($column->getAuth())) {
-                return null;
-            }
             $render = $column->getRender();
             if (!empty($render)) {
                 $render['sort'] = $render['sort'] ?? $key;
@@ -545,9 +581,6 @@ class Table
         }
         // 表格列节点
         $columnNode = $this->getColumns()->map(function ($column, $key) {
-            if (!Tools::isAuth($column->getAuth())) {
-                return null;
-            }
             $render = $column->getRender();
             if (!empty($render)) {
                 $render['sort'] = $render['sort'] ?? $key;
@@ -556,28 +589,31 @@ class Table
         })->filter()->sortBy('sort')->values()->toArray();
 
         $keyName = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
-        $node = new Node($this->ajax ?: url(request()->path() . '/ajax'), $keyName, $this->title);
+        $node = new Node($this->url ?: url(request()->path() . '/ajax'), $keyName, $this->title);
         $node->class(implode(' ', $this->class));
         $node->mode($this->tableMode);
         $node->dialog((bool)$this->dialog);
         $node->params($this->attr);
-        $node->data($this->filterParams, $this->filterShow);
+        $node->data($this->filterParams);
         $node->columns($columnNode);
-        $node->sortable($this->sortable);
+        $node->expand($this->expand);
         $node->back($this->back);
 
         foreach ($this->script as $key => $value) {
             $node->script($value, $this->scriptReturn[$key]);
+        }
+        if ($this->scriptData) {
+            $node->scriptData($this->scriptData);
         }
 
         $node->type($typeNode);
         $node->quickFilter($quickNode);
         $node->filter($filterNode);
         foreach ($this->sideNode as $vo) {
-            $node->side($vo['callback'], $vo['direction']);
+            $node->side($vo['callback'], $vo['direction'], $vo['resize'], $vo['width']);
         }
         foreach ($this->pageNode as $vo) {
-            $node->page($vo['callback'], $vo['direction']);
+            $node->page($vo['callback'], $vo['direction'], $vo['resize'], $vo['width']);
         }
 
         if ($actionNode) {
@@ -598,6 +634,9 @@ class Table
         $this->filters->map(function ($filter) {
             $filter->execute($this->query);
         });
+        $this->filtersType->map(function ($filter, $key) {
+            $filter->execute($this->query, $key);
+        });
 
         // 列筛选数据
         if ($this->columns) {
@@ -616,7 +655,7 @@ class Table
         // 查询列表
         if ($this->query) {
             $data = $this->query;
-            if ($this->tree || $this->sortable) {
+            if ($this->tree) {
                 $data = $data->paginate(99999)->eloquent();
                 $data->setCollection($data->getCollection()->toTree());
             } else {
@@ -624,24 +663,23 @@ class Table
             }
         } else {
             $data = $this->paginateCollection($this->data, $limit);
-            if ($this->tree || $this->sortable) {
+            if ($this->tree) {
                 $data->setCollection(collect(Tree::arr2table($data->getCollection()->toArray(), $key, 'parent_id')));
             }
         }
         if ($this->dataCallback) {
-            $data->setCollection(call_user_func($this->dataCallback, $data->getCollection()));
+            $dataCallback = call_user_func($this->dataCallback, $data->getCollection());
+            $data->setCollection($dataCallback);
         }
 
         $totalPage = $data->lastPage();
         $page = $data->currentPage();
+        $total = $data->total();
 
 
         $columns = [];
         if ($this->columns) {
             $columns = $this->columns->map(function ($column) {
-                if (!Tools::isAuth($column->getAuth())) {
-                    return null;
-                }
                 return $column;
             })->filter();
         }
@@ -651,7 +689,7 @@ class Table
         $this->map[] = $key;
 
         // 排序自动设置key
-        if ($this->sortable || $this->tree) {
+        if ($this->tree) {
             $this->map['key'] = $key;
         }
 
@@ -659,8 +697,37 @@ class Table
 
         return app_success('ok', [
             'data' => $resetData,
+            'total' => $total,
+            'pageSize' => $limit,
             'totalPage' => $totalPage,
         ]);
+    }
+
+    /**
+     * 渲染行数据
+     */
+    public function renderRowData(Collection $data, bool $tree = true)
+    {
+        if ($this->dataCallback) {
+            $data = call_user_func($this->dataCallback, $data);
+        }
+        $key = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
+        $columns = [];
+        if ($this->columns) {
+            $columns = $this->columns->map(function ($column) {
+                return $column;
+            })->filter();
+        }
+        // 设置行数据回调
+        $this->map[] = $key;
+
+        // 排序自动设置key
+        if ($this->tree) {
+            $this->map['key'] = $key;
+        }
+        $resetData = $this->formatData($data, $columns, $tree);
+        return $resetData;
+
     }
 
     /**
@@ -668,7 +735,7 @@ class Table
      * @param $columns
      * @return array
      */
-    private function formatData($data, $columns)
+    private function formatData($data, $columns, $tree = true)
     {
         $resetData = [];
         foreach ($data as $vo) {
@@ -692,8 +759,8 @@ class Table
                     $rowData[is_int($k) ? $v : $k] = is_callable($v) ? call_user_func($v, $vo) : $vo[$v];
                 }
             }
-            if ($vo['children']) {
-                $rowData['children'] = $this->formatData($vo['children'], $columns);
+            if ($vo['children'] && $tree) {
+                $rowData['children'] = $this->formatData($vo['children'], $columns, $tree);
             }
             $resetData[] = $rowData;
         }

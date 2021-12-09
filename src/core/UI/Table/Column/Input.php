@@ -54,8 +54,8 @@ class Input implements Component
         return [
             'nodeName' => 'n-input',
             'class' => 'shadow-sm',
-            'vModel:value' => "rowData['$field']",
-            'vOn:blur' => "editValue(rowData['$this->label'], {'field': '$this->field', '$this->field': rowData['$field']})",
+            'vModel:value' => "rowData.record['$field']",
+            'vOn:blur' => "editValue(rowData.record['$this->label'], {'field': '$this->field', '$this->field': rowData.record['$field']})",
         ];
     }
 

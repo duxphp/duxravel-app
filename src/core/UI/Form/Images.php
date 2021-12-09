@@ -14,6 +14,7 @@ use Duxravel\Core\UI\Tools;
  */
 class Images extends Element implements Component
 {
+    protected string $type = 'manage';
     /**
      * Text constructor.
      * @param  string  $name
@@ -27,6 +28,12 @@ class Images extends Element implements Component
         $this->has = $has;
     }
 
+    public function type($type = 'manage')
+    {
+        $this->type = $type;
+        return $this;
+    }
+
     /**
      * 渲染组件
      * @param $value
@@ -35,9 +42,11 @@ class Images extends Element implements Component
     public function render($value)
     {
         $data = [
-            'nodeName' => 'app-files',
-            'image' => true
+            'nodeName' => 'app-images',
         ];
+        if ($this->type) {
+            $data['type'] = $this->type;
+        }
         if ($this->model) {
             $data['vModel:value'] = $this->getModelField();
         }

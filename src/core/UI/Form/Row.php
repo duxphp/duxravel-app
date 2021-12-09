@@ -42,7 +42,6 @@ class Row extends Composite implements Component
      */
     public function render($value)
     {
-        $this->class('grid lg:grid-flow-col gap-4');
         $inner = [];
         foreach ($this->column as $vo) {
             $width = $vo['width'] ? "lg:row-span-{$vo['width']}" : '';
@@ -56,7 +55,7 @@ class Row extends Composite implements Component
 
         return [
             'nodeName' => 'div',
-            'class' => $this->getClass(),
+            'class' => 'grid lg:grid-flow-col gap-4',
             'child' => $inner
         ];
     }

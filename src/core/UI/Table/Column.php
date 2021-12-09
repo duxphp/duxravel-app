@@ -28,7 +28,6 @@ class Column
     protected ?\Closure $callback = null;
     protected array $node = [];
     protected array $attr = [];
-    protected array $class = [];
     protected array $function = [];
     protected array $children = [];
     protected $width = '';
@@ -38,7 +37,6 @@ class Column
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
     protected ?int $sort = null;
-    protected string $auth = '';
     protected $sorter = null;
     protected $layout;
     protected $relation;
@@ -125,30 +123,6 @@ class Column
     }
 
     /**
-     * 设置样式
-     * @param string $name
-     * @param string $value
-     * @return $this
-     */
-    public function style(string $name, string $value): self
-    {
-        $this->style[$name] = $value;
-        return $this;
-    }
-
-    /**
-     * 设置头样式
-     * @param string $name
-     * @param string $value
-     * @return $this
-     */
-    public function headerStyle(string $name, string $value): self
-    {
-        $this->headerStyle[$name] = $value;
-        return $this;
-    }
-
-    /**
      * 设置样式类
      * @param string $class
      * @return $this
@@ -182,13 +156,6 @@ class Column
         return $this;
     }
 
-    public function expand($node)
-    {
-        $this->attr['type'] = 'expand';
-        $this->attr['renderExpand:rowData, rowIndex'] = $node;
-        return $this;
-    }
-
     /**
      * 添加链接
      * @param string $name
@@ -200,6 +167,7 @@ class Column
     {
         if (!$this->element) {
             $this->element = new Table\Column\Link();
+            $this->element->fields($this->layout->fields);
         }
         return $this->element->add($name, $route, $params);
     }
@@ -307,30 +275,6 @@ class Column
     }
 
     /**
-     * 列权限
-     * @param $name
-     * @return $this
-     */
-    public function can($name): self
-    {
-        if (strpos($name, '.') !== false) {
-            $this->auth = $name;
-        } else {
-            $this->auth = \Request::route()->getName() . '|' . $name;
-        }
-        return $this;
-    }
-
-    /**
-     * 获取权限数据
-     * @return string
-     */
-    public function getAuth(): string
-    {
-        return $this->auth;
-    }
-
-    /**
      * 列合并
      * @param int $num
      * @return $this
@@ -354,7 +298,7 @@ class Column
      */
     public function getLabel()
     {
-        return $this->relation ? $this->relation . '.' . $this->label : $this->label;
+        return $this->relation ? $this->relation . '_' . $this->label : $this->label;
     }
 
     /**
@@ -372,9 +316,9 @@ class Column
 
         $node = [
             'title' => $this->name,
-            'key' => $this->getLabel(),
+            'dataIndex' => $this->getLabel(),
             'width' => $this->width,
-            'className' => Tools::toClass($this->class),
+            'className' => implode(' ', $this->class),
             'colSpan' => $this->colspan,
             'sort' => $this->sort,
             'align' => $this->align,
@@ -393,7 +337,7 @@ class Column
         }
 
         if ($this->sorter) {
-            $node['sorter'] = true;
+            $node['vBind:sortable'] = 'colSortable';
         }
 
         if ($render) {

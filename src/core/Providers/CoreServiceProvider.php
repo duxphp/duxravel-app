@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Providers;
 
+use Duxravel\Core\Events\App;
 use Duxravel\Core\Util\Build;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,6 +34,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
 
         // 调用系统扩展
-        app_hook('App', 'extend');
+        event(new App);
     }
 }

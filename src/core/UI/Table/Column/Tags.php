@@ -41,7 +41,7 @@ class Tags implements Component
         $node = [];
         foreach ($tagsArr as $key => $vo) {
             $item = (new Badge($vo['name']))->color($vo['color'])->render();
-            $item['vIf'] = "~rowData['{$label}'].indexOf(". (is_numeric($key) ? $key : "'$key'") .")";
+            $item['vIf'] = "~rowData.record['{$label}'].indexOf(". (is_numeric($key) ? $key : "'$key'") .")";
             $node[] = $item;
         }
 

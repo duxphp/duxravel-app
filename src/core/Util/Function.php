@@ -13,7 +13,7 @@ if (!function_exists("app_success")) {
     function app_success(string $msg = '', array $data = [], string $url = '', int $code = 200)
     {
         if (request()->expectsJson()) {
-            return Response::success($data, $msg, $code, ['x-Location' => $url ?: ''],  JSON_NUMERIC_CHECK);
+            return Response::success($data, $msg, $code, ['x-Location' => $url ?: ''], JSON_NUMERIC_CHECK);
         } else {
             return response()->view('vendor.duxphp.duxravel-app.src.core.Views.success', [
                 'msg' => $msg,
@@ -100,17 +100,43 @@ if (!function_exists("module")) {
 }
 
 
-if (!function_exists("app_hook")) {
+if (!function_exists("app_route")) {
+
     /**
-     * 应用钩子
-     * @param string $name
-     * @param string $method
-     * @param array $vars
-     * @return array|null
+     * 生成符合前端解析的url
      */
-    function app_hook(string $name, string $method, array $vars = [])
+    function app_route($route, $params = [], $absolute = true, $model = '', $field = [])
     {
-        return app(\Duxravel\Core\Util\Hook::class)->getAll($name, $method, $vars);
+        $paramsFix = [];
+        $paramsModel = [];
+        $data = [];
+        // 解析{}变量
+        foreach ($params as $k => $v) {
+            preg_match('/(?:\{)(.*)(?:\})/i', $v, $match);
+            if ($match[1]) {
+                $paramsFix[$k] = $match[1];
+                $data[$k] = 'Ss' . $k . 'sS';
+            } else {
+                if (in_array($v, $field)) {
+                    $paramsModel[$k] = $v;
+                    $data[$k] = 'Ss' . $k . 'sS';
+                } else {
+                    $data[$k] = $v;
+                }
+            }
+        }
+
+        $url = route($route, $data, $absolute);
+
+        // 解析js变量
+        foreach ($paramsFix as $k => $v) {
+            $url = str_replace('Ss' . $k . 'sS', '${' . $v . ' || \'\'}', $url);
+        }
+        foreach ($paramsModel as $k => $v) {
+            $url = str_replace('Ss' . $k . 'sS', '${' . ($model ? $model . '.' : '') . $v . '|| \'\'}', $url);
+        }
+        $url = "`$url`";
+        return $url;
     }
 }
 
@@ -188,5 +214,22 @@ if (!function_exists('file_class')) {
         $path = substr($file, strlen(base_path('modules') . '/'), -4);
         $path = str_replace('\\', '/', $path);
         return '\\Modules\\' . str_replace('/', '\\', $path);
+    }
+}
+
+
+if (!function_exists('url_class')) {
+    function url_class($url): array
+    {
+        $request = [];
+        try {
+            $request = app('router')->getRoutes()->match(app('request')->create($url))->getAction();
+        }catch (\Exception $exception) {
+        }
+        [$class, $action] = explode('@', $request['controller']);
+        return [
+            'class' => $class,
+            'action' => $action
+        ];
     }
 }

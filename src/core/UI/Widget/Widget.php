@@ -98,42 +98,6 @@ class Widget
     }
 
     /**
-     * 转换元素属性
-     * @return string
-     */
-    public function toElement(): string
-    {
-        return implode(' ', [$this->toClass(), $this->toAttr(), $this->toStyle()]);
-    }
-
-    /**
-     * 转换class
-     * @return string
-     */
-    public function toClass(): string
-    {
-        return Tools::toClass($this->restClass ?: $this->class);
-    }
-
-    /**
-     * 转换属性
-     * @return string
-     */
-    public function toAttr(): string
-    {
-        return Tools::toAttr($this->attr);
-    }
-
-    /**
-     * 转换样式
-     * @return string
-     */
-    public function toStyle(): string
-    {
-        return Tools::toStyle($this->style);
-    }
-
-    /**
      * 回调设置
      * @return $this
      */

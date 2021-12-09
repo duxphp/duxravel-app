@@ -28,7 +28,7 @@ class Progress implements Component
      */
     public function render($field): array
     {
-        return (new \Duxravel\Core\UI\Widget\Progress("rowData['$field']"))->color($this->color)->render();
+        return (new \Duxravel\Core\UI\Widget\Progress("rowData.record['$field']"))->color($this->color)->render();
     }
 
 }

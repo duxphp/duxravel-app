@@ -14,7 +14,7 @@ use Duxravel\Core\UI\Tools;
  */
 class Textarea extends Element implements Component
 {
-    protected Text $object;
+    protected int $limit = 0;
 
     /**
      * Text constructor.
@@ -27,10 +27,17 @@ class Textarea extends Element implements Component
         $this->name = $name;
         $this->field = $field;
         $this->has = $has;
-        $this->object = new Text($this->name, $this->field, $this->has);
-        $this->object->attr('type', 'textarea');
     }
 
+    /**
+     * @param $num
+     * @return $this
+     */
+    public function limit($num): self
+    {
+        $this->limit = $num;
+        return $this;
+    }
 
     /**
      * 渲染组件
@@ -39,7 +46,17 @@ class Textarea extends Element implements Component
      */
     public function render()
     {
-        return $this->object->getRender();
+        $data = [
+            'nodeName' => 'a-textarea',
+            'vModel:modelValue' => $this->getModelField(),
+            'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
+            'allowClear' => true,
+            'showWordLimit' => true
+        ];
+        if ($this->limit) {
+            $data['maxLength'] = $this->limit;
+        }
+        return $data;
     }
 
 }

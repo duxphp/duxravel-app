@@ -24,13 +24,14 @@ class Element
     protected array $verify = [];
     protected array $verifyMsg = [];
     protected array $format = [];
-    protected bool $dialog = true;
+    protected bool $dialog = false;
+    protected bool $vertical = false;
     protected bool $label = true;
     protected bool $component = false;
     protected bool $must = false;
     protected array $group = [];
     protected ?int $sort = null;
-    protected string $auth = '';
+    protected $modelElo;
     protected $value;
     protected $default;
 
@@ -43,6 +44,26 @@ class Element
     public function dialog($bool): self
     {
         $this->dialog = $bool;
+        return $this;
+    }
+
+    /**
+     * 设置方向
+     * @param $bool
+     * @return $this
+     */
+    public function vertical($bool): self
+    {
+        $this->vertical = $bool;
+        return $this;
+    }
+
+    /**
+     * 设置数据模型
+     */
+    public function modelElo($class)
+    {
+        $this->modelElo = $class;
         return $this;
     }
 
@@ -129,7 +150,7 @@ class Element
         } else {
             $values = $json ? [] : null;
         }
-        return is_array($values) ? array_filter($values) : $values;
+        return $values;
     }
 
     /**
@@ -200,6 +221,17 @@ class Element
     }
 
     /**
+     * 树形数组
+     * @param $attr
+     * @return $this
+     */
+    public function attrArray($attr)
+    {
+        $this->attr = $attr;
+        return $this;
+    }
+
+    /**
      * class样式
      * @param string $name
      * @return $this
@@ -221,54 +253,6 @@ class Element
             $this->attr['placeholder'] = $name;
         }
         return $this;
-    }
-
-    /**
-     * 设置样式
-     * @param $name
-     * @param $value
-     * @return $this
-     */
-    public function style(string $name, string $value): self
-    {
-        $this->style[$name] = $value;
-        return $this;
-    }
-
-    /**
-     * 转换元素属性
-     * @return string
-     */
-    public function toElement(): string
-    {
-        return implode(' ', [$this->toClass(), $this->toAttr(), $this->toStyle()]);
-    }
-
-    /**
-     * 转换class
-     * @return string
-     */
-    public function toClass(): string
-    {
-        return Tools::toClass($this->class);
-    }
-
-    /**
-     * 转换属性
-     * @return string
-     */
-    public function toAttr(): string
-    {
-        return Tools::toAttr($this->attr);
-    }
-
-    /**
-     * 转换样式
-     * @return string
-     */
-    public function toStyle(): string
-    {
-        return Tools::toStyle($this->style);
     }
 
     /**
@@ -321,30 +305,6 @@ class Element
     }
 
     /**
-     * 元素权限
-     * @param $name
-     * @return $this
-     */
-    public function can($name): self
-    {
-        if (strpos($name, '.') !== false) {
-            $this->auth = $name;
-        } else {
-            $this->auth = \Request::route()->getName() . '|' . $name;
-        }
-        return $this;
-    }
-
-    /**
-     * 获取权限数据
-     * @return string
-     */
-    public function getAuth(): string
-    {
-        return $this->auth;
-    }
-
-    /**
      * 获取分组
      * @return array
      */
@@ -378,15 +338,6 @@ class Element
     public function getHelpLine(): string
     {
         return $this->helpLine;
-    }
-
-    /**
-     * 获取class
-     * @return string
-     */
-    public function getClass(): string
-    {
-        return implode(' ', $this->class);
     }
 
     /**
@@ -499,6 +450,9 @@ class Element
      */
     public function getRender()
     {
+        if ($this->class) {
+            $this->attr['class'] = implode(' ', $this->class);
+        }
         return array_merge($this->render(null), $this->attr);
     }
 
@@ -520,7 +474,7 @@ class Element
             }
         }
         if (method_exists($this, 'dataValue')) {
-            $value = $this->dataValue($value);
+            $value = $this->dataValue($value, $info);
         }
         $data[$this->getField()] = $this->getValue($value);
 

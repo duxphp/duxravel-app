@@ -18,6 +18,7 @@ class Number extends Element implements Component
     protected int $step = 1;
     protected ?int $max = null;
     protected ?int $min = 0;
+    protected ?int $precision = null;
 
     /**
      * Text constructor.
@@ -59,9 +60,10 @@ class Number extends Element implements Component
      * @param int $default
      * @return $this
      */
-    public function step(int $default = 1): self
+    public function step(int $default = 1, ?int $precision = null): self
     {
         $this->step = $default;
+        $this->precision = $precision;
         return $this;
     }
 
@@ -73,15 +75,18 @@ class Number extends Element implements Component
     public function render()
     {
         $data = [
-            'nodeName' => 'n-input-number',
-            'class' => 'shadow-sm',
+            'nodeName' => 'a-input-number',
             'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
+            'vModel:modelValue' => $this->getModelField(),
             'step' => $this->step,
             'min' => $this->min,
-            'max' => $this->max,
+            'mode' => 'button'
         ];
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
+        if ($this->max) {
+            $data['max'] = $this->max;
+        }
+        if ($this->precision) {
+            $data['precision'] = $this->precision;
         }
         return $data;
     }

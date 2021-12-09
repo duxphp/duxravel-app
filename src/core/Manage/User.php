@@ -26,10 +26,22 @@ trait User
         $table->title('用户管理');
         $table->action()->button('添加', $parser['route'] . '.page')->type('dialog');
 
+        $table->filter('用户名', 'username', function ($query, $value) {
+            $query->where('username', 'like', '%' . $value . '%');
+        })->text('请输入用户名搜索')->quick();
+
+        $table->filter('角色', 'role_id', function ($query, $value) {
+            $query->whereHas('roles', function ($query) use ($value) {
+                $query->where((new $this->model)->roles()->getTable() . '.role_id', $value);
+            });
+        })->select(function () {
+            return \Duxravel\Core\Model\Role::where('guard', 'admin')->pluck('name', 'role_id')->toArray();
+        })->quick();
+
         $table->column('#', 'user_id')->width(80);
         $table->column('用户名', 'username');
         $table->column('昵称', 'nickname');
-
+        $table->column('角色', 'roles.name');
         $table->column('状态', 'status')->status([
             1 => '正常',
             0 => '禁用'
@@ -42,11 +54,6 @@ trait User
         $column->link('编辑', $parser['route'] . '.page', ['id' => 'user_id'])->type('dialog');
         $column->link('删除', $parser['route'] . '.del', ['id' => 'user_id'])->type('ajax', ['method' => 'post']);
 
-        $table->filter('用户名', 'username', function ($query, $value) {
-            $query->where('username', 'like', '%' . $value . '%');
-        })->text('请输入用户名搜索')->quick();
-
-
         return $table;
     }
 
@@ -56,6 +63,14 @@ trait User
         $form = new \Duxravel\Core\UI\Form(new $parser['model']());
         $form->dialog(true);
         $form->setKey('user_id', $id);
+
+        $form->select('角色', 'role_ids', function () {
+            return \Duxravel\Core\Model\Role::where('guard', 'admin')->pluck('name', 'role_id');
+        }, 'roles')->multi()->verify([
+            'required',
+        ], [
+            'required' => '请选择角色',
+        ])->sort(-1);
 
         $form->text('用户名', 'username')->verify([
             'required',

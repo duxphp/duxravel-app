@@ -10,7 +10,14 @@ namespace Duxravel\Core\UI\Form;
 class Date extends Element implements Component
 {
 
-    protected Text $object;
+    protected ?string $type = null;
+
+    private $types = [
+        'year',
+        'month',
+        'quarter',
+        'week'
+    ];
 
     /**
      * Text constructor.
@@ -23,7 +30,21 @@ class Date extends Element implements Component
         $this->name = $name;
         $this->field = $field;
         $this->has = $has;
+    }
 
+    /**
+     * 类型选择
+     * @param string $type
+     * @return $this
+     * @throws \Exception
+     */
+    public function type(string $type): self
+    {
+        if (in_array($type, $this->types)) {
+            throw new \Exception('There is no type "' . $type . '"');
+        }
+        $this->type = $type;
+        return $this;
     }
 
     /**
@@ -34,17 +55,14 @@ class Date extends Element implements Component
     public function render()
     {
         $data = [
-            'nodeName' => 'n-date-picker',
-            'class' => 'shadow-sm',
-            'type' => 'date',
-            'clearable' => true,
+            'nodeName' => 'a-date-picker',
+            'allowClear' => true,
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            'vModel:modelValue' => $this->getModelField(),
         ];
-
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
+        if ($this->type) {
+            $data['nodeName'] = 'a-' . $this->type . '-picker';
         }
-
         return $data;
 
     }
@@ -54,9 +72,14 @@ class Date extends Element implements Component
      * @param $data
      * @return string|null
      */
-    public function dataInput($data): ?string
+    public function dataInput($data)
     {
         return $data ? strtotime($data) : null;
+    }
+
+    public function dataValue($data)
+    {
+        return $data ? date('Y-m-d', $data) : null;
     }
 
 }

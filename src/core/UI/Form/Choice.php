@@ -30,12 +30,13 @@ class Choice extends Element implements Component
         $this->has = $has;
     }
 
-    public function ajax($url, $key, $column): self
+    public function ajax($url, $key, $column, $types = []): self
     {
         $this->ajax = [
             'url' => $url,
             'key' => $key,
-            'column' => $column
+            'column' => $column,
+            'type' => $types
         ];
         return $this;
     }
@@ -150,7 +151,8 @@ class Choice extends Element implements Component
             'vModel:value' => $this->getModelField(),
             'column' => $this->column,
             'ajaxColumn' => $ajaxColumn,
-            'only' => $this->ajax['key'],
+            'ajaxType' => $this->ajax['type'],
+            'key' => $this->ajax['key'],
             'url' => $this->ajax['url'],
             'number' => $this->number,
             'option' => $this->option,

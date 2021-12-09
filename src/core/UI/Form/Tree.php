@@ -48,22 +48,28 @@ class Tree extends Element implements Component
 
         $data = $this->loop($data);
         $data = [
-            'nodeName' => 'n-tree',
-            'class' => 'border border-gray-300 p-2 rounded',
-            'block-line' => true,
-            'cascade' => true,
-            'checkable' => true,
-            'data' => $data,
+            'nodeName' => 'div',
+            'class' => 'bg-gray-100 dark:bg-blackgray-2 p-2 rounded w-full h-56  overflow-y-auto app-scrollbar',
+            'child' => [
+                'nodeName' => 'a-tree',
+                'blockNode' => true,
+                'checkable' => true,
+                'showLine' => true,
+                'vModel:checked-keys' => $this->getModelField(),
+                'data' => $data,
+            ]
         ];
-        if ($this->model) {
-            $data['vModel:checked-keys'] = $this->getModelField();
-        }
         return $data;
     }
 
     public function dataValue($value)
     {
-        return array_filter((array) $this->getValue($value)) ?: [];
+        return $this->getValueArray($value);
+    }
+
+    public function dataInput($data)
+    {
+        return is_array($data) ? implode(',', $data) : '';
     }
 
     protected function loop($data)
@@ -71,7 +77,7 @@ class Tree extends Element implements Component
         $newData = [];
         foreach ($data as $key => $item) {
             $tmpData = [
-                'label' => $item['name'],
+                'title' => $item['name'],
                 'key' => $item['id'],
             ];
             if ($item['children']) {

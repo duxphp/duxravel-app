@@ -9,7 +9,7 @@ namespace Duxravel\Core\UI\Form;
  */
 class Time extends Element implements Component
 {
-    protected Text $object;
+    protected string $string = 'HH:mm:ss';
 
     /**
      * Text constructor.
@@ -25,19 +25,29 @@ class Time extends Element implements Component
     }
 
     /**
+     * 时间格式
+     * @param string $format
+     * @return $this
+     */
+    public function string(string $format): self
+    {
+        $this->string = $format;
+        return $this;
+    }
+
+    /**
      * 渲染组件
      * @return string
      */
     public function render()
     {
         $data = [
-            'nodeName' => 'n-time-picker',
-            'clearable' => true,
+            'nodeName' => 'a-time-picker',
+            'allowClear' => true,
+            'format' => $this->string,
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            'vModel:model-value' => $this->getModelField()
         ];
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
-        }
         return $data;
     }
 

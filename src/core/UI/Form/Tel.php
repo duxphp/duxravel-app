@@ -49,6 +49,7 @@ class Tel extends Element implements Component
      */
     public function render()
     {
+        $this->object->attrArray($this->attr);
         return $this->object->getRender();
     }
 

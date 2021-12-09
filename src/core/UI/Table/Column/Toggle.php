@@ -52,8 +52,8 @@ class Toggle implements Component
     {
         return [
             'nodeName' => 'n-switch',
-            'vModel:value' => "rowData['$field']",
-            'vOn:update:value' => "rowData['$field'] = \$event, editValue(rowData['$this->label'], {'field': '$this->field', '$this->field': rowData['$field']})",
+            'vModel:value' => "rowData.record['$field']",
+            'vOn:update:value' => "rowData.record['$field'] = \$event, editValue(rowData.record['$this->label'], {'field': '$this->field', '$this->field': rowData.record['$field']})",
         ];
     }
 

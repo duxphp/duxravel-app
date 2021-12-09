@@ -15,6 +15,7 @@ class Progress extends Widget
 
     private $value;
     private string $color = 'default';
+    private string $size = 'medium';
     private bool $number = true;
 
 
@@ -41,20 +42,26 @@ class Progress extends Widget
         return $this;
     }
 
+    public function size($size = 'medium'): self
+    {
+        $this->size = (bool)$size;
+        return $this;
+    }
+
     /**
      * @return array
      */
     public function render(): array
     {
         $node = [
-            'nodeName' => 'n-progress',
-            'type' => 'line',
+            'nodeName' => 'a-progress',
+            'size' => $this->size,
             'status' => $this->color,
         ];
         if (is_numeric($this->value)) {
-            $node['percentage'] = $this->value;
+            $node['percent'] = $this->value;
         }else {
-            $node['vBind:percentage'] = $this->value;
+            $node['vBind:percent'] = $this->value;
         }
         return $node;
 

@@ -10,49 +10,45 @@ class TreeList extends Widget
 {
 
     private $key;
+    private $field;
     private $url = null;
     private $sortUrl = null;
+    private $filter = null;
     private $search = true;
+    private $keyword = [];
     private $expand = true;
     private $menu = [];
     private $menuLevel = [];
+    private $labelNode = [];
 
-    public function __construct($default, $field = '')
+    public function __construct($default, $field = '', $event = '')
     {
         $this->key = $default;
         $this->field = $field;
+        $this->event = $event;
     }
 
-    public function search(bool $bool = true)
+    public function search(bool $bool = true, array $keyword = [])
     {
         $this->search = $bool;
+        $this->keyword = $keyword;
         return $this;
     }
 
     public function menu($data = [], $level = [])
     {
-        /* 'add' => [
-            'name' => '新增',
-            'route' => '',
-            'params' => [],
-            'type' => 'dialog',
-        ] */
-
         $this->menu = $data;
-        /* [
-            ['add', 'edit', 'del']
-        ] */
         $this->menuLevel = $level;
         return $this;
     }
 
-    public function url(String $url = null)
+    public function url(string $url = null)
     {
         $this->url = $url;
         return $this;
     }
 
-    public function sortUrl(String $url = null)
+    public function sortUrl(string $url = null)
     {
         $this->sortUrl = $url;
         return $this;
@@ -64,115 +60,73 @@ class TreeList extends Widget
         return $this;
     }
 
+    public function filter($filter)
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+    public function label($node)
+    {
+        $this->labelNode = $node;
+        return $this;
+    }
+
     /**
      * @return array
      */
     public function render(): array
     {
-        $urlPaths = parse_url(substr($this->url,0,strrpos($this->url,"/")));
-
-
-
+        $urlPaths = parse_url(substr($this->url, 0, strrpos($this->url, "/")));
         $tree = [
             'nodeName' => 'widget-tree',
             'url' => $this->url,
-            'sort-url' => $this->sortUrl,
-            'url-bind' => false,
-            'class' => 'overflow-x-auto app-scrollbar',
-            'close-dialog-refresh-urls' => [trim($urlPaths['path'], '/')],
-            'columns' => [
-                [
-                    'key' => 'name',
-                    'title' => ''
-                ]
-            ],
-            'child' => [
-                [
-                    'vSlot:default' => '{data: treeData, renderLabel, onDrop}',
-                    'nodeName' => 'n-tree-copy',
-                    'vBind:data' => 'treeData',
-                    'vBind:renderLabel' => 'renderLabel',
-                    'vBind:onDrop' => 'onDrop',
-                    'level-mark-color' => ['#0087FF', '#30CCF6', '#49CD5B', '#FAAC11', '#F53739', '#AA69F6'],
-                    'vBind:pattern' => 'data.search',
-                    'block-line' => true,
-                    'default-selected-keys' => [intval($this->key)],
-                    'default-expand-all' => $this->expand,
-                    'draggable' => true,
-                    'context-menus' => [],
-                    'context-level-menus' => $this->menuLevel,
-                    'vModel:selected-keys' => "data.filter['{$this->field}']",
-                    'render-label:info' => [
-                        'nodeName' => 'div',
-                        'class' => 'whitespace-nowrap',
-                        'child' => '{{info.option.label}}'
-                    ]
-                ],
-                [
-                    'vSlot:empty' => '',
-                    'nodeName' => 'div',
-                    'class' => 'flex flex-col gap-2 justify-center items-center text-gray-300',
-                    'child' => [
-                        (new Icon('filter'))->size(42)->class('cursor-pointer')->getRender(),
-                        [
-                            'nodeName' => 'div',
-                            'child' => '暂无数据'
-                        ],
-                    ],
-                ]
-            ]
+            'sortUrl' => $this->sortUrl,
+            'search' => $this->search,
+            'keywords' => $this->keyword,
+            'requestEventName' => $this->event ?: url_class($this->url)['class'],
+            'vBind:filter' => $this->filter ?: [],
+            'refreshUrls' => [trim($urlPaths['path'], '/')],
+            'iconColor' => ['blue', 'cyan', 'green', 'orange', 'red', 'purple'],
+            'vModel:value' => "data.filter['{$this->field}']",
         ];
+
+        if ($this->labelNode) {
+            $tree['child'] = [
+                'nodeName' => 'span',
+                'vSlot:label' => 'item',
+                'child' => $this->labelNode
+            ];
+        }
+
         $menu = [];
         if ($this->menu) {
             foreach ($this->menu as $key => $vo) {
-                $label = $vo['route'] . '?' . http_build_query($vo['params'] ?: []);
-                $menu[$key] = [
+                $url = $vo['url'];
+                $event = $vo['event'];
+                $tmp = [
                     'text' => $vo['name'],
-                    'event' => $key,
                 ];
-                switch ($vo['type']) {
-                    case 'dialog':
-                        $tree['child'][0]['vOn:' . $key] = "\$event.rawNode['$label'] ? window.router.dialog(\$event.rawNode['$label']) : window.appDialog.alert({content: '未定义链接数据'})";
-                        break;
-                    case 'ajax':
-                        $tree['child'][0]['vOn:' . $key] = "\$event.rawNode['$label'] ? window.router.ajax(\$event.rawNode['$label'], {_method: 'POST', _title: '确认进行该操作？'}) : window.appDialog.alert({content: '未定义链接数据'})";
-                        break;
-                    default:
-                    $tree['child'][0]['vOn:' . $key] = "\$event.rawNode['$label'] ? window.router.push(\$event.rawNode['$label']) : window.router.push(\$event.rawNode['".route($vo['route'], $vo['params'])."'])";
+                if ($event) {
+                    $tmp['event'] = $event;
+                } else {
+                    switch ($vo['type']) {
+                        case 'dialog':
+                            $tmp['event'] = $url ? "window.router.dialog($url)" : "window.dialog.alert({content: '未定义链接数据'})";
+                            break;
+                        case 'ajax':
+                            $tmp['event'] = $url ? "window.router.ajax($url, {_method: 'POST', _title: '确认进行{$vo['name']}操作？'})" : "window.dialog.alert({content: '未定义链接数据'})";
+                            break;
+                        default:
+                            $tmp['event'] = $url ? "window.router.push($url)" : "window.dialog.alert({content: '未定义链接数据'})";
+                    }
                 }
+
+                $menu[] = $tmp;
             }
-            $tree['child'][0]['context-menus'] = $menu;
+            $tree['contextMenus'] = $menu;
         }
 
-
-
-        $search = [];
-        if ($this->search) {
-            $search = [
-                'nodeName' => 'div',
-                'class' => 'p-2 mb-2',
-                'child' => [
-                    'nodeName' => 'n-input',
-                    'placeholder' => '搜索',
-                    'vModel:value' => 'data.search',
-                    'round' => true,
-                    'child' => [
-                        'vSlot:prefix' => '',
-                        'nodeName' => 'n-icon',
-                        'child' => [
-                            'nodeName' => 'search-icon'
-                        ]
-                    ],
-                ],
-            ];
-        }
-        return [
-            'nodeName' => 'div',
-            'class' => 'p-2',
-            'child' => [
-                $search,
-                $tree
-            ]
-        ];
+        return $tree;
     }
 }

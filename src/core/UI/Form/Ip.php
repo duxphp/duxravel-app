@@ -22,7 +22,7 @@ class Ip extends Element implements Component
         $this->field = $field;
         $this->has = $has;
         $this->object = new Text($this->name, $this->field, $this->has);
-        $this->object->afterIcon('beaker');
+        $this->object->afterIcon('desktop');
     }
 
     /**

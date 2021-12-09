@@ -12,12 +12,12 @@ class Card extends Composite implements Component
 {
     protected $callback;
 
-    public function __construct($callback, $dialog = false)
+    public function __construct($callback)
     {
-        $this->dialog = $dialog;
         $this->callback = $callback;
         $form = new Form();
-        $form->dialog($dialog);
+        $form->dialog($this->dialog);
+        $form->vertical($this->vertical);
         $callback($form);
         $this->column[] = [
             'object' => $form,
@@ -37,12 +37,12 @@ class Card extends Composite implements Component
         }
 
         if (!$this->dialog) {
-            $this->class('mb-3 bg-white rounded shadow px-6 lg:px-8 py-6');
+            $this->class('mb-4 bg-white dark:bg-blackgray-4 rounded shadow p-7 pb-2');
         }
 
         return [
             'nodeName' => 'div',
-            'class' => $this->getClass(),
+            'class' => implode(' ', $this->class),
             'child' => $inner
         ];
     }

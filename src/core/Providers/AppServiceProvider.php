@@ -2,7 +2,10 @@
 
 namespace Duxravel\Core\Providers;
 
+use Closure;
 use Duxravel\Core\Util\Build;
+use Duxravel\Core\Util\MenuStore;
+use Duxravel\Core\Util\Permission;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
@@ -19,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // 异常级别
         error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-        
+
         // 注册核心配置
         foreach (glob(__DIR__ . '/../Config/*.php') as $vo) {
             $this->mergeConfigFrom($vo, basename($vo, '.php'));
@@ -27,6 +30,14 @@ class AppServiceProvider extends ServiceProvider
 
         // 注册组件
         $this->app->singleton(Build::class);
+
+        $this->app->singleton('Menu', function () {
+            return new MenuStore();
+        });
+
+        $this->app->singleton('Permission', function () {
+            return new Permission();
+        });
 
         // 编译包
         app(Build::class)->getBuild();
@@ -38,7 +49,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
-        $this->app->register(AuthServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(CoreServiceProvider::class);
     }
@@ -77,6 +87,11 @@ class AppServiceProvider extends ServiceProvider
                 $direction
             );
         });
+
+        $this->bootedCallbacks[] = function () {
+            // 权限注册
+            \Duxravel\Core\Facades\Permission::register('admin');
+        };
 
     }
 }

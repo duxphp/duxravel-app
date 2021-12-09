@@ -16,12 +16,13 @@ class Menu
      */
     public function getAll($layout)
     {
-        $list = app_hook('Menu', 'get' . ucfirst($layout) . 'Menu');
-        $data = [];
-        foreach ((array)$list as $value) {
-            $data = array_merge_recursive((array)$data, (array)$value);
+        $layout = ucfirst($layout);
+        $serviceList = app(Build::class)->getData('menu.' . $layout);
+        $vendor = base_path();
+        foreach ($serviceList as $key => $vo) {
+            require $vendor . '/' . $vo;
         }
-        return $data;
+        return \Duxravel\Core\Facades\Menu::getData();
     }
 
     /**
@@ -49,41 +50,35 @@ class Menu
 
         $list = [];
         foreach ($data as $app => $appList) {
-            if (empty($appList['menu']) && empty($appList['url'])) {
+            if (empty($appList['menu']) && empty($appList['route'])) {
                 continue;
             }
 
-            if ($appList['url']) {
-                $public = app('router')->getRoutes()->getByName($appList['url'])->getAction('public');
-                if (!$public && $purview && !in_array($appList['url'], $purview)) {
+            if ($appList['route']) {
+                $public = app('router')->getRoutes()->getByName($appList['route'])->getAction('public');
+                if (!$public && $purview && !in_array($appList['route'], $purview)) {
                     continue;
                 }
             }
-            $url = $appList['url'] ? route($appList['url'], $appList['params'], false) : '';
+            $url = $appList['route'] ? route($appList['route'], $appList['params'], false) : '';
 
             $appData = [
                 'app' => $app,
                 'name' => $appList['name'],
+                'title' => $appList['title'],
                 'icon' => $appList['icon'],
                 'url' => $url,
                 'route' => $appList['side'] ? route($layout . '.side', ['app' => $app], false) : '',
-                'data' => $appList['data'],
                 'topic' => $appList['topic'],
                 'hidden' => (bool)$appList['hidden'],
                 'target' => $appList['target'],
-                'cur' => false,
             ];
-            if ($appList['url']) {
-                if ($this->contrastRoute($url, $ruleName)) {
-                    $appData['cur'] = true;
-                    $appData['hidden'] = false;
-                }
-            }
             $parentData = [];
             $appList['menu'] = collect($appList['menu'])->sortBy('order')->values();
             foreach ($appList['menu'] as $parent => $parentList) {
                 $parentData[$parent] = [
                     'name' => $parentList['name'],
+                    'title' => $parentList['title'],
                 ];
                 if (empty($parentList['menu'])) {
                     continue;
@@ -91,41 +86,36 @@ class Menu
                 $subData = [];
                 $parentList['menu'] = collect($parentList['menu'])->sortBy('order')->values();
                 foreach ($parentList['menu'] as $sub => $subList) {
-                    $public = app('router')->getRoutes()->getByName($subList['url'])->getAction('public');
+                    $public = app('router')->getRoutes()->getByName($subList['route'])->getAction('public');
 
-                    if (!$public && $purview && !in_array($subList['url'], $purview)) {
+                    if (!$public && $purview && !in_array($subList['route'], $purview)) {
                         continue;
                     }
-                    $url = route($subList['url'], $subList['params'], false);
+                    $url = route($subList['route'], $subList['params'], false);
                     $subData[$sub] = [
                         'name' => $subList['name'],
+                        'title' => $subList['title'],
                         'url' => $url,
                         'target' => $subList['target'],
-                        'cur' => false,
                     ];
 
                     if (!$appData['url']) {
                         $appData['url'] = $url;
                     }
 
-                    if ($this->contrastRoute($url, $ruleName)) {
-                        $subData[$sub]['cur'] = true;
-                        $appData['cur'] = true;
-                        $appData['hidden'] = false;
-                    }
                 }
                 if (empty($subData)) {
                     unset($parentData[$parent]);
                 } else {
-                    $parentData[$parent]['menu'] = $subData;
+                    $parentData[$parent]['menu'] = array_values($subData);
                 }
                 if (empty($parentData)) {
                     unset($parentData);
                 } else {
-                    $appData['menu'] = $parentData;
+                    $appData['menu'] = array_values($parentData);
                 }
             }
-            if (!empty($appData)) {
+            if (!empty($appData['url']) || !empty($appData['menu'])) {
                 $list[$app] = $appData;
             } else {
                 unset($list[$app]);
@@ -135,14 +125,17 @@ class Menu
 
     }
 
-    public function getSide($layout, $app)
+    /**
+     * 获取应用菜单
+     * @return array
+     */
+    public function getApps()
     {
-        $list = app_hook('Menu', 'get' . ucfirst($layout) . 'Side', [$app]);
-        $data = [];
-        foreach ((array)$list as $value) {
-            $data = array_merge_recursive((array)$data, (array)$value);
+        $apps = \Duxravel\Core\Facades\Menu::getApps();
+        foreach ($apps as $key => $vo) {
+            $apps[$key]['url'] = $vo['route'] ? route($vo['route'], $vo['params'], false) : '';
         }
-        return $data;
+        return $apps;
     }
 
     /**

@@ -47,7 +47,7 @@ class Text extends Element implements Component
      */
     public function beforeIcon($content): self
     {
-        $this->before = (new Icon($content))->attr('vSlot:prefix', '')->getRender();
+        $this->before = (new Icon($content))->attr('vSlot:prepend', '')->getRender();
         return $this;
     }
 
@@ -58,7 +58,7 @@ class Text extends Element implements Component
      */
     public function afterIcon($content): self
     {
-        $this->after = (new Icon($content))->attr('vSlot:suffix', '')->getRender();
+        $this->after = (new Icon($content))->attr('vSlot:append', '')->getRender();
         return $this;
     }
 
@@ -70,7 +70,7 @@ class Text extends Element implements Component
     public function beforeText($content): self
     {
         $this->before = [
-            'vSlot:prefix' => '',
+            'vSlot:prepend' => '',
             'nodeName' => 'span',
             'child' => $content
         ];
@@ -85,7 +85,7 @@ class Text extends Element implements Component
     public function afterText($content): self
     {
         $this->after = [
-            'vSlot:suffix' => '',
+            'vSlot:append' => '',
             'nodeName' => 'span',
             'child' => $content
         ];
@@ -108,16 +108,11 @@ class Text extends Element implements Component
         }
 
         $data = [
-            'nodeName' => 'n-input',
-            'vModel:value' => $this->getModelField(),
-            'class' => 'shadow-sm',
+            'nodeName' => 'a-input',
+            'vModel:modelValue' => $this->getModelField(),
             'child' => $child,
-            'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
+            'placeholder' => '请输入' . $this->name,
         ];
-
-        if ($this->model) {
-            $data['vModel:value'] = $this->getModelField();
-        }
 
         return $data;
     }

@@ -27,7 +27,7 @@ class Text extends Widget
     public function render(): string
     {
         return <<<HTML
-            <span {$this->toElement()}>$this->content</span>
+            <span>$this->content</span>
         HTML;
 
     }

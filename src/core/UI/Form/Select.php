@@ -12,11 +12,14 @@ use Duxravel\Core\UI\Tools;
  */
 class Select extends Element implements Component
 {
-    protected array $search = [];
+    protected string $url = '';
+    protected string $route = '';
     protected string $linkage = '';
     protected string $level = '';
+    protected int $tagCount = 0;
     protected bool $tags = false;
     protected bool $tip = false;
+    protected bool $search = false;
     protected bool $multi = false;
     protected $data;
 
@@ -59,15 +62,36 @@ class Select extends Element implements Component
     }
 
     /**
+     * 搜索
+     * @param bool $search
+     * @return $this
+     */
+    public function search(bool $search = true): self
+    {
+        $this->search = $search;
+        return $this;
+    }
+
+    /**
      * 搜索选择
      * @param string $url
      * @return $this
      */
-    public function search(string $url): self
+    public function url(string $url): self
     {
-        $this->search = [
-            'url' => $url,
-        ];
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * 搜索选择
+     * @param string $route
+     * @return $this
+     */
+    public function route(string $route, $params = []): self
+    {
+        $this->route = $route;
+        $this->url = app_route($route, $params);
         return $this;
     }
 
@@ -88,9 +112,10 @@ class Select extends Element implements Component
      * 多选组件
      * @return $this
      */
-    public function multi(): self
+    public function multi($count = 0): self
     {
         $this->multi = true;
+        $this->tagCount = $count;
         return $this;
     }
 
@@ -139,21 +164,28 @@ class Select extends Element implements Component
         if ($this->model) {
             $object['vModel:value'] = $this->getModelField();
         }
-        if ($this->tip) {
-            $object['nParams']['clearable'] = true;
-        }
+        $object['nParams']['allowClear'] = true;
         if ($this->multi) {
             $object['nParams']['multiple'] = true;
         }
         if ($this->tags) {
             $object['nParams']['multiple'] = true;
-            $object['nParams']['tag'] = true;
+            $object['nParams']['allowCreate'] = true;
         }
-
+        if ($this->url) {
+            $object['nParams']['allowSearch'] = true;
+            $object['nParams']['filterOption'] = false;
+            if ($this->route) {
+                $object['vBind:dataUrl'] = $this->url;
+            } else {
+                $object['dataUrl'] = $this->url;
+            }
+        }
         if ($this->search) {
-            $object['nParams']['filterable'] = true;
-            $object['nParams']['remote'] = true;
-            $object['dataUrl'] = $this->search['url'];
+            $object['nParams']['allowSearch'] = true;
+        }
+        if ($this->tagCount) {
+            $object['nParams']['maxTagCount'] = $this->tagCount;
         }
 
         return $object;
@@ -161,7 +193,7 @@ class Select extends Element implements Component
 
     public function dataValue($value)
     {
-        return $this->multi ? $this->getValueArray($value) : $this->getValue($value);
+        return $this->multi ? array_values(array_filter((array)$this->getValueArray($value))) : $this->getValue($value);
     }
 
     public function dataInput($data)

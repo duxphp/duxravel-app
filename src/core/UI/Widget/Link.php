@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\UI\Widget;
 
+use Duxravel\Core\Facades\Permission;
 use Duxravel\Core\UI\Tools;
 use Duxravel\Core\UI\Widget\Append\Element;
 
@@ -18,10 +19,11 @@ class Link extends Widget
     protected string $route;
     protected string $url;
     protected array $params = [];
+    protected array $fields = [];
     protected ?\Closure $show = null;
     protected string $button = '';
     protected string $type = 'default';
-    protected string $size = 'medium';
+    protected string $status = 'normal';
     protected bool $block = false;
     protected string $model = '';
     protected array $data = [];
@@ -46,6 +48,16 @@ class Link extends Widget
     }
 
     /**
+     * @param $params
+     * @return $this
+     */
+    public function fields($params)
+    {
+        $this->fields = $params;
+        return $this;
+    }
+
+    /**
      * 链接类型
      * @param string $name
      * @param array $config
@@ -56,6 +68,24 @@ class Link extends Widget
         $this->type = $name;
         $this->typeConfig = $config;
         return $this;
+    }
+
+    /**
+     * 获取类型
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * 获取类型配置
+     * @return array
+     */
+    public function getTypeConfig()
+    {
+        return $this->typeConfig;
     }
 
     /**
@@ -93,10 +123,10 @@ class Link extends Widget
      * @param string $type
      * @return $this
      */
-    public function button(string $type = 'primary', string $size = 'medium', bool $block = false): self
+    public function button(string $type = 'primary', string $status = 'medium', bool $block = false): self
     {
         $this->button = $type;
-        $this->size = $size;
+        $this->status = $status;
         $this->block = $block;
         return $this;
     }
@@ -121,6 +151,7 @@ class Link extends Widget
         return $this;
     }
 
+
     /**
      * 自定义权限
      * @param $name
@@ -137,87 +168,77 @@ class Link extends Widget
     }
 
     /**
-     * @param $data
-     * @return array
+     * 获取url
+     * @return false|string
      */
-    public function render($data = null)
+    public function getUrl()
     {
         if (!$this->isAuth()) {
+            return false;
+        }
+
+        if ($this->show && !call_user_func($this->show)) {
+            return false;
+        }
+
+        return app_route($this->route, $this->params, false, $this->model, $this->fields);
+    }
+
+    /**
+     * @return array
+     */
+    public function render()
+    {
+        $url = $this->getUrl();
+
+        if (!$url) {
             return [];
         }
-
-        if ($this->show && !call_user_func($this->show, $data)) {
-            return [];
-        }
-
-        $url = '';
-        if (!$this->model) {
-            $params = [];
-            if (!$data) {
-                $params = $this->params;
-            } else {
-                foreach ($this->params as $k => $v) {
-                    $params[$k] = Tools::parsingArrData($data, $v, true);
-                }
-            }
-            $url = route($this->route, $params, false);
-        }else {
-            $url = $this->route . '?' . http_build_query($this->params);
-        }
-
-        $name = $this->name;
 
         $object = [
             'nodeName' => 'route',
-            'name' => $name
+            'name' => $this->name
         ];
 
         switch ($this->type) {
             case 'default':
-                $object['href'] = $url;
+                $object['vBind:href'] = $url;
                 break;
             case 'dialog':
-                $object['href'] = $url;
+                $object['vBind:href'] = $url;
                 $object['type'] = 'dialog';
                 $object['title'] = $this->name;
                 break;
             case 'ajax':
-                $object['href'] = $url;
+                $object['vBind:href'] = $url;
                 $object['type'] = 'ajax';
                 $object['title'] = '确认进行' . $this->name . '操作?';
                 break;
         }
-
-        if ($this->model) {
-            unset($object['href']);
-            $object['vBind:href'] = $this->model . "['$url']";
-        }
-
         $object = array_merge($object, $this->typeConfig);
-
 
         if ($this->button) {
             $link = [
-                'nodeName' => 'n-button',
+                'nodeName' => 'a-button',
                 'class' => implode(' ', $this->class),
                 'type' => $this->button,
-                'size' => $this->size,
+                'status' => $this->status,
                 'child' => [
-                    $name
+                    $this->name
                 ]
             ];
             if ($this->icon) {
                 $link['child'][] = (new Icon($this->icon))->attr('vSlot:icon', '')->getRender();
             }
             if ($this->block) {
-                $link['block'] = true;
+                $link['long'] = true;
             }
         } else {
             $link = [
-                'nodeName' => 'div',
-                'class' => 'text-blue-600 hover:underline ' . implode(' ', $this->class),
+                'nodeName' => 'span',
+                'class' => 'arco-link arco-link-status-normal ' . implode(' ', $this->class),
                 'child' => [
-                    $name
+                    $this->name
                 ]
             ];
             if ($this->icon) {
@@ -233,22 +254,22 @@ class Link extends Widget
 
     private function isAuth()
     {
+        // 路由不存在
         if (!\Route::has($this->route)) {
             return false;
         }
+        // 验证是否公共类
         $public = \Route::getRoutes()->getByName($this->route)->getAction('public');
-
+        if ($public) {
+            return true;
+        }
+        // 验证是否当前守护器
         $app = \Str::before($this->route, '.');
-
-        if ($app <> app()->make('purview_app') || $public) {
-            return true;
-        }
-        $purview = app()->make('purview');
-
-        if (!$purview) {
+        if ($app <> Permission::getGuerd()) {
             return true;
         }
 
+        // 设置通用页面权限
         if (\Str::afterLast($this->route, '.') === 'page') {
             if ($this->params['id']) {
                 $this->can('edit');
@@ -256,18 +277,17 @@ class Link extends Widget
                 $this->can('add');
             }
         }
+
+        // 验证自定义权限
         if ($this->auth) {
-            if (!in_array($this->auth, $purview)) {
+            if (!auth($app)->user()->can($this->auth)) {
                 return false;
             }
             return true;
         }
-        $filterPurview = [];
-        foreach ($purview as $vo) {
-            $arr = explode('|', $vo);
-            $filterPurview[] = $arr[0];
-        }
-        if (in_array($this->route, $filterPurview)) {
+
+        // 验证通用权限
+        if (auth($app)->user()->can($this->route)) {
             return true;
         }
         return false;

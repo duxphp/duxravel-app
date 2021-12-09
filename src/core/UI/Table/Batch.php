@@ -13,7 +13,7 @@ use Duxravel\Core\UI\Form\Select;
 class Batch
 {
 
-    protected array $button = [];
+    protected array $nodes = [];
     protected array $select = [];
     protected array $url = [];
 
@@ -26,16 +26,27 @@ class Batch
      * @param string $type
      * @return $this
      */
-    public function button(string $name, $type = '', string $route = '', array $params = [], string $btnType = 'default'): self
+    public function button(string $name, $type = '', string $route = '', array $params = [], string $btnType = 'normal'): self
     {
         $params['bath_type'] = $type;
         $url = route($route, $params);
-        $this->button[] = [
-            'nodeName' => 'n-button',
-            'type' => $btnType,
-            'size' => 'small',
+        $this->nodes[] = [
+            'nodeName' => 'a-button',
+            'type' => 'secondary',
+            'status' => $btnType,
             'child' => $name,
-            'vOn:click' => "checkAction('$url')"
+            'vOn:click' => "footer.checkAction('$url', '确定执行$name\操作？')"
+        ];
+        return $this;
+    }
+
+    public function select(string $name, string $route = '', array $params = [])
+    {
+        $url = route($route, $params);
+        $this->select[] = [
+            'nodeName' => 'a-doption',
+            'child' => $name,
+            'vOn:click' => "footer.checkAction('$url' '确定执行$name\操作？')"
         ];
         return $this;
     }
@@ -46,22 +57,26 @@ class Batch
      */
     public function render(): array
     {
-        return $this->button;
 
-        $html = [];
-        foreach ($this->select as $key => $select) {
-            $inner = $select->class('custom-select')->render(null);
-            $html[] = <<<HTML
-                <form class="input-group" method="get" action="{$this->url[$key]}">
-                $inner
-                <div class="input-group-append"><button type="submit" data-submit class="btn-blue">执行</button></div>
-                </form>
-            HTML;
+        if ($this->select) {
+            $this->nodes[] = [
+                'nodeName' => 'a-dropdown',
+                'child' => [
+                    [
+                        'nodeName' => 'a-button',
+                        'type' => 'secondary',
+                        'child' => '批量操作',
+                    ],
+                    [
+                        'vSlot:content' => '',
+                        'nodeName' => 'div',
+                        'child' => $this->select
+                    ]
+                ],
+            ];
         }
-        foreach ($this->button as $button) {
-            $html[] = $button->render($data);
-        }
-        return $html;
+
+        return $this->nodes;
     }
 
 }

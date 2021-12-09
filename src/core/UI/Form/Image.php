@@ -17,7 +17,7 @@ class Image extends Element implements Component
 
     private array $thumb = [];
     private array $water = [];
-    protected string $type = 'upload';
+    protected string $type = 'manage';
     protected string $url = '';
 
     /**
@@ -81,7 +81,8 @@ class Image extends Element implements Component
         $data = [
             'nodeName' => 'app-file',
             'format' => 'image',
-            'image' => true
+            'image' => true,
+            'size' => 32
         ];
         if ($this->url) {
             $data['upload'] = $this->url;

@@ -27,11 +27,10 @@ class Layout extends Composite implements Component
      */
     public function render($value)
     {
-        $this->class('mb-4');
         $callback = is_callable($this->callback) ? call_user_func($this->callback) : $this->callback;
         return [
             'nodeName' => 'div',
-            'class' => $this->getClass(),
+            'class' => 'mb-4',
             'child' => $callback
         ];
 

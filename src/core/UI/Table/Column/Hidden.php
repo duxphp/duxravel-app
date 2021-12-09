@@ -22,15 +22,18 @@ class Hidden implements Component
                 [
                     'nodeName' => 'span',
                     'class' => 'mr-2',
-                    'vIf' => "rowData['$name']",
-                    'child' => "{{rowData['$field']}}",
+                    'vIf' => "rowData.record['$name']",
+                    'child' => "{{rowData.record['$field']}}",
                 ],
                 [
-                    'nodeName' => 'n-tag',
-                    'vBind:type' => "rowData['$name'] ? 'warning' : 'info'",
+                    'nodeName' => 'a-button',
+                    'shape' => 'round',
+                    'size' => 'mini',
+                    'type' => 'outline',
+                    'vBind:status' => "rowData.record['$name'] ? 'warning' : ''",
                     'class' => 'mr-2',
-                    'vOn:click' => "rowData['$name'] = !rowData['$name']",
-                    'child' => "{{rowData['$name'] ? '隐藏' : '显示'}}",
+                    'vOn:click' => "rowData.record['$name'] = !rowData.record['$name']",
+                    'child' => "{{rowData.record['$name'] ? '隐藏' : '显示'}}",
                 ],
             ]
         ];
