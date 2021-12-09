@@ -21,7 +21,6 @@
     },
     "extra": {
         "duxravel": {
-            "type": "app",
             "name": "appname"
         }
     }
