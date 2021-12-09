@@ -110,84 +110,6 @@ class Node
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    private function headNode()
-    {
-        if ($this->dialog) {
-            return [
-                'nodeName' => 'div',
-                'class' => 'arco-modal-header',
-                'child' => [
-                    [
-                        'nodeName' => 'div',
-                        'class' => 'arco-modal-title',
-                        'child' => $this->title ?: '信息详情'
-                    ],
-                    [
-                        'nodeName' => 'route',
-                        'type' => 'back',
-                        'class' => 'arco-modal-close-btn',
-                        'child' => [
-                            'nodeName' => 'span',
-                            'class' => 'arco-icon-hover arco-icon-hover-size-medium',
-                            'child' => (new Icon('close'))->getRender()
-                        ]
-                    ]
-                ]
-            ];
-        }
-
-        return [
-            'nodeName' => 'div',
-            'class' => ' flex items-center p-4 border-b border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 shadow-sm z-10',
-            'child' => [
-                [
-                    'nodeName' => 'div',
-                    'class' => 'flex-none',
-                    'child' => [
-                        $this->back ? [
-                            'nodeName' => 'route',
-                            'type' => 'back',
-                            'class' => 'text-xs items-center text-gray-500 hidden lg:flex',
-                            'child' => [
-                                [
-                                    'nodeName' => 'rich-text',
-                                    'nodes' => '<svg xmlns="http://www.w3.org/2000/svg" class="icon w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><line x1="5" y1="12" x2="19" y2="12"></line><line x1="5" y1="12" x2="11" y2="18"></line><line x1="5" y1="12" x2="11" y2="6"></line></svg>'
-                                ],
-                                '返回'
-                            ]
-                        ] : [],
-                        [
-                            'nodeName' => 'div',
-                            'class' => 'text-base',
-                            'child' => $this->title ?: '信息详情'
-                        ]
-                    ]
-                ],
-                [
-                    'nodeName' => 'div',
-                    'class' => 'flex-grow items-center hidden lg:flex justify-end gap-2',
-                    'child' => [
-                        [
-                            'nodeName' => 'n-button',
-                            'type' => 'default',
-                            'attr-type' => 'reset',
-                            'child' => '重置',
-                        ],
-                        [
-                            'nodeName' => 'n-button',
-                            'attr-type' => 'submit',
-                            'type' => 'primary',
-                            'child' => '提交',
-                        ],
-                    ]
-                ],
-            ]
-        ];
-    }
-
     private function renderPage()
     {
         return [
@@ -201,6 +123,7 @@ class Node
                 'class' => 'flex-grow w-10',
                 'title' => $this->title ?: '信息详情',
                 'form' => true,
+                'vBind:loading' => 'loading',
                 'child' => [
                     [
                         'nodeName' => 'div',
@@ -227,6 +150,7 @@ class Node
                                     [
                                         'nodeName' => 'a-button',
                                         'html-type' => 'submit',
+                                        'vBind:loading'=>"loading",
                                         'type' => 'primary',
                                         'child' => '提交',
                                     ],
