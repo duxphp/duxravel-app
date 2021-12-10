@@ -14,10 +14,7 @@ class Node
     private string $url = '';
     private ?string $key = '';
     private ?string $title = '';
-    private bool $dialog = false;
     private bool $tree = false;
-    private bool $back = false;
-    private string $mode = 'table';
     private string $class = '';
     private array $params = [];
     private array $data = [];
@@ -25,7 +22,6 @@ class Node
     private array $expand = [];
     private array $filter = [];
     private array $quickFilter = [];
-    private array $showFilter = [];
     private array $action = [];
     private array $bath = [];
     private array $type = [];
@@ -51,23 +47,6 @@ class Node
     }
 
     /**
-     * 表格模式
-     * @param string $mode
-     * @return $this
-     */
-    public function mode($mode = 'table')
-    {
-        $this->mode = $mode;
-        if ($mode === 'list') {
-            //$this->class .= 'table-list';
-        }
-        if ($mode === 'list-nohead') {
-            //$this->class .= 'table-list table-nohead';
-        }
-        return $this;
-    }
-
-    /**
      * @param $class
      * @return $this
      */
@@ -84,16 +63,6 @@ class Node
     public function params($params)
     {
         $this->params = $params;
-        return $this;
-    }
-
-    /**
-     * @param bool $bool
-     * @return $this
-     */
-    public function dialog(bool $bool)
-    {
-        $this->dialog = $bool;
         return $this;
     }
 
@@ -138,16 +107,6 @@ class Node
     public function tree($config)
     {
         $this->tree = $config;
-        return $this;
-    }
-
-    /**
-     * @param bool $bool
-     * @return $this
-     */
-    public function back($bool = true)
-    {
-        $this->back = $bool;
         return $this;
     }
 
@@ -200,16 +159,6 @@ class Node
         if ($node) {
             $this->quickFilter = $node;
         }
-        return $this;
-    }
-
-    /**
-     * @param array $node
-     * @return $this
-     */
-    public function showFilter(array $node)
-    {
-        $this->showFilter = $node;
         return $this;
     }
 

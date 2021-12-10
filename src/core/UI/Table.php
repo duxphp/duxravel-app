@@ -32,7 +32,6 @@ class Table
     protected ?Action $action = null;
     protected ?Batch $batch = null;
     protected array $expand = [];
-    protected string $tableMode = 'list';
     protected array $class = [];
     protected array $rows = [];
     protected array $map = [];
@@ -269,17 +268,6 @@ class Table
     }
 
     /**
-     * 表格模式
-     * @param string $mode
-     * @return $this
-     */
-    public function tableMode($mode = 'table')
-    {
-        $this->tableMode = $mode;
-        return $this;
-    }
-
-    /**
      * 设置样式class
      * @return $this
      */
@@ -376,17 +364,6 @@ class Table
     public function title($title): self
     {
         $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * 返回
-     * @param bool $bool
-     * @return $this
-     */
-    public function back(bool $bool = true): self
-    {
-        $this->back = $bool;
         return $this;
     }
 
@@ -591,13 +568,10 @@ class Table
         $keyName = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
         $node = new Node($this->url ?: url(request()->path() . '/ajax'), $keyName, $this->title);
         $node->class(implode(' ', $this->class));
-        $node->mode($this->tableMode);
-        $node->dialog((bool)$this->dialog);
         $node->params($this->attr);
         $node->data($this->filterParams);
         $node->columns($columnNode);
         $node->expand($this->expand);
-        $node->back($this->back);
 
         foreach ($this->script as $key => $value) {
             $node->script($value, $this->scriptReturn[$key]);
