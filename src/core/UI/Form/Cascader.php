@@ -89,7 +89,7 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 多选组件
+     * 节点选择
      * @return $this
      */
     public function leaf(bool $leaf): self
@@ -98,7 +98,12 @@ class Cascader extends Element implements Component
         return $this;
     }
 
-    public function tree($bool = true)
+    /**
+     * 树形模式
+     * @param bool $bool
+     * @return $this
+     */
+    public function tree(bool $bool = true): self
     {
         $this->treeData = $bool;
         return $this;
@@ -139,13 +144,8 @@ class Cascader extends Element implements Component
 
         $data = [
             'nodeName' => 'app-cascader',
-            //'class' => 'shadow-sm',
             'nParams' => [
-                //'cascade' => true,
-                //'show-path' => true,
-                //'filterable' => false,
-                //'clearable' => true,
-                //'leaf-only' => $this->leaf,
+                'check-strictly' => !$this->leaf,
                 'multiple' => $this->multi,
                 'options' => $options,
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
