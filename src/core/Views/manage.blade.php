@@ -10,15 +10,15 @@
   <script>
     window.appConfig = {
       name: '{{config('app.name')}}',
-      logo: '/static/images/logo.svg',
+      logo: '/images/logo.svg',
       login: {
-        logo: '/static/images/logo.svg',
+        logo: '/images/logo.svg',
         title: '{{config('app.name')}}',
         desc: '{{config('app.desc')}}',
         contact: '{{config('app.contact')}}',
-        background: '/static/images/login-bg.png',
+        background: '/images/login-bg.png',
         side: [
-          '/static/images/login-side.png'
+          '/images/login-side.png'
         ]
       }
     }
