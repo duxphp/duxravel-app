@@ -21,6 +21,7 @@ class Select extends Element implements Component
     protected bool $tip = false;
     protected bool $search = false;
     protected bool $multi = false;
+    protected array $optionRender = [];
     protected $data;
 
     /**
@@ -131,6 +132,17 @@ class Select extends Element implements Component
     }
 
     /**
+     * 选项渲染
+     * @param  array $data JS语法
+     * @return $this
+     */
+    public function optionRender(array $data)
+    {
+        $this->optionRender = $data;
+        return $this;
+    }
+
+    /**
      * 渲染组件
      * @return string
      */
@@ -154,7 +166,6 @@ class Select extends Element implements Component
 
         $object = [
             'nodeName' => 'app-select',
-            'class' => 'shadow-sm',
             'nParams' => [
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
                 'options' => $options
@@ -186,6 +197,9 @@ class Select extends Element implements Component
         }
         if ($this->tagCount) {
             $object['nParams']['maxTagCount'] = $this->tagCount;
+        }
+        if ($this->optionRender) {
+            $object['vRender:optionRender:item'] = $this->optionRender;
         }
 
         return $object;

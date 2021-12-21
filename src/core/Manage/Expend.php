@@ -208,7 +208,7 @@ trait Expend
     public function data()
     {
         $name = request()->get('query');
-        $limit = request()->get('limit', 20);
+        $limit = request()->get('limit', 10);
         $id = request()->get('id');
         $data = new $this->model();
         $key = $data->getKeyName();
@@ -217,15 +217,19 @@ trait Expend
             if (method_exists($this, 'dataSearch')) {
                 $nameKey = $this->dataSearch();
             }
-            foreach ($nameKey as $vo) {
-                $data = $data->orWhere($vo, 'like', "%{$name}%");
-            }
+            $data = $data->where(function ($query) use ($nameKey, $name) {
+                foreach ($nameKey as $vo) {
+                    $query->orWhere($vo, 'like', "%{$name}%");
+                }
+            });
+
         }
         if ($id) {
             $ids = !is_array($id) ? explode(',', $id) : $id;
             $ids = array_filter($ids);
             if ($ids) {
-                $data = $data->whereIn($key, $ids);
+                $ids = implode(',', $ids);
+                $data = $data->orderByRaw(DB::raw("FIELD($key, $ids) desc"))->orderBy($key, 'desc');
             }
         }
 
@@ -241,8 +245,13 @@ trait Expend
         $data = $data->paginate($limit, $field);
 
         $totalPage = $data->lastPage();
-        $data = $data->toArray();
         $total = $data['total'];
+
+        if (method_exists($this, 'dataCallback')) {
+            $data->setCollection($this->dataCallback($data->getCollection()));
+        }
+
+        $data = $data->toArray();
 
         $manageUrl = false;
         if (method_exists($this, 'dataManageUrl')) {

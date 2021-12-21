@@ -31,10 +31,10 @@ class Link implements Component
      * @param string $label
      * @return \Duxravel\Core\UI\Widget\Link
      */
-    public function add(string $name, string $route, array $params = []): \Duxravel\Core\UI\Widget\Link
+    public function add(string $name, string $route, array $params = [], bool $absolute = false): \Duxravel\Core\UI\Widget\Link
     {
         $label = $route . '?' . http_build_query($params);
-        $link = new \Duxravel\Core\UI\Widget\Link($name, $route, $params);
+        $link = new \Duxravel\Core\UI\Widget\Link($name, $route, $params, $absolute);
         $link->fields($this->fields);
         $link = $link->model('rowData.record');
         $this->link[] = $link;

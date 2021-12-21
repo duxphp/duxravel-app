@@ -18,6 +18,7 @@ class Link extends Widget
     protected string $name;
     protected string $route;
     protected string $url;
+    protected bool $absolute = false;
     protected array $params = [];
     protected array $fields = [];
     protected ?\Closure $show = null;
@@ -39,12 +40,12 @@ class Link extends Widget
      * @param array $params
      * @param callable|null $callback
      */
-    public function __construct(string $name, string $route = '', array $params = [], callable $callback = NULL)
+    public function __construct(string $name, string $route = '', array $params = [], bool $absolute = false)
     {
         $this->name = $name;
         $this->route = $route;
         $this->params = $params ?: [];
-        $this->callback = $callback;
+        $this->absolute = $absolute;
     }
 
     /**
@@ -181,7 +182,7 @@ class Link extends Widget
             return false;
         }
 
-        return app_route($this->route, $this->params, false, $this->model, $this->fields);
+        return app_route($this->route, $this->params, $this->absolute, $this->model, $this->fields);
     }
 
     /**
@@ -197,12 +198,17 @@ class Link extends Widget
 
         $object = [
             'nodeName' => 'route',
-            'name' => $this->name
         ];
 
         switch ($this->type) {
             case 'default':
                 $object['vBind:href'] = $url;
+                break;
+            case 'blank':
+                $object['nodeName'] = 'a';
+                $object['vBind:href'] = $url;
+                $object['target'] = '_blank';
+                $object['child'] = $this->name;
                 break;
             case 'dialog':
                 $object['vBind:href'] = $url;

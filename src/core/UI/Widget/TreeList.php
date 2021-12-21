@@ -107,6 +107,7 @@ class TreeList extends Widget
                 $tmp = [
                     'text' => $vo['name'],
                 ];
+                $tmp['key'] = $key;
                 if ($event) {
                     $tmp['event'] = $event;
                 } else {
@@ -121,7 +122,6 @@ class TreeList extends Widget
                             $tmp['event'] = $url ? "window.router.push($url)" : "window.dialog.alert({content: '未定义链接数据'})";
                     }
                 }
-
                 $menu[] = $tmp;
             }
             $tree['contextMenus'] = $menu;

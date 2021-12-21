@@ -5,19 +5,17 @@ namespace Duxravel\Core\UI\Form;
 use Duxravel\Core\UI\Form\Component;
 use Duxravel\Core\UI\Form\Element;
 use Duxravel\Core\UI\Tools;
-use Duxravel\Core\UI\Widget\TreeList;
-use Illuminate\Support\Facades\Http;
 
 /**
- * Class Cascader
+ * Class TreeSelect
  * @package Duxravel\Core\UI\Form
  */
-class Cascader extends Element implements Component
+class TreeSelect extends Element implements Component
 {
     protected bool $tip = false;
     protected bool $multi = false;
-    protected bool $leaf = true;
     protected bool $treeData = false;
+    protected string $strategy = 'all';
     protected string $url = '';
     protected string $route = '';
     protected $data;
@@ -89,23 +87,25 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 节点选择
-     * @return $this
-     */
-    public function leaf(bool $leaf): self
-    {
-        $this->leaf = $leaf;
-        return $this;
-    }
-
-    /**
      * 树形模式
      * @param bool $bool
      * @return $this
      */
-    public function tree(bool $bool = true): self
+    public function tree(bool $bool = true)
     {
         $this->treeData = $bool;
+        return $this;
+    }
+
+
+    /**
+     * 回填方式
+     * @param string $model
+     * @return $this
+     */
+    public function strategy(string $model)
+    {
+        $this->strategy = $model;
         return $this;
     }
 
@@ -134,21 +134,21 @@ class Cascader extends Element implements Component
                     'label' => $vo['name'],
                 ];
             }
-
             $options = \Duxravel\Core\Util\Tree::arr2tree($options, 'id', 'pid', 'children');
 
         } else {
             $options = $data;
         }
 
-
         $data = [
-            'nodeName' => 'app-cascader',
+            'nodeName' => 'app-tree-select',
             'nParams' => [
-                'check-strictly' => !$this->leaf,
                 'multiple' => $this->multi,
-                'options' => $options,
+                'treeCheckable' => $this->multi,
+                'treeCheckedStrategy' => $this->strategy,
+                'data' => $options,
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+
             ]
         ];
 
@@ -174,6 +174,5 @@ class Cascader extends Element implements Component
     {
         return is_array($data) ? implode(',', $data) : $data;
     }
-
 
 }

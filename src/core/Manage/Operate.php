@@ -11,6 +11,7 @@ trait Operate
 
     protected function table(): Table
     {
+        
         $parser = app_parsing();
         $layer = strtolower($parser['layer']);
         $route = strtolower($parser['layer']) . '.' . strtolower($parser['app']);

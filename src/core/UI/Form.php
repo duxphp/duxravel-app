@@ -60,7 +60,7 @@ class Form
     protected array $script = [];
     protected array $sideNode = [];
     protected bool $dialog = false;
-    protected bool $vertical = false;
+    protected bool $vertical = true;
     public Collection $element;
 
     /**
@@ -622,12 +622,12 @@ class Form
                 }
             }
 
-            // 树形处理
-            if ($formatData['parent_id']) {
+            // 树形处理 已废弃 先设置 scoped 数据 再设置上级数据
+            /*if ($model->parent_id) {
                 if (method_exists($model, 'appendToNode')) {
                     $model = $model->appendToNode($this->modelElo->find($formatData['parent_id']));
                 }
-            }
+            }*/
 
             $data->map(function ($item, $key) use ($model) {
                 $has = $item['has'];

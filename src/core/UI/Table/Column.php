@@ -161,15 +161,16 @@ class Column
      * @param string $name
      * @param string $route
      * @param array $params
+     * @param bool $absolute
      * @return Link
      */
-    public function link(string $name, string $route, array $params = []): Link
+    public function link(string $name, string $route, array $params = [], bool $absolute = false): Link
     {
         if (!$this->element) {
             $this->element = new Table\Column\Link();
             $this->element->fields($this->layout->fields);
         }
-        return $this->element->add($name, $route, $params);
+        return $this->element->add($name, $route, $params, $absolute);
     }
 
     /**
