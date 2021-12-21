@@ -16,9 +16,8 @@
         title: '{{config('app.name')}}',
         desc: '{{config('app.desc')}}',
         contact: '{{config('app.contact')}}',
-        background: '/images/login-bg.png',
+        background: '{{is_file(public_path('/images/login-bg.png')) ? "/images/login-bg.png" : ""}}',
         side: [
-          '/images/login-side.png'
         ]
       }
     }
