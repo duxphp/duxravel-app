@@ -6,7 +6,7 @@ namespace Duxravel\Core\Model;
  * Class Role
  * @package Duxravel\Core\Model
  */
-class Role extends \Duxravel\Core\Model\Base
+class RoleHas extends \Duxravel\Core\Model\Base
 {
 
     protected $table = 'role_has';
