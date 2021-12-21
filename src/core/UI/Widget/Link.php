@@ -215,6 +215,12 @@ class Link extends Widget
                 $object['type'] = 'dialog';
                 $object['title'] = $this->name;
                 break;
+            case 'drawer':
+                $object['vBind:href'] = $url;
+                $object['type'] = 'dialog';
+                $object['mode'] = 'drawer';
+                $object['title'] = $this->name;
+                break;
             case 'ajax':
                 $object['vBind:href'] = $url;
                 $object['type'] = 'ajax';
