@@ -65,7 +65,7 @@ trait Operate
         });
 
         $column = $table->column('详情');
-        $column->link('查看数据', $route . '.operate.info', ['id' => 'uuid'])->type('dialog');
+        $column->link('查看数据', $route . '.operate.info', ['id' => 'uuid'])->type('drawer');
 
         return $table;
     }
