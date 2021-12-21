@@ -11,7 +11,7 @@ trait Operate
 
     protected function table(): Table
     {
-        
+
         $parser = app_parsing();
         $layer = strtolower($parser['layer']);
         $route = strtolower($parser['layer']) . '.' . strtolower($parser['app']);
@@ -74,14 +74,76 @@ trait Operate
     {
         $info = \Duxravel\Core\Model\VisitorOperate::find($id);
 
-        $params = $info['params'];
 
         $data = [];
-        foreach ($params as $key => $vo) {
-            $data[] = $key . ' : ' . $vo;
-        }
-        $list = (new Widget\Lists($data))->getRender();
-        return $this->dialogNode('操作详情', $list);
+        $data[] = [
+            'label' => '用户',
+            'value' => $info->username,
+        ];
+        $data[] = [
+            'label' => '方式',
+            'value' => $info->method,
+        ];
+        $data[] = [
+            'label' => '路由',
+            'value' => $info->route,
+        ];
+        $data[] = [
+            'label' => '描述',
+            'value' => $info->desc,
+        ];
+        $data[] = [
+            'label' => 'IP',
+            'value' => $info->ip,
+        ];
+        $data[] = [
+            'label' => '浏览器',
+            'value' => $info->browser,
+        ];
+        $data[] = [
+            'label' => '系统',
+            'value' => $info->device,
+        ];
+        $data[] = [
+            'label' => '响应',
+            'value' => $info->time . 's',
+        ];
+        $data[] = [
+            'label' => '请求时间',
+            'value' => $info->create_time->format('Y-m-d H:i:s'),
+        ];
+        $data[] = [
+            'label' => '结束时间',
+            'value' => $info->update_time->format('Y-m-d H:i:s'),
+        ];
+
+        return $this->dialogNode('操作详情', [
+            'nodeName' => 'div',
+            'class' => 'p-4',
+            'child' => [
+                [
+                    'nodeName' => 'div',
+                    'child' => '用户信息',
+                    'class' => 'pb-4 text-base',
+                ],
+                [
+                    'nodeName' => 'a-descriptions',
+                    'column' => 1,
+                    'bordered' => true,
+                    'data' => $data
+                ],
+                $info->params ? [
+                    'nodeName' => 'div',
+                    'child' => '请求数据',
+                    'class' => ' py-4 text-base',
+                ] : [],
+                $info->params ? [
+                    'nodeName' => 'pre',
+                    'class' => 'bg-gray-100 block p-4',
+                    'child' => json_encode($info->params, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)
+                ] : [],
+            ]
+        ]);
     }
 
 }
