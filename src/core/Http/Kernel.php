@@ -41,8 +41,6 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
 
             // \Duxravel\Core\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
-            \Duxravel\Core\Middleware\Web::class
         ],
         'api' => [
             \Duxravel\Core\Middleware\Header::class,

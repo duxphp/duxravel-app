@@ -34,36 +34,17 @@ class View
         return $this;
     }
 
-    public function render($type = 'base')
+    public function render()
     {
         $assign = $this->data;
-        $view = '';
-
         $parsing = app_parsing();
 
-        if ($type === 'web') {
-            $agent = new Agent();
-            $theme = config('theme.default');
-            $mobileTheme = config('theme.mobile');
-            if ($mobileTheme && ($agent->isMobile() || $agent->isTablet())) {
-                $theme = $mobileTheme;
-            }
-            \View::share('theme', function ($url) use ($theme) {
-                return \URL::asset('themes/' . $theme) . '/' . $url;
-            });
-            foreach ($assign as $key => $vo) {
-                \View::share($key, $vo);
-            }
-            $view = $this->tpl;
-        } else {
-            if (!$this->tpl) {
-                $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
-                $this->tpl = implode('.', $view);
-            }
-            $assign['manage'] = strtolower($parsing['layer']);
-            $view = $this->tpl;
+        if (!$this->tpl) {
+            $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
+            $this->tpl = implode('.', $view);
         }
-        return view($view ?: $this->tpl, $assign);
+        $assign['manage'] = strtolower($parsing['layer']);
+        return view($this->tpl, $assign);
     }
 
     public static function manage()
