@@ -22,7 +22,7 @@ class Tab extends Composite implements Component
      * @param string $desc
      * @return $this
      */
-    public function column($name, callable $callback, string $title = '', string $desc = ''): self
+    public function column($name, callable $callback, int $order = null, string $title = '', string $desc = ''): self
     {
         $form = new Form();
         $form->dialog($this->dialog);
@@ -32,7 +32,9 @@ class Tab extends Composite implements Component
             'name' => $name,
             'title' => $title,
             'desc' => $desc,
+            'order' => isset($order) ? $order : count($this->column) + 1,
             'object' => $form,
+
         ];
         return $this;
     }
@@ -46,7 +48,9 @@ class Tab extends Composite implements Component
 
         $nodes = [];
 
-        foreach ($this->column as $key => $vo) {
+        $column = collect($this->column)->sortBy('order')->toArray();
+
+        foreach ($column as $key => $vo) {
 
             $child = [];
             if ($vo['title']) {
