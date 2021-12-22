@@ -82,7 +82,7 @@ class Image extends Element implements Component
             'nodeName' => 'app-file',
             'format' => 'image',
             'image' => true,
-            'size' => 32
+            'size' => 125
         ];
         if ($this->url) {
             $data['upload'] = $this->url;
