@@ -72,7 +72,14 @@
       ],
       "event": [
         "Duxravel\\Core\\Events\\App",
-        "Duxravel\\Core\\Events\\ManageTable"
+        "Duxravel\\Core\\Events\\ManageTable",
+        "Duxravel\\Core\\Events\\ManageForm",
+        "Duxravel\\Core\\Events\\ManageExport",
+        "Duxravel\\Core\\Events\\ManageForm",
+        "Duxravel\\Core\\Events\\ManageDel",
+        "Duxravel\\Core\\Events\\ManageClear",
+        "Duxravel\\Core\\Events\\ManageRecovery",
+        "Duxravel\\Core\\Events\\ManageStatus"
       ],
       "listener": [
         "Duxravel\\Core\\Listeners\\InstallSeed"
