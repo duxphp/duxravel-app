@@ -14,9 +14,9 @@ class Datetime extends Element implements Component
 
     /**
      * Datetime constructor.
-     * @param  string  $name
-     * @param  string  $field
-     * @param  string  $has
+     * @param string $name
+     * @param string $field
+     * @param string $has
      */
     public function __construct(string $name, string $field, string $has = '')
     {
@@ -38,12 +38,11 @@ class Datetime extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
-        $data = [
+        return [
             'nodeName' => 'a-date-picker',
             'vModel:value' => $this->getModelField(),
             'showTime' => true,
@@ -52,13 +51,12 @@ class Datetime extends Element implements Component
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
             'vModel:modelValue' => $this->getModelField(),
         ];
-
-        return $data;
     }
 
     /**
      * 获取输入值
      * @param $data
+     * @return false|int|null
      */
     public function dataInput($data)
     {
