@@ -12,6 +12,7 @@ class File extends Element implements Component
 {
     protected string $type = 'upload';
     protected string $url = '';
+    protected string $fileUrl = '';
 
     /**
      * File constructor.
@@ -32,6 +33,30 @@ class File extends Element implements Component
         return $this;
     }
 
+
+
+    /**
+     * 上传地址
+     * @param string $url
+     * @return $this
+     */
+    public function url(string $url): self
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * 文件地址
+     * @param string $url
+     * @return $this
+     */
+    public function fileUrl(string $url): self
+    {
+        $this->fileUrl = $url;
+        return $this;
+    }
+
     /**
      * 渲染组件
      * @return string
@@ -43,6 +68,9 @@ class File extends Element implements Component
         ];
         if ($this->url) {
             $data['upload'] = $this->url;
+        }
+        if ($this->fileUrl) {
+            $data['fileUrl'] = $this->fileUrl;
         }
         if ($this->type) {
             $data['type'] = $this->type;

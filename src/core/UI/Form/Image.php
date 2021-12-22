@@ -19,6 +19,7 @@ class Image extends Element implements Component
     private array $water = [];
     protected string $type = 'manage';
     protected string $url = '';
+    protected string $fileUrl = '';
 
     /**
      * Text constructor.
@@ -65,18 +66,44 @@ class Image extends Element implements Component
         return $this;
     }
 
-    public function type($type = 'manage')
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function type(string $type = 'manage'): self
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * 上传地址
+     * @param string $url
+     * @return $this
+     */
+    public function url(string $url): self
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * 文件地址
+     * @param string $url
+     * @return $this
+     */
+    public function fileUrl(string $url): self
+    {
+        $this->fileUrl = $url;
         return $this;
     }
 
 
     /**
      * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = [
             'nodeName' => 'app-file',
@@ -86,6 +113,9 @@ class Image extends Element implements Component
         ];
         if ($this->url) {
             $data['upload'] = $this->url;
+        }
+        if ($this->fileUrl) {
+            $data['fileUrl'] = $this->fileUrl;
         }
         if ($this->type) {
             $data['type'] = $this->type;

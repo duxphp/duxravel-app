@@ -15,6 +15,8 @@ use Duxravel\Core\UI\Tools;
 class Files extends Element implements Component
 {
     protected string $type = 'manage';
+    protected string $url = '';
+    protected string $fileUrl = '';
     /**
      * Text constructor.
      * @param  string  $name
@@ -35,6 +37,28 @@ class Files extends Element implements Component
     }
 
     /**
+     * 上传地址
+     * @param string $url
+     * @return $this
+     */
+    public function url(string $url): self
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * 文件地址
+     * @param string $url
+     * @return $this
+     */
+    public function fileUrl(string $url): self
+    {
+        $this->fileUrl = $url;
+        return $this;
+    }
+
+    /**
      * 渲染组件
      * @param $value
      * @return string
@@ -46,6 +70,12 @@ class Files extends Element implements Component
         ];
         if ($this->type) {
             $data['type'] = $this->type;
+        }
+        if ($this->url) {
+            $data['upload'] = $this->url;
+        }
+        if ($this->fileUrl) {
+            $data['fileUrl'] = $this->fileUrl;
         }
         if ($this->model) {
             $data['vModel:value'] = $this->getModelField();
