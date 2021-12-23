@@ -730,7 +730,7 @@ class Table
             }
             if ($this->map) {
                 foreach ($this->map as $k => $v) {
-                    $rowData[is_int($k) ? str_replace('.', '_', $v) : $k] = is_callable($v) ? call_user_func($v, $vo) : Tools::parsingArrData($vo, $v);
+                    $rowData[is_int($k) ? str_replace(['.', '->'], '_', $v) : $k] = is_callable($v) ? call_user_func($v, $vo) : Tools::parsingArrData($vo, $v);
                 }
             }
             if ($vo['children'] && $tree) {

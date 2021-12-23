@@ -65,6 +65,7 @@ class Datetime extends Element implements Component
 
     public function dataValue($data)
     {
+        $data = $this->getValue($data);
         return $data ? date('Y-m-d H:i:s', $data) : null;
     }
 

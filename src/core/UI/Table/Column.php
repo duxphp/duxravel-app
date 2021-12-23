@@ -299,7 +299,7 @@ class Column
      */
     public function getLabel()
     {
-        return $this->relation ? $this->relation . '_' . $this->label : $this->label;
+        return str_replace(['.', '->'], '_', $this->relation ? $this->relation . '_' . $this->label : $this->label);
     }
 
     /**
@@ -443,6 +443,9 @@ class Column
             }
         }
         $object = new $class(...$arguments);
+        if (method_exists($object, 'fields')) {
+            $object->fields($this->layout->fields);
+        }
         $this->element = $object;
         return $this;
     }

@@ -13,12 +13,12 @@ class Form
     /**
      * 获取表单UI
      * @param $formId
-     * @param $form
+     * @param \Duxravel\Core\UI\Form $form
      * @param int $id
      * @param string $hasType
-     * @return mixed
+     * @return \Duxravel\Core\UI\Form
      */
-    public static function getFormUI($formId, $form, $id = 0, $hasType = '')
+    public static function getFormUI($formId, \Duxravel\Core\UI\Form $form, int $id = 0, string $hasType = ''): \Duxravel\Core\UI\Form
     {
         $model = new \Duxravel\Core\Model\FormData();
         $info = [];
@@ -120,33 +120,20 @@ class Form
     {
         return [
             'text' => [
-                'ui' => function ($config, $form, $value) {
-                    if ($config['data']['type'] === 'text') {
-                        $el = $form->text($config['name'], $config['field']);
-                    }
-                    if ($config['data']['type'] === 'number') {
-                        $el = $form->text($config['name'], $config['field'])->type('number');
-                    }
-                    if ($config['data']['type'] === 'email') {
-                        $el = $form->email($config['name'], $config['field']);
-                    }
-                    if ($config['data']['type'] === 'tel') {
-                        $el = $form->tel($config['name'], $config['field']);
-                    }
-                    if ($config['data']['type'] === 'password') {
-                        $el = $form->password($config['name'], $config['field']);
-                    }
-                    if ($config['data']['type'] === 'ip') {
-                        $el = $form->text($config['name'], $config['field'])->type('ip');
-                    }
-                    if ($config['data']['type'] === 'url') {
-                        $el = $form->text($config['name'], $config['field'])->type('url');
-                    }
-                    if ($config['data']['type'] === 'date') {
-                        $el = $form->text($config['name'], $config['field'])->type('date');
-                    }
-                    if ($config['data']['type'] === 'time') {
-                        $el = $form->text($config['name'], $config['field'])->type('time');
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
+                    switch ($config['data']['type']) {
+                        case 'number':
+                            $el = $form->number($config['name'], $config['field']);
+                            break;
+                        case 'textarea':
+                            $el = $form->textarea($config['name'], $config['field']);
+                            break;
+                        case 'password':
+                            $el = $form->password($config['name'], $config['field']);
+                            break;
+                        case 'text':
+                        default:
+                            $el = $form->text($config['name'], $config['field']);
                     }
                     $el->value($value);
                 },
@@ -159,9 +146,9 @@ class Form
                 }
             ],
             'select' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     $form->select($config['name'], $config['field'], function () use ($config) {
-                        $option = array_filter(explode("\n", $config['data']['options']));
+                        $option = array_filter($config['data']['options']);
                         $tmpArr = [];
                         foreach ($option as $vo) {
                             $tmpArr[$vo] = $vo;
@@ -171,9 +158,9 @@ class Form
                 }
             ],
             'radio' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     $form->radio($config['name'], $config['field'], function () use ($config) {
-                        $option = array_filter(explode("\n", $config['data']['options']));
+                        $option = array_filter($config['data']['options']);
                         $tmpArr = [];
                         foreach ($option as $vo) {
                             $tmpArr[$vo] = $vo;
@@ -183,9 +170,9 @@ class Form
                 }
             ],
             'checkbox' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     $form->checkbox($config['name'], $config['field'], function () use ($config) {
-                        $option = array_filter(explode("\n", $config['data']['options']));
+                        $option = array_filter($config['data']['options']);
                         $tmpArr = [];
                         foreach ($option as $vo) {
                             $tmpArr[$vo] = $vo;
@@ -195,8 +182,8 @@ class Form
                 }
             ],
             'image' => [
-                'ui' => function ($config, $form, $value) {
-                    $form->image($config['name'], $config['field'])->attr('data-mode', $config['data']['type'] ? 'upload' : 'manage')->value($value);
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
+                    $form->image($config['name'], $config['field'])->type($config['data']['type'] ? 'upload' : 'manage')->value($value);
                 },
                 'verify' => function ($config, $value) {
                     if ($config['data']['required']) {
@@ -207,8 +194,8 @@ class Form
                 }
             ],
             'images' => [
-                'ui' => function ($config, $form, $value) {
-                    $form->images($config['name'], $config['field'])->attr('data-mode', $config['data']['type'] ? 'upload' : 'manage')->value($value);
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
+                    $form->images($config['name'], $config['field'])->type($config['data']['type'] ? 'upload' : 'manage')->value($value);
                 },
                 'verify' => function ($config, $value) {
                     if ($config['data']['required']) {
@@ -224,7 +211,7 @@ class Form
                 }
             ],
             'file' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     $form->file($config['name'], $config['field'])->attr('data-mode', $config['data']['type'] ? 'upload' : 'manage')->value($value);
                 },
                 'verify' => function ($config, $value) {
@@ -236,7 +223,7 @@ class Form
                 }
             ],
             'date' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     if ($config['data']['type'] === 'date') {
                         $form->date($config['name'], $config['field'])->value($value);
                     }
@@ -259,7 +246,7 @@ class Form
                 }
             ],
             'editor' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     $form->editor($config['name'], $config['field'])->value($value);
                 },
                 'verify' => function ($config, $value) {
@@ -271,7 +258,7 @@ class Form
                 }
             ],
             'color' => [
-                'ui' => function ($config, $form, $value) {
+                'ui' => function ($config, \Duxravel\Core\UI\Form $form, $value) {
                     if ($config['data']['type'] === 'color') {
                         $form->color($config['name'], $config['field'])->value($value);
                     }

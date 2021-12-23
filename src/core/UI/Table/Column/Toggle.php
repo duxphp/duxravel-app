@@ -10,38 +10,34 @@ use Duxravel\Core\UI\Tools;
 class Toggle implements Component
 {
 
+    private string $route;
     private array $params;
     private string $field;
+    private array $fields;
     private string $url;
-    private string $label;
 
     /**
      * Toggle constructor.
-     * @param string $url
+     * @param string $route
      * @param array $params
      */
-    public function __construct(string $field, string $url, array $params = [])
+    public function __construct(string $field, string $route, array $params = [])
     {
         $this->field = $field;
-        $this->url = $url;
         $this->params = $params;
-        $this->label = $url . '?' . http_build_query($params);
+        $this->route = $route;
     }
 
+
     /**
-     * 获取数据
-     * @param $rowData
-     * @return array
+     * 设置数据列字段
+     * @param array $fields
+     * @return void
      */
-    public function getData($rowData, $field)
+    public function fields(Array $fields = [])
     {
-        $params = [];
-        foreach ($this->params as $key => $vo) {
-            $params[$key] = Tools::parsingArrData($data, $vo, true);
-        }
-        return [
-            $this->label => route($this->url, $this->params, false)
-        ];
+        $this->fields = $fields;
+        return $this;
     }
 
     /**
@@ -50,10 +46,11 @@ class Toggle implements Component
      */
     public function render($field): array
     {
+        $url = app_route($this->route, $this->params, false, 'rowData.record', $this->fields);
         return [
-            'nodeName' => 'n-switch',
-            'vModel:value' => "rowData.record['$field']",
-            'vOn:update:value' => "rowData.record['$field'] = \$event, editValue(rowData.record['$this->label'], {'field': '$this->field', '$this->field': rowData.record['$field']})",
+            'nodeName' => 'a-switch',
+            'vModel:model-value' => "rowData.record['$field']",
+            'vOn:change' => "rowData.record['$field'] = \$event, editValue($url, {'field': '$this->field', '$this->field': rowData.record['$field']})",
         ];
     }
 

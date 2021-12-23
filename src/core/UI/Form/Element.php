@@ -475,8 +475,10 @@ class Element
         }
         if (method_exists($this, 'dataValue')) {
             $value = $this->dataValue($value, $info);
+        }else {
+            $value = $this->getValue($value);
         }
-        $data[$this->getField()] = $this->getValue($value);
+        $data[$this->getField()] = $value;
 
         return $data;
     }

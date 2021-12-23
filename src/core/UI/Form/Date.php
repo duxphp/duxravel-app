@@ -79,6 +79,7 @@ class Date extends Element implements Component
 
     public function dataValue($data)
     {
+        $data = $this->getValue($data);
         return $data ? date('Y-m-d', $data) : null;
     }
 
