@@ -23,8 +23,7 @@ class CreateVisitorApiTable extends Migration
             $table->integer('uv')->nullable()->default(0)->comment('访客量');
             $table->char('min_time', 30)->nullable()->default('')->comment('最小响应');
             $table->char('max_time', 30)->nullable()->default('')->comment('最大响应');
-            $table->integer('create_time')->default(0);
-            $table->integer('update_time')->default(0);
+            $table->timestamps();
         });
     }
 

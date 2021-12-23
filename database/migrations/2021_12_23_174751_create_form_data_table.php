@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVisitorViewsTable extends Migration
+class CreateFormDataTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateVisitorViewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('visitor_views', function (Blueprint $table) {
-            $table->increments('view_id');
+        Schema::create('form_data', function (Blueprint $table) {
+            $table->increments('data_id');
+            $table->integer('form_id')->default(0)->index('form_id')->comment('表单id');
             $table->string('has_type', 250)->nullable()->default('')->index('has_type')->comment('关联类型');
             $table->integer('has_id')->default(0)->index('has_id')->comment('关联id');
-            $table->integer('pv')->default(0)->comment('浏览量');
-            $table->integer('uv')->default(0)->comment('访客量');
-            $table->integer('create_time')->default(0);
-            $table->integer('update_time')->default(0);
+            $table->longText('data')->nullable()->comment('表单内容');
+            $table->boolean('status')->default(1)->comment('状态');
+            $table->timestamps();
         });
     }
 
@@ -31,6 +31,6 @@ class CreateVisitorViewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('visitor_views');
+        Schema::dropIfExists('form_data');
     }
 }

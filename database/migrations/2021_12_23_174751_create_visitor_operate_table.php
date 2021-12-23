@@ -14,7 +14,7 @@ class CreateVisitorOperateTable extends Migration
     public function up()
     {
         Schema::create('visitor_operate', function (Blueprint $table) {
-            $table->increments('operate_id');
+            $table->char('uuid', 36)->default('')->unique('uuid')->comment('uuid');
             $table->char('has_type', 50)->nullable()->default('')->index('has_type')->comment('关联类型');
             $table->integer('has_id')->default(0)->index('has_id')->comment('关联id');
             $table->string('username', 100)->nullable()->default('')->index('username')->comment('用户名');
@@ -29,8 +29,7 @@ class CreateVisitorOperateTable extends Migration
             $table->char('device', 50)->nullable()->default('')->comment('设备');
             $table->boolean('mobile')->default(0)->comment('移动端');
             $table->char('time', 30)->default('0')->comment('记录时间');
-            $table->integer('create_time')->default(0);
-            $table->integer('update_time')->default(0);
+            $table->timestamps();
         });
     }
 

@@ -21,8 +21,12 @@ class CreateFormTable extends Migration
             $table->longText('data')->nullable()->comment('表单配置');
             $table->boolean('manage')->nullable()->default(0)->comment('独立管理');
             $table->char('search', 50)->nullable()->default('')->comment('搜索字段');
-            $table->integer('create_time')->default(0);
-            $table->integer('update_time')->default(0);
+            $table->boolean('audit')->nullable()->default(0)->comment('审核状态');
+            $table->boolean('submit')->nullable()->default(0)->comment('外部提交');
+            $table->string('tpl_list', 250)->nullable()->comment('列表模板');
+            $table->string('tpl_info', 250)->nullable()->comment('详情模板');
+            $table->integer('interval')->nullable()->default(10)->comment('search');
+            $table->timestamps();
         });
     }
 

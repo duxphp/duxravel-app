@@ -24,8 +24,8 @@ class CreateFileTable extends Migration
             $table->string('ext', 20)->nullable()->default('')->index('ext')->comment('扩展名');
             $table->integer('size')->default(0)->comment('大小字节');
             $table->string('mime', 250)->nullable()->default('')->comment('mime类型');
-            $table->integer('create_time')->default(0);
-            $table->integer('update_time')->default(0);
+            $table->string('field', 50)->nullable()->comment('文件字段');
+            $table->timestamps();
         });
     }
 
