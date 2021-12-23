@@ -14,7 +14,7 @@ use Duxravel\Core\UI\Tools;
  */
 class Tags extends Element implements Component
 {
-    protected int $limit = 3;
+    protected int $limit = 0;
 
     /**
      * Text constructor.

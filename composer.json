@@ -33,7 +33,6 @@
     "laravel/tinker": "^2.5",
     "orangehill/iseed": "^3.0",
     "phpoffice/phpspreadsheet": "^1.15",
-    "rtconner/laravel-tagging": "^4.1",
     "tymon/jwt-auth": "^1.0",
     "mews/captcha": "^3.2",
     "overtrue/laravel-filesystem-qiniu": "^1.0",

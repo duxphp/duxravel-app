@@ -141,8 +141,12 @@ class Element
     public function getValueArray($value, bool $json = false)
     {
         $value = $this->getValue($value);
-        if ($value instanceof \Illuminate\Database\Eloquent\Collection && $value->count()) {
-            $values = $value->pluck($value->first()->getKeyName())->toArray();
+        if ($value instanceof \Illuminate\Database\Eloquent\Collection) {
+            if ($value->count()) {
+                $values = $value->pluck($value->first()->getKeyName())->toArray();
+            } else {
+                $values = $json ? [] : null;
+            }
         } elseif (is_array($value)) {
             $values = $value;
         } elseif ($value !== null) {
@@ -475,7 +479,7 @@ class Element
         }
         if (method_exists($this, 'dataValue')) {
             $value = $this->dataValue($value, $info);
-        }else {
+        } else {
             $value = $this->getValue($value);
         }
         $data[$this->getField()] = $value;
