@@ -93,13 +93,13 @@ trait FileManage
                 }
             }
             $data = $data->orderBy('file_id', 'desc')->paginate(16, [
-                'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'create_time'
+                'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'created_at'
             ]);
             $total = $data->total();
             $page = $data->currentPage();
             $data = $data->map(function ($item) use ($format) {
                 $item->size = app_filesize($item['size']);
-                $item->time = $item->create_time->format('Y-m-d H:i:s');
+                $item->time = $item->created_at->format('Y-m-d H:i:s');
                 if (in_array($item->ext, explode(',', $format['image']))) {
                     $item->cover = $item->url;
                 } else {

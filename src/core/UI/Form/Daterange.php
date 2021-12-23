@@ -62,7 +62,7 @@ class Daterange extends Element implements Component
             return [];
         }
         $data = [];
-        $data[$this->stopField] = is_array($value) && $value[1] ? strtotime($value[1]) : null;
+        $data[$this->stopField] = is_array($value) && $value[1] ? date('Y-m-d H:i:s', strtotime($value[1])) : null;
         return $data;
     }
 
@@ -71,7 +71,7 @@ class Daterange extends Element implements Component
         if ($this->stopField) {
             return is_array($value) && $value[0] ? strtotime($value[0]) : null;
         }
-        return is_array($value) ? strtotime($value[0]) . ',' . strtotime($value[1]) : null;
+        return is_array($value) ? date('Y-m-d H:i:s', strtotime($value[0])) . ',' . date('Y-m-d H:i:s', strtotime($value[1])) : null;
     }
 
     public function dataValue($value, $info)
@@ -79,16 +79,16 @@ class Daterange extends Element implements Component
         $value = $this->getValue($value);
         if ($this->stopField) {
             $data = [];
-            $data[] = $value ? date('Y-m-d H:i:s', $value) : null;
+            $data[] = $value ?: null;
             $stopValue = Tools::parsingArrData($info, $this->stopField);
-            $data[] = $stopValue ? date('Y-m-d H:i:s', $stopValue) : null;
+            $data[] = $stopValue ?: null;
             return $data;
         }
         $data = [];
         if ($value) {
             $data = explode(',', $value);
         }
-        return $data ? [date('Y-m-d H:i:s', $data[0]), date('Y-m-d H:i:s', $data[1])] : null;
+        return $data ? [$data[0], $data[1]] : null;
     }
 
 

@@ -123,8 +123,8 @@ trait Upload
                 'ext' => $ext,
                 'mime' => $mime,
                 'size' => $size,
-                'create_time' => time(),
-                'update_time' => time()
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ];
             \Duxravel\Core\Model\File::insert($upload);
         }

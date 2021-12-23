@@ -49,8 +49,8 @@ class VisitorAfter
         }
         $model = new \Duxravel\Core\Model\VisitorOperate();
         // 清理过期日志
-        $time = now()->subDays(env('VISIATOR_OPERATE_DAY'))->timestamp;
-        $model->where('create_time', '<=', $time)->delete();
+        $time = now()->subDays(env('VISIATOR_OPERATE_DAY'))->toDateString();
+        $model->where('created_at', '<=', $time)->delete();
 
         // 增加操作记录
         $params = $request->all();

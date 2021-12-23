@@ -20,24 +20,4 @@ trait Expend
     protected string $hasName = '';
 
 
-    /**
-     * 获取当前时间
-     *
-     * @return int
-     */
-    public function freshTimestamp(): int
-    {
-        return time();
-    }
-
-    /**
-     * 避免转换时间戳为时间字符串
-     * @param mixed $value
-     * @return mixed|string|null
-     */
-    public function fromDateTime($value)
-    {
-        return $value;
-    }
-
 }

@@ -37,6 +37,6 @@ class Visitor extends Command
      */
     public function handle()
     {
-        app(\Duxravel\Core\Model\VisitorLog::class)->where('update_time', '<=', time())->delete();
+        app(\Duxravel\Core\Model\VisitorLog::class)->where('updated_at', '<=', date('Y-m-d H:i:s'))->delete();
     }
 }

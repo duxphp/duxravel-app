@@ -18,15 +18,15 @@ trait Operate
         $table = new \Duxravel\Core\UI\Table(new \Duxravel\Core\Model\VisitorOperate());
         $table->title('操作日志');
         $table->model()->where('has_type', $layer);
-        $table->model()->orderBy('update_time', 'desc');
+        $table->model()->orderBy('updated_at', 'desc');
 
         $table->map([
             'method',
-            'create_time' => function($item) {
-                return $item->create_time->format('Y-m-d H:i:s');
+            'created_at' => function($item) {
+                return $item->created_at->format('Y-m-d H:i:s');
             },
-            'update_time' => function($item) {
-                return $item->update_time->format('Y-m-d H:i:s');
+            'updated_at' => function($item) {
+                return $item->updated_at->format('Y-m-d H:i:s');
             }
         ]);
 
@@ -37,10 +37,10 @@ trait Operate
         })->quick();
 
         $table->filter('开始日期', 'start', function ($query, $value) {
-            $query->where('create_time', '>=', strtotime($value));
+            $query->where('created_at', '>=', $value);
         })->date();
         $table->filter('结束日期', 'stop', function ($query, $value) {
-            $query->where('update_time', '<=', strtotime($value));
+            $query->where('updated_at', '<=', $value);
         })->date();
 
         $table->column('用户', 'username');
@@ -60,11 +60,11 @@ trait Operate
             }
             return implode(' ', $html) . ' ' . $item->device . ' - ' . $item->browser;
         });
-        $table->column('操作时间', 'update_time')->desc('time', function ($value) {
+        $table->column('操作时间', 'updated_at')->desc('time', function ($value) {
             return $value . 's';
         });
 
-        $column = $table->column('详情');
+        $column = $table->column('详情')->width(150);
         $column->link('查看数据', $route . '.operate.info', ['id' => 'uuid'])->type('drawer');
 
         return $table;
@@ -110,11 +110,11 @@ trait Operate
         ];
         $data[] = [
             'label' => '请求时间',
-            'value' => $info->create_time->format('Y-m-d H:i:s'),
+            'value' => $info->created_at->format('Y-m-d H:i:s'),
         ];
         $data[] = [
             'label' => '结束时间',
-            'value' => $info->update_time->format('Y-m-d H:i:s'),
+            'value' => $info->updated_at->format('Y-m-d H:i:s'),
         ];
 
         return $this->dialogNode('操作详情', [

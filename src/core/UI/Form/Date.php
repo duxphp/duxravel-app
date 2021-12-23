@@ -15,8 +15,6 @@ class Date extends Element implements Component
     private $types = [
         'year',
         'month',
-        'quarter',
-        'week'
     ];
 
     /**
@@ -74,13 +72,13 @@ class Date extends Element implements Component
      */
     public function dataInput($data)
     {
-        return $data ? strtotime($data) : null;
+        return $data ? date('Y-m-d', strtotime($data)) : null;
     }
 
     public function dataValue($data)
     {
         $data = $this->getValue($data);
-        return $data ? date('Y-m-d', $data) : null;
+        return $data ?: null;
     }
 
 }

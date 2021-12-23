@@ -61,10 +61,10 @@ class AppModel extends \Duxravel\Core\Console\Common\Stub
         //创建模型
         Schema::create($table, function (Blueprint $table) use ($key, $del) {
             $table->increments($key);
-            $table->integer('create_time');
-            $table->integer('update_time');
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
             if ($del) {
-                $table->integer('delete_time');
+                $table->timestamp('deleted_at');
             }
         });
         $this->generatorFile($app . "/Model/{$modelName}.php", __DIR__ . '/Tpl/AppModel/Model.stub', [

@@ -10,7 +10,7 @@ namespace Duxravel\Core\UI\Form;
 class Datetime extends Element implements Component
 {
 
-    protected string $string = 'YYYY-MM-DD hh:mm';
+    protected string $string = 'YYYY-MM-DD HH:mm';
 
     /**
      * Datetime constructor.
@@ -60,13 +60,13 @@ class Datetime extends Element implements Component
      */
     public function dataInput($data)
     {
-        return $data ? strtotime($data) : null;
+        return $data ? date('Y-m-d H:i:s', strtotime($data)) : null;
     }
 
     public function dataValue($data)
     {
         $data = $this->getValue($data);
-        return $data ? date('Y-m-d H:i:s', $data) : null;
+        return $data ?: null;
     }
 
 }

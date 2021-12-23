@@ -150,8 +150,8 @@ class Upload
                         'ext' => $file->extension(),
                         'mime' => $file->getMimeType(),
                         'size' => $file->getSize(),
-                        'create_time' => time(),
-                        'update_time' => time()
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
                     ];
                     $ids[] = \Duxravel\Core\Model\File::insertGetId($tmp);
                 } else {
@@ -160,12 +160,12 @@ class Upload
             }
         }
         $data = \Duxravel\Core\Model\File::where('has_type', $hasType)->whereIn('file_id', $ids)->get([
-            'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'create_time', 'field'
+            'file_id', 'dir_id', 'url', 'title', 'ext', 'size', 'created_at', 'field'
         ]);
 
         return $data->map(function ($item) {
             $item->size = app_filesize($item['size']);
-            $item->time = $item->create_time->format('Y-m-d H:i:s');
+            $item->time = $item->created_at->format('Y-m-d H:i:s');
             return $item;
         })->toArray();
     }

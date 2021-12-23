@@ -11,17 +11,6 @@ use \Illuminate\Database\Eloquent\Builder;
  */
 class Base extends Eloquent
 {
-    public const CREATED_AT = 'create_time';
-    public const UPDATED_AT = 'update_time';
-    public const DELETED_AT = 'delete_time';
-
-    protected $dateFormat = 'U';
-
-    protected $dates = [
-        'create_time',
-        'update_time',
-        'delete_time',
-    ];
 
     use Expend;
 
