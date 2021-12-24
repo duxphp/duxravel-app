@@ -3,7 +3,6 @@
 namespace Duxravel\Core\Api;
 
 use Duxravel\Core\Api\Api;
-use Modules\Article\Resource\TagsCollection;
 use Duxravel\Core\Resource\FormDataCollection;
 use Duxravel\Core\Resource\FormDataResource;
 use Duxravel\Core\Resource\FormResource;
@@ -26,9 +25,13 @@ class Form extends Api
         return $this->success(new FormDataResource($info));
     }
 
-    public function push()
+    public function push($id)
     {
-        $formInfo = \Duxravel\Core\Service\Form::push($id);
+        $key = request('key');
+        if (!$key) {
+            return $this->error('缺少验证码参数');
+        }
+        $formInfo = \Duxravel\Core\Service\Form::push($id, $key);
         return $this->success(new FormResource($formInfo));
     }
 
