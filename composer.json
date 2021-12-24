@@ -67,7 +67,8 @@
       ],
       "route": [
         "src/core/Route/Web.php",
-        "src/core/Route/Service.php"
+        "src/core/Route/Service.php",
+        "src/core/Route/Api.php"
       ],
       "event": [
         "Duxravel\\Core\\Events\\App",

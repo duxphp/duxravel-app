@@ -14,7 +14,7 @@ class Api
      */
     protected int $time = 5;
 
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         // 请求超时
         if (!$this->allowTimestamp($request)) {
@@ -32,7 +32,7 @@ class Api
      * @param $request
      * @return bool
      */
-    protected function signVerify($request): bool
+    protected function signVerify(Request $request): bool
     {
         $time = $request->header('Content-Date');
         $sign = $request->header('Content-MD5');
@@ -47,7 +47,7 @@ class Api
         });
         $secretKey = $apiInfo->secret_key;
 
-        $url = $request->getUrl();
+        $url = $request->getUri();
         $signStr = "url={$url}&timestamp={$time}&key={$secretKey}";
         if (strtoupper(md5($signStr)) === $sign) {
             return true;

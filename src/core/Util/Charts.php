@@ -363,7 +363,7 @@ class Charts
         foreach ($this->data as $data) {
             $group = [];
             foreach ($data['data'] as $vo) {
-                $vo['label'] = Carbon::create($vo['label'])->format($this->date['format']);
+                $vo['label'] = Carbon::createFromDate($vo['label'])->format($this->date['format']);
                 $group[$vo['label']] += $vo['value'];
             }
             $tmpArr = [];

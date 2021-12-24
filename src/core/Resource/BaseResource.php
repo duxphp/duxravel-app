@@ -2,7 +2,9 @@
 
 namespace Duxravel\Core\Resource;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Article\Resource\ArticleClassCollection;
 
 class BaseResource extends JsonResource
 {
@@ -11,6 +13,7 @@ class BaseResource extends JsonResource
     private bool $hide = true;
 
     protected string $type = 'default';
+
 
     public function type(string $request): self
     {

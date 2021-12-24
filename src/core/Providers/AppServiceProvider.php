@@ -68,7 +68,6 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('paginate', function ($label) {
             return '<?php echo $pageData ? $pageData->links(' . $label . ') : "" ?>';
         });
-        \Duxravel\Core\Util\Blade::loopMake('form', \Duxravel\Core\Service\Blade::class, 'form');
 
         // 扩展数据库方法
         Builder::macro('findInSet', function ($field, $value) {
