@@ -17,11 +17,11 @@ class Menu extends Widget
     protected array $link = [];
 
     /**
-     * Menu constructor.
-     * @param string $name
+     * @param string        $name
+     * @param string        $type
      * @param callable|null $callback
      */
-    public function __construct(string $name, string $type = 'blue', callable $callback = NULL)
+    public function __construct(string $name, string $type = 'primary', callable $callback = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -31,35 +31,43 @@ class Menu extends Widget
     /**
      * @param string $name
      * @param string $route
-     * @param array $params
+     * @param array  $params
+     *
      * @return Link
      */
     public function link(string $name, string $route = '', array $params = []): Link
     {
-        $link = new Link($name, $route, $params);
-        $link->restClass('flex p-2 hover:bg-gray-200');
-        $this->link[] = $link;
+        $this->link[] = new Link($name, $route, $params);
         return $link;
     }
 
     /**
      * @return string
      */
-    public function render(): string
+    public function render(): array
     {
-        $inner = [];
+        $list = [];
         foreach ($this->link as $class) {
-            $inner[] = '<div>' . $class->render() . '</div>';
+            $list[] = [
+                'nodeName' => 'a-doption',
+                'child' => $class->render(),
+            ];
         }
-        $this->class('shadow absolute right-0 w-40 pt-1 pb-1 mt-2 rounded-sm bg-white');
-        return <<<HTML
-            <div x-data="{open: false}" class="relative">
-                <button class="btn-$this->type" type="button" @click="open = !open">$this->name</button>
-                <div {$this->toElement()}  x-cloak @click.outside="open = false" x-show="open">
-                {$this->mergeArray($inner)}
-                </div>
-            </div>
-        HTML;
+        return [
+            'nodeName' => 'a-dropdown',
+            'child' => [
+                [
+                    'nodeName' => 'a-button',
+                    'type' => $this->type,
+                    'child' => $this->name
+                ],
+                [
+                    'nodeName' => 'div',
+                    'vSlot:content' => '',
+                    'child' => $list
+                ]
+            ]
+        ];
 
     }
 

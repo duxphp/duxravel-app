@@ -17,10 +17,11 @@ class StatsCard extends Widget
 
     /**
      * StatsCard constructor.
+     *
      * @param callable|null $callback
-     * @param int $column
+     * @param int           $column
      */
-    public function __construct(callable $callback = NULL, $column = 4)
+    public function __construct(callable $callback = null, $column = 4)
     {
         $this->callback = $callback;
         $this->column = $column;
@@ -29,32 +30,23 @@ class StatsCard extends Widget
     /**
      * @param $name
      * @param $num
-     * @param $icon
-     * @param string $color
+     *
      * @return $this
      */
-    public function item($name, $num, $icon, $color = 'blue'): self
+    public function item($name, $num): self
     {
         $this->items[] = [
             'name' => $name,
             'num' => $num,
-            'icon' => $icon,
-            'color' => $color
         ];
         return $this;
     }
 
-    public function type($type)
-    {
-        $this->type = $type;
-    }
-
     /**
-     * @return string
+     * @return array
      */
-    public function render(): string
+    public function render(): array
     {
-        $this->class('grid gap-4 grid-cols-1 lg:grid-cols-' . $this->column);
         $inner = [];
         foreach ($this->items as $vo) {
             $icon = (new Icon($vo['icon']))->class('text-white');
@@ -74,11 +66,24 @@ class StatsCard extends Widget
                 </div>
             HTML;
         }
-        return <<<HTML
-            <div>
-                {$this->mergeArray($inner)}
-            </div>
-        HTML;
+        $childs = [];
+        foreach ($this->items as $vo) {
+            $childs[] = [
+                'nodeName' => 'div',
+                'class' => "text-white bg-{$vo['color']}-600 rounded shadow p-4",
+                'child' => [
+                    'nodeName' => 'a-statistic',
+                    'title' => $vo['name'],
+                    'value' => $vo['num'],
+                ]
+            ];
+        }
+
+        return [
+            'nodeName' => 'div',
+            'class' => 'grid gap-4 grid-cols-' . $this->column,
+            'child' => $childs
+        ];
 
     }
 

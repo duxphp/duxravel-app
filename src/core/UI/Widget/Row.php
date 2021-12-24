@@ -39,24 +39,24 @@ class Row extends Widget
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function render(): string
+    public function render(): array
     {
-        $this->class('grid grid-flow-col gap-x-4');
-        $inner = [];
+
+        $nodes = [];
         foreach ($this->column as $vo) {
-            $width = $vo['width'] ? "row-span-{$vo['width']}" : '';
-            $callback = call_user_func($vo['callback']);
-            $inner[] = <<<HTML
-                <div class="$width">$callback</div>
-            HTML;
+            $nodes[] = [
+                'nodeName' => 'div',
+                'class' => $vo['width'] ? "row-span-{$vo['width']}" : '',
+                'child' => call_user_func($vo['callback'])
+            ];
         }
-        return <<<HTML
-            <div>
-                {$this->mergeArray($inner)}
-            </div>
-        HTML;
+        return [
+          'nodeName' => 'grid grid-flow-col gap-x-4',
+            'child' => $nodes
+        ];
+
 
     }
 

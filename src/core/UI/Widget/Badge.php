@@ -12,7 +12,6 @@ class Badge extends Widget
 {
 
     private string $content;
-    private string $url = '';
     private string $size = 'medium';
     private string $type;
 
@@ -54,7 +53,7 @@ class Badge extends Widget
      * @param string $size
      * @return $this
      */
-    public function size(string $size = '')
+    public function size(string $size = ''): self
     {
         $this->size = $size;
         return $this;

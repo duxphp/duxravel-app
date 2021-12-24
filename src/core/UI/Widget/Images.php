@@ -10,7 +10,7 @@ class Images extends Widget
 {
 
     private array $list;
-    private int $size = 10;
+    private int $size = 60;
 
     /**
      * Images constructor.
@@ -37,19 +37,26 @@ class Images extends Widget
     /**
      * @return string
      */
-    public function render(): string
+    public function render(): array
     {
-        $this->class('flex items-center space-x-4');
-        $inner = [];
+        $list = [];
         foreach ($this->list as $vo) {
-            $inner[] = '<div data-js="show-tooltip" data-title="' . $vo['title'] . '"><div  class="avatar w-' . $this->size . ' h-' . $this->size . '" style="background-image: url(' . $vo['image'] . ');"></div></div>';
+            $list[] = [
+                'nodeName' => 'a-image',
+                'src' => $vo,
+                'width' => $this->size,
+                'height' => $this->size,
+            ];
         }
-        $innerHtml = implode('', $inner);
-        return <<<HTML
-            <div>
-                $innerHtml
-            </div>
-        HTML;
+
+        return [
+            'nodeName' => 'a-image-preview-group',
+            'infinite' => true,
+            'child' => [
+                'nodeName' => 'a-space',
+                'child' => $list
+            ]
+        ];
 
     }
 

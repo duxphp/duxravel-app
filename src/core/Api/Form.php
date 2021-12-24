@@ -3,6 +3,7 @@
 namespace Duxravel\Core\Api;
 
 use Duxravel\Core\Api\Api;
+use Modules\Article\Resource\TagsCollection;
 use Duxravel\Core\Resource\FormDataCollection;
 use Duxravel\Core\Resource\FormDataResource;
 use Duxravel\Core\Resource\FormResource;
