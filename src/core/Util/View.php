@@ -10,19 +10,12 @@ class View
 
     private string $tpl;
     private array $data;
-    private string $route = '';
     private $menuClass;
 
     public function __construct($tpl = '', $data = [])
     {
         $this->tpl = $tpl;
         $this->data = $data;
-    }
-
-    public function route(string $route = ''): self
-    {
-        $this->route = $route;
-        return $this;
     }
 
     public function menu($class): self

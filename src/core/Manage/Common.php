@@ -24,9 +24,9 @@ trait Common
         $this->assign[$name] = $value;
     }
 
-    public function systemView(string $tpl = '', string $route = '')
+    public function systemView(string $tpl = '')
     {
-        return (new View($tpl, $this->assign))->route($route)->render();
+        return (new View($tpl, $this->assign))->render();
     }
 
     public function layoutView(string $tpl = '')
