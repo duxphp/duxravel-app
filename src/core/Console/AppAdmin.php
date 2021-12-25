@@ -74,12 +74,10 @@ class AppAdmin extends \Duxravel\Core\Console\Common\Stub
             '// Generate Route Make');
 
         // 创建菜单
-        $this->appendFile($app . '/Service/Menu.php', <<<EOL
-                                    [
-                                        'name'  => '$title',
-                                        'url'   => 'admin.$name.$fun',
-                                    ],
-                                    EOL,
+        $this->appendFile($app . '/Menu/Admin.php',
+            <<<EOL
+        Menu::link('$title', 'admin.$name.$fun');
+EOL,
             '// Generate Menu Make');
 
         $this->info('创建模型成功');

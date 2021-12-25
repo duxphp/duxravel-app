@@ -13,7 +13,6 @@ class {{class}} extends \Modules\System\Admin\Expend
     protected function table(): Table
     {
         $table = new Table(new $this->model());
-        $table->title('{{title}}');
         // Generate Table Make
         return $table;
     }
@@ -21,7 +20,6 @@ class {{class}} extends \Modules\System\Admin\Expend
     public function form(int $id = 0): Form
     {
         $form = new Form(new $this->model());
-        $form->title('{{title}}');
         // Generate Form Make
         return $form;
     }
