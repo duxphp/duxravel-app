@@ -9,12 +9,14 @@ use Duxravel\Core\UI\Widget\Icon;
  */
 class WebService
 {
-    private $key = '0431d93c54359a750095ea21a3f85bbb';
+    private $key = '';
 
     public function __construct($key = '')
     {
         if ($key) {
             $this->key = $key;
+        } else {
+            $this->key = config('dux.map_amap_key');
         }
     }
 
