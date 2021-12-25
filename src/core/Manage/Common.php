@@ -29,16 +29,6 @@ trait Common
         return (new View($tpl, $this->assign))->render();
     }
 
-    public function layoutView(string $tpl = '')
-    {
-        return (new View($tpl, $this->assign))->render('layout');
-    }
-
-    public function dialogView(string $tpl = '')
-    {
-        return (new View($tpl, $this->assign))->render('dialog');
-    }
-
     public function dialogNode(string $title = '', array $node = [])
     {
         return app_success('ok', [
