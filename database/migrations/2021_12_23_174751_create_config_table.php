@@ -15,7 +15,7 @@ class CreateConfigTable extends Migration
     {
         Schema::create('config', function (Blueprint $table) {
             $table->increments('config_id');
-            $table->char('has_type', 20)->default('')->index('has_type')->comment('关联类型');
+            $table->char('has_type', 20)->index('has_type')->comment('关联类型');
             $table->integer('has_id')->default(0)->index('has_id')->comment('关联id');
             $table->longText('data')->nullable();
         });

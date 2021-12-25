@@ -15,8 +15,8 @@ class CreateFileDirTable extends Migration
     {
         Schema::create('file_dir', function (Blueprint $table) {
             $table->increments('dir_id');
-            $table->string('name', 250)->nullable()->default('')->comment('目录名称');
-            $table->string('has_type', 20)->nullable()->default('')->index('has_type')->comment('关联类型');
+            $table->string('name', 255)->nullable()->comment('目录名称');
+            $table->string('has_type', 20)->nullable()->index('has_type')->comment('关联类型');
         });
     }
 

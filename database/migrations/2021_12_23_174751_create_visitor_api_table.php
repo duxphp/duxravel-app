@@ -15,14 +15,14 @@ class CreateVisitorApiTable extends Migration
     {
         Schema::create('visitor_api', function (Blueprint $table) {
             $table->integer('api_id', true);
-            $table->char('method', 6)->nullable()->default('')->index('method')->comment('动作');
-            $table->char('name', 50)->nullable()->default('')->index('name')->comment('名称');
-            $table->char('desc', 50)->nullable()->default('')->index('date')->comment('描述');
+            $table->char('method', 6)->nullable()->index('method')->comment('动作');
+            $table->char('name', 50)->nullable()->index('name')->comment('名称');
+            $table->char('desc', 50)->nullable()->index('date')->comment('描述');
             $table->integer('date')->nullable()->default(0)->index('desc')->comment('日期');
             $table->integer('pv')->nullable()->default(1)->comment('访问量');
             $table->integer('uv')->nullable()->default(0)->comment('访客量');
-            $table->char('min_time', 30)->nullable()->default('')->comment('最小响应');
-            $table->char('max_time', 30)->nullable()->default('')->comment('最大响应');
+            $table->char('min_time', 30)->nullable()->comment('最小响应');
+            $table->char('max_time', 30)->nullable()->comment('最大响应');
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ class CreateVisitorViewsTable extends Migration
     {
         Schema::create('visitor_views', function (Blueprint $table) {
             $table->increments('view_id');
-            $table->string('has_type', 250)->nullable()->default('')->index('has_type')->comment('关联类型');
+            $table->string('has_type', 255)->nullable()->index('has_type')->comment('关联类型');
             $table->integer('has_id')->default(0)->index('has_id')->comment('关联id');
             $table->integer('pv')->default(0)->comment('浏览量');
             $table->integer('uv')->default(0)->comment('访客量');

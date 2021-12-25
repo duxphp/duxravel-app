@@ -15,16 +15,16 @@ class CreateFormTable extends Migration
     {
         Schema::create('form', function (Blueprint $table) {
             $table->increments('form_id');
-            $table->char('name', 100)->nullable()->default('')->comment('表单名称');
-            $table->string('description', 250)->nullable()->default('')->comment('表单描述');
-            $table->char('menu', 50)->nullable()->default('')->comment('菜单名');
+            $table->char('name', 100)->nullable()->comment('表单名称');
+            $table->string('description', 255)->nullable()->comment('表单描述');
+            $table->char('menu', 50)->nullable()->comment('菜单名');
             $table->longText('data')->nullable()->comment('表单配置');
             $table->boolean('manage')->nullable()->default(0)->comment('独立管理');
-            $table->char('search', 50)->nullable()->default('')->comment('搜索字段');
+            $table->char('search', 50)->nullable()->comment('搜索字段');
             $table->boolean('audit')->nullable()->default(0)->comment('审核状态');
             $table->boolean('submit')->nullable()->default(0)->comment('外部提交');
-            $table->string('tpl_list', 250)->nullable()->comment('列表模板');
-            $table->string('tpl_info', 250)->nullable()->comment('详情模板');
+            $table->string('tpl_list', 255)->nullable()->comment('列表模板');
+            $table->string('tpl_info', 255)->nullable()->comment('详情模板');
             $table->integer('interval')->nullable()->default(10)->comment('search');
             $table->timestamps();
         });

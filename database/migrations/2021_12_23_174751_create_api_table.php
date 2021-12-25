@@ -15,9 +15,9 @@ class CreateApiTable extends Migration
     {
         Schema::create('api', function (Blueprint $table) {
             $table->increments('api_id');
-            $table->string('name', 250)->nullable()->default('')->comment('接口名');
-            $table->char('secret_id', 20)->nullable()->default('')->index('secret_id')->comment('接口id');
-            $table->char('secret_key', 32)->nullable()->default('')->comment('接口密钥');
+            $table->string('name', 255)->nullable()->comment('接口名');
+            $table->char('secret_id', 20)->nullable()->index('secret_id')->comment('接口id');
+            $table->char('secret_key', 32)->nullable()->comment('接口密钥');
             $table->boolean('status')->nullable()->default(0)->index('status');
         });
     }

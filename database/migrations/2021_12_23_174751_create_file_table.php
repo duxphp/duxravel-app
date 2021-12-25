@@ -16,14 +16,14 @@ class CreateFileTable extends Migration
         Schema::create('file', function (Blueprint $table) {
             $table->integer('file_id', true);
             $table->integer('dir_id')->default(0)->index('dir_id')->comment('目录ID');
-            $table->string('has_type', 50)->nullable()->default('')->index('has_type')->comment('关联类型');
-            $table->string('driver', 20)->nullable()->default('')->comment('上传驱动');
-            $table->string('url', 250)->nullable()->default('')->comment('访问地址');
-            $table->string('path', 250)->nullable()->default('')->comment('上传地址');
-            $table->string('title', 250)->nullable()->default('')->comment('文件标题');
-            $table->string('ext', 20)->nullable()->default('')->index('ext')->comment('扩展名');
+            $table->string('has_type', 50)->nullable()->index('has_type')->comment('关联类型');
+            $table->string('driver', 20)->nullable()->comment('上传驱动');
+            $table->string('url', 255)->nullable()->comment('访问地址');
+            $table->string('path', 255)->nullable()->comment('上传地址');
+            $table->string('title', 255)->nullable()->comment('文件标题');
+            $table->string('ext', 20)->nullable()->index('ext')->comment('扩展名');
             $table->integer('size')->default(0)->comment('大小字节');
-            $table->string('mime', 250)->nullable()->default('')->comment('mime类型');
+            $table->string('mime', 255)->nullable()->comment('mime类型');
             $table->string('field', 50)->nullable()->comment('文件字段');
             $table->timestamps();
         });

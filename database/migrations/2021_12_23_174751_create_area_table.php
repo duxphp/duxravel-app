@@ -18,7 +18,7 @@ class CreateAreaTable extends Migration
             $table->integer('code')->default(0)->comment('编码');
             $table->integer('parent_code')->default(0)->index('parent_code')->comment('上级编码');
             $table->boolean('level')->default(0)->index('level')->comment('层级');
-            $table->string('name', 250)->nullable()->default('')->index('name')->comment('名称');
+            $table->string('name', 255)->nullable()->index('name')->comment('名称');
         });
     }
 
