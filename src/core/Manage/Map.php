@@ -15,15 +15,26 @@ trait Map
     public function area()
     {
         $ip = request()->get('ip') ?: null;
-        $object = new WebService();
-        return app_success('ok', $object->getArea($ip));
+        try {
+            $object = new WebService();
+            $ip = $object->getArea($ip);
+        } catch (\Exception $e) {
+            $ip = [];
+        }
+        return app_success('ok', $ip);
     }
 
     public function weather()
     {
         $ip = request()->get('ip') ?: null;
         $city = request()->get('city') ?: null;
-        $object = new WebService();
-        return app_success('ok', $object->getWeather($city, $ip));
+
+        try {
+            $object = new WebService();
+            $data = $object->getWeather($city, $ip);
+        } catch (\Exception $e) {
+            $data = [];
+        }
+        return app_success('ok', $data);
     }
 }
