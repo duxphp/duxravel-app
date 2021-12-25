@@ -14,22 +14,16 @@ use Modules\System\Model\SystemUser;
 trait Register
 {
 
-    public function index()
-    {
-        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.Register.index'))->render('layout');
-    }
-
     public function submit(Request $request)
     {
 
         Validator::make($request->input(), [
             'username' => ['required', 'string', 'max:255', 'unique:system_user'],
-            'password' => ['required', 'string', 'min:4', 'max:20', 'confirmed'],
+            'password' => ['required', 'string', 'min:4', 'max:20'],
         ], [
             'username.required' => '用户名输入错误',
             'username.unique' => '用户名不能重复',
             'password.required' => '请输入4~20位密码',
-            'password.confirmed' => '确认密码输入不正确',
         ])->validate();
 
         $parsing = app_parsing();
@@ -45,6 +39,16 @@ trait Register
         $user->roles()->attach(1);
         $user->save();
 
-        return app_success('创建账号成功，请进行登录', [], route($layer . '.login'));
+        return app_success('创建账号成功', [
+            'userInfo' => [
+                'user_id' => $user->user_id,
+                'avatar' => $user->avatar,
+                'avatar_text' => strtoupper(substr($user->username, 0, 1)),
+                'username' => $user->username,
+                'nickname' => $user->nickname,
+                'rolename' => $user->roles[0]['name'],
+            ],
+            'token' => 'Bearer ' . auth($layer)->tokenById($user->user_id),
+        ]);
     }
 }

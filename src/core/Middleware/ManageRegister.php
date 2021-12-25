@@ -11,7 +11,7 @@ class ManageRegister
         $model = config('auth.providers.' .$guard . '.model');
         $count = $model::count();
         if ($count) {
-            return redirect()->route($layer . '.login');
+            app_error('登录失效，请进行登录', 401);
         }
         return $next($request);
     }

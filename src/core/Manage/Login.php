@@ -12,9 +12,15 @@ use Duxravel\Core\Util\View;
 trait Login
 {
 
-    public function index()
+    public function check()
     {
-        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.Login.index'))->render('layout');
+        $layer = strtolower(app_parsing('layer'));
+        $guard = config('auth.guards.' . $layer . '.provider');
+        $model = config('auth.providers.' . $guard . '.model');
+        $count = $model::count();
+        return app_success('检测成功', [
+            'register' => $count ? false : true
+        ]);
     }
 
     public function submit(Request $request)
