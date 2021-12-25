@@ -24,11 +24,22 @@ trait Common
         $this->assign[$name] = $value;
     }
 
+    /**
+     * @param string $tpl
+     *
+     * @return mixed
+     */
     public function systemView(string $tpl = '')
     {
         return (new View($tpl, $this->assign))->render();
     }
 
+    /**
+     * @param string $title
+     * @param array  $node
+     *
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     */
     public function dialogNode(string $title = '', array $node = [])
     {
         return app_success('ok', [
