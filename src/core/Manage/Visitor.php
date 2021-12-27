@@ -9,9 +9,10 @@ trait Visitor
 {
     public function info()
     {
-        $startTime = strtotime('-1 year');
+        $startTime = strtotime('-30 day');
         $hasType = request()->get('type');
         $hasId = request()->get('id');
+
         $data = app(\Duxravel\Core\Model\VisitorViewsData::class)
             ->select(DB::raw('SUM(pv) as pv, SUM(uv) as uv, date as label'))
             ->where('date', '>=', date('Ymd', $startTime))
@@ -31,16 +32,25 @@ trait Visitor
             $item['value'] = $item['uv'];
             return $item;
         })->toArray();
-        $appChart = app(\Duxravel\Core\Util\ApexCharts::class)->area(array_merge($pvData, $uvData))->type('day', ['start' => date('Y-m-d', $startTime), 'stop' => date('Y-m-d')])->render('app-chart', function ($config) {
-            \Arr::set($config, 'chart.height', 300);
-            \Arr::set($config, 'chart.sparkline.enabled', false);
-            \Arr::set($config, 'chart.zoom.enabled', false);
-            \Arr::set($config, 'legend.show', true);
-            return $config;
-        });
-        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorViews.info', [
-            'appChart' => $appChart
-        ]))->render('dialog');
+        $appChart = (new \Duxravel\Core\Util\Charts)
+            ->area()
+            ->date(date('Y-m-d', $startTime), date('Y-m-d'), '1 days', 'm-d')
+            ->data('访问量', $pvData)
+            ->data('访客量', $uvData)
+            ->height(300)
+            ->render(false);
+
+        return app_success('ok', [
+            'node' => [
+                'nodeName' => 'app-dialog',
+                'title' => '流量统计',
+                'child' => [
+                    'nodeName' => 'div',
+                    'class' => 'p-4',
+                    'child' => $appChart
+                ]
+            ]
+        ]);
     }
 
 }
