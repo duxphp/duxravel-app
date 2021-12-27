@@ -14,8 +14,6 @@ class Select extends Element implements Component
 {
     protected string $url = '';
     protected string $route = '';
-    protected string $linkage = '';
-    protected string $level = '';
     protected int $tagCount = 0;
     protected bool $tags = false;
     protected bool $tip = false;
@@ -93,19 +91,6 @@ class Select extends Element implements Component
     {
         $this->route = $route;
         $this->url = app_route($route, $params);
-        return $this;
-    }
-
-    /**
-     * 联动选项
-     * @param $name
-     * @param string $level
-     * @return $this
-     */
-    public function linkage($name, string $level = ''): self
-    {
-        $this->linkage = (string)$name;
-        $this->level = $level;
         return $this;
     }
 

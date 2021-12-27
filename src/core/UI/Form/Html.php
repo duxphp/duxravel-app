@@ -25,14 +25,15 @@ class Html extends Element implements Component
     /**
      * 渲染组件
      * @param $value
-     * @return string
+     * @return array
      */
     public function render($value)
     {
         $callback = is_callable($this->callback) ? call_user_func($this->callback) : $this->callback;
-        return <<<HTML
-            <div>$callback</div>
-        HTML;
+        return [
+            'nodeName' => 'rich-text',
+            'nodes' => $callback
+        ];
 
     }
 
