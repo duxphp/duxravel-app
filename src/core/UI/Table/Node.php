@@ -35,8 +35,9 @@ class Node
 
     /**
      * Node constructor.
-     * @param string $url
-     * @param string $method
+     *
+     * @param string      $url
+     * @param string      $method
      * @param string|null $title
      */
     public function __construct(string $url, string $key, ?string $title = '')
@@ -48,6 +49,7 @@ class Node
 
     /**
      * @param $class
+     *
      * @return $this
      */
     public function class($class)
@@ -58,6 +60,7 @@ class Node
 
     /**
      * @param $params
+     *
      * @return $this
      */
     public function params($params)
@@ -68,6 +71,7 @@ class Node
 
     /**
      * @param array $filter
+     *
      * @return $this
      */
     public function data(array $filter)
@@ -78,6 +82,7 @@ class Node
 
     /**
      * @param $content
+     *
      * @return $this
      */
     public function script($content, $return)
@@ -102,6 +107,7 @@ class Node
 
     /**
      * @param $config
+     *
      * @return $this
      */
     public function tree($config)
@@ -112,6 +118,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function columns(array $node)
@@ -122,6 +129,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function expand(array $node)
@@ -132,6 +140,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function type(array $node)
@@ -142,6 +151,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function filter(array $node)
@@ -152,6 +162,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function quickFilter(array $node)
@@ -164,6 +175,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function action(array $node)
@@ -174,6 +186,7 @@ class Node
 
     /**
      * @param array $node
+     *
      * @return $this
      */
     public function bath(array $node)
@@ -183,10 +196,11 @@ class Node
     }
 
     /**
-     * @param $node
+     * @param        $node
      * @param string $type
-     * @param false $resize
+     * @param false  $resize
      * @param string $width
+     *
      * @return $this
      */
     public function side($node, $type = 'left', bool $resize = false, string $width = '100px')
@@ -199,8 +213,9 @@ class Node
     }
 
     /**
-     * @param $node
+     * @param        $node
      * @param string $type
+     *
      * @return $this
      */
     public function page($node, $type = 'left')
@@ -355,7 +370,6 @@ class Node
         $value = array_merge($this->scriptData, $value);
 
 
-
         return [
             'node' => [
                 'nodeName' => 'app-form',
@@ -388,13 +402,23 @@ class Node
                                             'nodeName' => 'div',
                                             'class' => 'flex-grow lg:w-10 p-4 bg-white dark:bg-blackgray-4 rounded shadow',
                                             'child' => [
+                                                $this->header ? [
+                                                    'nodeName' => 'div',
+                                                    'class' => 'pb-4',
+                                                    'child' => $this->header
+                                                ] : [],
                                                 [
                                                     'nodeName' => 'div',
                                                     'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
                                                     'child' => $this->headNode()
 
                                                 ],
-                                                $this->tableNode()
+                                                $this->tableNode(),
+                                                $this->footer ? [
+                                                    'nodeName' => 'div',
+                                                    'class' => 'pb-4',
+                                                    'child' => $this->footer
+                                                ] : [],
                                             ],
                                         ],
                                         $this->page['right'] ?: [],

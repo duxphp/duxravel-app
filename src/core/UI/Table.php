@@ -590,6 +590,10 @@ class Table
             $node->page($vo['callback'], $vo['direction'], $vo['resize'], $vo['width']);
         }
 
+
+        $node->header($headerNode);
+        $node->footer($footerNode);
+
         if ($actionNode) {
             $node->action($actionNode);
         }

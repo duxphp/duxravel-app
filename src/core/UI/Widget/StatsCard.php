@@ -12,8 +12,8 @@ use Duxravel\Core\UI\Tools;
 class StatsCard extends Widget
 {
 
-    private $column = 0;
-    private $items = [];
+    private int $column = 0;
+    private array $items = [];
 
     /**
      * StatsCard constructor.
@@ -47,30 +47,10 @@ class StatsCard extends Widget
      */
     public function render(): array
     {
-        $inner = [];
-        foreach ($this->items as $vo) {
-            $icon = (new Icon($vo['icon']))->class('text-white');
-            $inner[] = <<<HTML
-                <div class="text-white bg-{$vo['color']}-900 rounded shadow p-4">
-                      <div class="flex items-center space-x-4">
-                        <div class="flex-none w-10 h-10">$icon</div>
-                        <div class="flex-grow">
-                          <div class="text-xl font-medium">
-                            {$vo['num']}
-                          </div>
-                          <div class="opacity-80">
-                            {$vo['name']}
-                          </div>
-                        </div>
-                    </div>
-                </div>
-            HTML;
-        }
         $childs = [];
         foreach ($this->items as $vo) {
             $childs[] = [
                 'nodeName' => 'div',
-                'class' => "text-white bg-{$vo['color']}-600 rounded shadow p-4",
                 'child' => [
                     'nodeName' => 'a-statistic',
                     'title' => $vo['name'],
