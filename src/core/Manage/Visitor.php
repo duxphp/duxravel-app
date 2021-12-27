@@ -9,7 +9,7 @@ trait Visitor
 {
     public function info()
     {
-        $startTime = strtotime('-30 day');
+        $startTime = strtotime('-1 year');
         $hasType = request()->get('type');
         $hasId = request()->get('id');
 
@@ -32,13 +32,21 @@ trait Visitor
             $item['value'] = $item['uv'];
             return $item;
         })->toArray();
+
         $appChart = (new \Duxravel\Core\Util\Charts)
             ->area()
-            ->date(date('Y-m-d', $startTime), date('Y-m-d'), '1 days', 'm-d')
+            ->date(date('Y-m-d', $startTime), date('Y-m-d'), '1 days')
             ->data('访问量', $pvData)
             ->data('访客量', $uvData)
+            ->datetime(true)
             ->height(300)
-            ->render(false);
+            ->legend(true)
+            ->render(true);
+
+
+        return (new View('vendor.duxphp.duxravel-app.src.core.Views.Manage.VisitorViews.info', [
+            'appChart' => $appChart
+        ]))->render('dialog');
 
         return app_success('ok', [
             'node' => [

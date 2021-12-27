@@ -17,6 +17,7 @@ class Charts
     private $width = '100%';
     private $zoom = false;
     private $toolbar = false;
+    private $datatime = false;
     private $legend = [
         'status' => false,
         'x' => 'right',
@@ -58,7 +59,7 @@ class Charts
     }
 
     /**
-     * @param $title
+     * @param        $title
      * @param string $align
      * @return $this
      */
@@ -72,7 +73,7 @@ class Charts
     }
 
     /**
-     * @param $title
+     * @param        $title
      * @param string $align
      * @return $this
      */
@@ -106,7 +107,7 @@ class Charts
     }
 
     /**
-     * @param $status
+     * @param        $status
      * @param string $x
      * @param string $y
      * @return $this
@@ -122,8 +123,20 @@ class Charts
     }
 
     /**
-     * @param $start
-     * @param $stop
+     * 时间轴
+     * @param bool $status
+     * @return $this
+     */
+    public function datetime(bool $status = true)
+    {
+        $this->datatime = $status;
+        return $this;
+
+    }
+
+    /**
+     * @param        $start
+     * @param        $stop
      * @param string $interval
      * @param string $format
      * @return $this
@@ -141,17 +154,19 @@ class Charts
 
     /**
      * @param string $name
-     * @param array $data
+     * @param array  $data
      * @return $this
      */
-    public function data(string $name, array $data = [])
+    public function data(string $name, array $data = [], $format = 'Ymd')
     {
         $this->data[] = [
             'name' => $name,
-            'data' => $data
+            'data' => $data,
+            'format' => 'Ymd'
         ];
         return $this;
     }
+
 
     /**
      * 线型图
@@ -173,6 +188,7 @@ class Charts
                     'curve' => "straight",
                 ],
                 'xaxis' => [
+                    'type' => $this->datatime ? 'datetime' : 'category',
                     'categories' => $this->labels
                 ],
             ];
@@ -198,7 +214,7 @@ class Charts
                     'type' => 'solid'
                 ],
                 'xaxis' => [
-
+                    'type' => $this->datatime ? 'datetime' : 'category',
                     'categories' => $this->labels
                 ],
             ];
@@ -228,6 +244,7 @@ class Charts
                     'opacity' => 1,
                 ],
                 'xaxis' => [
+                    'type' => $this->datatime ? 'datetime' : 'category',
                     'categories' => $this->labels
                 ],
             ];
@@ -275,8 +292,9 @@ class Charts
         }
 
         if ($this->toolbar) {
-            $option['chart']['zoom'] = [
-                'show' => true
+            $option['chart']['toolbar'] = [
+                'show' => true,
+                'autoSelected' => true
             ];
         } else {
             $option['chart']['toolbar'] = [
@@ -286,7 +304,9 @@ class Charts
 
         if ($this->zoom) {
             $option['chart']['zoom'] = [
-                'enabled' => true
+                'enabled' => true,
+                'type' => 'x',
+                'autoScaleYaxis' => false
             ];
         } else {
             $option['chart']['zoom'] = [
@@ -363,7 +383,7 @@ class Charts
         foreach ($this->data as $data) {
             $group = [];
             foreach ($data['data'] as $vo) {
-                $vo['label'] = Carbon::createFromDate($vo['label'])->format($this->date['format']);
+                $vo['label'] = date_format(date_create_from_format($data['format'], $vo['label']), $this->date['format']);
                 $group[$vo['label']] += $vo['value'];
             }
             $tmpArr = [];
@@ -375,6 +395,7 @@ class Charts
                 'data' => $tmpArr
             ];
         }
+
 
         return $this;
     }
