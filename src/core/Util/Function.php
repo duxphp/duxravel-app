@@ -211,7 +211,7 @@ if (!function_exists('html_text')) {
 if (!function_exists('file_class')) {
     function file_class($file): string
     {
-        if(is_file($file)) {
+        if(!is_file($file)) {
             return '';
         }
         $tokens = token_get_all(file_get_contents($file));
