@@ -24,6 +24,10 @@
     mounted() {
       this.$nextTick(() => {
         this.changeZoom()
+
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'))
+        }, 300)
       })
 
     },

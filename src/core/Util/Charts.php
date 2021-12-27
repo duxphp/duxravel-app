@@ -157,12 +157,12 @@ class Charts
      * @param array  $data
      * @return $this
      */
-    public function data(string $name, array $data = [], $format = 'Ymd')
+    public function data(string $name, array $data = [], string $format = 'Ymd')
     {
         $this->data[] = [
             'name' => $name,
             'data' => $data,
-            'format' => 'Ymd'
+            'format' => $format
         ];
         return $this;
     }
