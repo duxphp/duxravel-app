@@ -8,21 +8,18 @@ class Install extends Command
 {
     /**
      * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'app:install {name} {--update=}';
 
     /**
      * The console command description.
-     *
      * @var string
      */
     protected $description = '扩展应用安装';
 
     /**
      * Create a new command instance.
-     *
      * @return void
      */
     public function __construct()
@@ -32,31 +29,46 @@ class Install extends Command
 
     /**
      * Execute the console command.
-     *
      * @return int
      */
     public function handle()
     {
         $name = $this->argument('name');
-        $appDir = ucfirst($name);
-        $dir = base_path('modules/' . $appDir);
-        $database = $dir . '/Database';
+        $update = $this->argument('update');
+
+        if (strpos($name, '/') === false) {
+            $appDir = ucfirst($name);
+            $dir = base_path('modules/' . $appDir);
+            $database = $dir . '/Database';
+            $migrations = $database . '/Migrations';
+            $seeders = $database . '/Seeders/DatabaseSeeder.php';
+            $publish = 'duxravel-' . strtolower($name);
+        } else {
+            $dir = base_path('vendor/' . trim($name, '/'));
+            $database = $dir . '/database';
+            $migrations = $database . '/migrations';
+            $seeders = $database . '/seeders/DatabaseSeeder.php';
+            $dir = explode('/', $name);
+            $publish = str_replace('/', '-', end($dir));
+        }
+
+
         // 数据表安装
-        if (is_dir($database . '/Migrations')) {
-            $path = $database . '/Migrations/*.php';
+        if (is_dir($migrations)) {
+            $path = $migrations . '/*.php';
             $fileList = glob($path);
             foreach ($fileList as $file) {
                 $file = str_replace(base_path(), '', $file);
                 $this->callSilent('migrate', [
                     '--path' => $file,
-                    '--force' => true,
+                    '--force' => $update || true,
                 ]);
             }
         }
 
         // 数据安装
-        if (is_dir($database . '/Seeders')) {
-            $path = $database . '/Seeders/DatabaseSeeder.php';
+        if (is_file($seeders) && !$update) {
+            $path = $seeders;
             $class = file_class($path);
             $this->callSilent('db:seed', [
                 '--force' => true,
@@ -66,7 +78,7 @@ class Install extends Command
 
         // 发布配置
         $this->callSilent('vendor:publish', [
-            '--tag' => 'duxravel-' . strtolower($name),
+            '--tag' => $publish,
             '--force' => true,
         ]);
 
