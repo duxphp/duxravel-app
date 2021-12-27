@@ -35,7 +35,7 @@ class Install extends Command
     {
 
         $name = $this->argument('name');
-        $update = $this->hasArgument('update');
+        $update = $this->option('update');
 
         if (strpos($name, '/') === false) {
             // 本地应用
