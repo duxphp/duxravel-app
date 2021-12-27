@@ -15,28 +15,36 @@ class Icon extends Widget
 
     private string $content;
     private bool $layout = false;
+    private int $size;
 
     /**
      * Icon constructor.
-     * @param $content
+     *
+     * @param string        $content
      * @param callable|null $callback
      */
-    public function __construct($content, callable $callback = NULL)
+    public function __construct(string $content, callable $callback = null)
     {
         $this->content = $content;
         $this->callback = $callback;
     }
 
-    public function size($size = null)
+    /**
+     * 设置大小
+     * @param int $size
+     *
+     * @return $this
+     */
+    public function size(int $size): self
     {
         $this->size = $size;
         return $this;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $icon = $this->content;
         if (strpos($icon, '<svg') !== false) {
