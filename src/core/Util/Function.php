@@ -215,7 +215,7 @@ if (!function_exists('file_class')) {
             return '';
         }
         $tokens = token_get_all(file_get_contents($file));
-        $namespace = '';
+        $namespace = '\\';
         for ($index = 0; isset($tokens[$index]); $index++) {
             if (!isset($tokens[$index][0])) {
                 continue;

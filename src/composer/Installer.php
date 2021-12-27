@@ -24,7 +24,28 @@ class Installer extends LibraryInstaller
 
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-        return parent::install($repo, $package);
+        $this->initializeVendorDir();
+        $downloadPath = $this->getInstallPath($package);
+
+        if (!Filesystem::isReadable($downloadPath) && $repo->hasPackage($package)) {
+            $this->binaryInstaller->removeBinaries($package);
+        }
+
+        $promise = $this->installCode($package);
+        if (!$promise instanceof PromiseInterface) {
+            $promise = \React\Promise\resolve();
+        }
+
+        $binaryInstaller = $this->binaryInstaller;
+        $installPath = $this->getInstallPath($package);
+
+        return $promise->then(function () use ($binaryInstaller, $installPath, $package, $repo) {
+            $binaryInstaller->installBinaries($package, $installPath);
+            if (!$repo->hasPackage($package)) {
+                $repo->addPackage(clone $package);
+                $this->process->execute('php artisan app:install ' . $package->getName());
+            }
+        });
     }
 
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
@@ -49,8 +70,6 @@ class Installer extends LibraryInstaller
             $repo->removePackage($initial);
             if (!$repo->hasPackage($target)) {
                 $repo->addPackage(clone $target);
-                $this->process->execute('php artisan app:install ' . $target->getName());
-            } else {
                 $this->process->execute('php artisan app:install ' . $target->getName() . ' --update');
             }
         });
