@@ -10,7 +10,7 @@ class Install extends Command
      * The name and signature of the console command.
      * @var string
      */
-    protected $signature = 'app:install {name} {--update=}';
+    protected $signature = 'app:install {name} {--update}';
 
     /**
      * The console command description.
@@ -54,7 +54,6 @@ class Install extends Command
             $publish = $name;
         }
 
-
         // 数据表安装
         if (is_dir($migrations)) {
             $path = $migrations . '/*.php';
@@ -65,6 +64,14 @@ class Install extends Command
                     '--path' => $file,
                     '--force' => $update || true,
                 ]);
+            }
+        }
+
+        // 安装前注册数据库
+        if(is_dir($database . '/seeders')) {
+            $files = glob($database . '/seeders/*.php');
+            foreach($files as $file) {
+                require_once $file;
             }
         }
 
@@ -86,6 +93,11 @@ class Install extends Command
         ]);
 
         $this->callSilent('app:build');
-        $this->info('Installation and application successful');
+
+        if ($update) {
+            $this->info('Update and application successful');
+        }else {
+            $this->info('Installation and application successful');
+        }
     }
 }
