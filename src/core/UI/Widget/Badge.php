@@ -38,17 +38,6 @@ class Badge extends Widget
     }
 
     /**
-     * 链接
-     * @param string $value
-     * @return $this
-     */
-    public function url(string $value): self
-    {
-        $this->url = $value;
-        return $this;
-    }
-
-    /**
      * 大小
      * @param string $size
      * @return $this
