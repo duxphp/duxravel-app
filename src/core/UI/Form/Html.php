@@ -24,10 +24,9 @@ class Html extends Element implements Component
 
     /**
      * 渲染组件
-     * @param $value
      * @return array
      */
-    public function render($value)
+    public function render()
     {
         $callback = is_callable($this->callback) ? call_user_func($this->callback) : $this->callback;
         return [
