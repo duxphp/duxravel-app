@@ -29,6 +29,10 @@ class Html extends Element implements Component
     public function render()
     {
         $callback = is_callable($this->callback) ? call_user_func($this->callback) : $this->callback;
+
+        if (is_array($callback)) {
+            return $callback;
+        }
         return [
             'nodeName' => 'rich-text',
             'nodes' => $callback
