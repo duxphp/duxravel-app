@@ -101,7 +101,8 @@ class Link extends Widget
 
     /**
      * 图标
-     * @param bool $model
+     * @param $icon
+     * @return $this
      */
     public function icon($icon): self
     {
@@ -110,18 +111,10 @@ class Link extends Widget
     }
 
     /**
-     * class
-     * @param bool $model
-     */
-    public function class($name): self
-    {
-        $this->class[] = $name;
-        return $this;
-    }
-
-    /**
-     * 设置为按钮
+     * 按钮属性
      * @param string $type
+     * @param string $status
+     * @param bool   $block
      * @return $this
      */
     public function button(string $type = 'primary', string $status = 'medium', bool $block = false): self
@@ -134,7 +127,7 @@ class Link extends Widget
 
     /**
      * 获取路由
-     * @return $this
+     * @return string
      */
     public function getRoute(): string
     {

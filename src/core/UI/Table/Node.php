@@ -82,7 +82,7 @@ class Node
 
     /**
      * @param $content
-     *
+     * @param $return
      * @return $this
      */
     public function script($content, $return)

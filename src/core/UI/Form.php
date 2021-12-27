@@ -58,6 +58,7 @@ class Form
     protected array $flow = [];
     protected array $assign = [];
     protected array $script = [];
+    protected array $scriptReturn = [];
     protected array $sideNode = [];
     protected bool $dialog = false;
     protected bool $vertical = true;
@@ -168,12 +169,14 @@ class Form
 
     /**
      * 附加脚本
-     * @param $content
+     * @param string $content
+     * @param string $return
      * @return $this
      */
-    public function script($content): Form
+    public function script(string $content = '', string $return = ''): self
     {
         $this->script[] = $content;
+        $this->scriptReturn[] = $return;
         return $this;
     }
 
@@ -496,8 +499,8 @@ class Form
         }
 
         // 处理附加js
-        foreach ($this->script as $vo) {
-            $node->script($vo);
+        foreach ($this->script as $key => $value) {
+            $node->script($value, $this->scriptReturn[$key]);
         }
 
         return app_success('ok', $node->render());

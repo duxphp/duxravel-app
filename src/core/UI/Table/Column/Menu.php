@@ -16,7 +16,8 @@ class Menu implements Component
     /**
      * 添加条目
      * @param string $name
-     * @param string $label
+     * @param string $route
+     * @param array  $params
      * @return \Duxravel\Core\UI\Widget\Link
      */
     public function add(string $name, string $route, array $params = []): \Duxravel\Core\UI\Widget\Link

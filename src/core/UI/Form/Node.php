@@ -22,6 +22,7 @@ class Node
     private array $data = [];
     private array $side = [];
     private array $script = [];
+    private array $scriptReturn = [];
 
     /**
      * Node constructor.
@@ -46,15 +47,17 @@ class Node
 
     /**
      * @param $content
+     * @param $return
      * @return $this
      */
-    public function script($content)
+    public function script($content, $return)
     {
         if ($content instanceof \Closure) {
             $this->script[] = $content();
         } else {
             $this->script[] = $content;
         }
+        $this->scriptReturn[] = $return;
         return $this;
     }
 
@@ -243,7 +246,7 @@ class Node
                     'child' => $this->dialog ? $this->renderDialog() : $this->renderPage()
                 ]
             ],
-            'setupScript' => implode("\n", $this->script)
+            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}'
 
         ];
     }
