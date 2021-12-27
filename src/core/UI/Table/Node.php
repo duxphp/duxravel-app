@@ -37,7 +37,7 @@ class Node
      * Node constructor.
      *
      * @param string      $url
-     * @param string      $method
+     * @param string      $key
      * @param string|null $title
      */
     public function __construct(string $url, string $key, ?string $title = '')
