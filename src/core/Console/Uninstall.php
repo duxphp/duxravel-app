@@ -36,20 +36,24 @@ class Uninstall extends Command
         $name = $this->argument('name');
 
         if (strpos($name, '/') === false) {
+            // 本地应用
             $appDir = ucfirst($name);
             $dir = base_path('modules/' . $appDir);
             $database = $dir . '/Database';
-            $publish = $name;
+            $migrations = $database . '/Migrations';
+            $publish = 'duxapp-' . strtolower($name);
         } else {
+            // 包应用
             $dir = base_path('vendor/' . trim($name, '/'));
             $database = $dir . '/database';
+            $migrations = $database . '/migrations';
             $dir = explode('/', $name);
             $publish = str_replace('/', '-', end($dir));
         }
 
         // 数据表卸载
-        if (is_dir($database . '/Migrations')) {
-            $path = $database . '/Migrations/*.php';
+        if (is_dir($migrations)) {
+            $path = $migrations . '/*.php';
             $fileList = glob($path);
             foreach ($fileList as $file) {
                 $file = str_replace(base_path(), '', $file);
@@ -58,12 +62,6 @@ class Uninstall extends Command
                     '--force' => true,
                 ]);
             }
-        }
-
-        // 静态文件卸载
-        $dir = public_path('static/' . strtolower($publish));
-        if (is_dir($dir)) {
-            \File::deleteDirectory($dir);
         }
 
         $this->callSilent('app:build');

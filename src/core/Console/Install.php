@@ -33,23 +33,25 @@ class Install extends Command
      */
     public function handle()
     {
+
         $name = $this->argument('name');
         $update = $this->argument('update');
 
         if (strpos($name, '/') === false) {
+            // 本地应用
             $appDir = ucfirst($name);
             $dir = base_path('modules/' . $appDir);
             $database = $dir . '/Database';
             $migrations = $database . '/Migrations';
             $seeders = $database . '/Seeders/DatabaseSeeder.php';
-            $publish = 'duxravel-' . strtolower($name);
+            $publish = 'duxapp-' . strtolower($name);
         } else {
+            // 包应用
             $dir = base_path('vendor/' . trim($name, '/'));
             $database = $dir . '/database';
             $migrations = $database . '/migrations';
             $seeders = $database . '/seeders/DatabaseSeeder.php';
-            $dir = explode('/', $name);
-            $publish = str_replace('/', '-', end($dir));
+            $publish = $name;
         }
 
 
@@ -68,12 +70,13 @@ class Install extends Command
 
         // 数据安装
         if (is_file($seeders) && !$update) {
-            $path = $seeders;
-            $class = file_class($path);
-            $this->callSilent('db:seed', [
-                '--force' => true,
-                '--class' => $class,
-            ]);
+            $class = file_class($seeders);
+            if($class) {
+                $this->callSilent('db:seed', [
+                    '--force' => true,
+                    '--class' => $class,
+                ]);
+            }
         }
 
         // 发布配置
