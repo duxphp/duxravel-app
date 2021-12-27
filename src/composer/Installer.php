@@ -50,6 +50,8 @@ class Installer extends LibraryInstaller
             if (!$repo->hasPackage($target)) {
                 $repo->addPackage(clone $target);
                 $this->process->execute('php artisan app:install ' . $target->getName());
+            } else {
+                $this->process->execute('php artisan app:install ' . $target->getName() . ' --update');
             }
         });
     }
