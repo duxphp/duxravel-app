@@ -33,6 +33,7 @@ class Column
     protected $width = '';
     protected $align = '';
     protected $fixed = '';
+    protected $class = [];
     protected $drag = false;
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
