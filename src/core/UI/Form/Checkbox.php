@@ -94,7 +94,7 @@ class Checkbox extends Element implements Component
 
     public function dataValue($value)
     {
-        return array_values(array_filter($this->getValueArray($value)));
+        return array_values(array_filter((array) $this->getValueArray($value)));
     }
 
     /**
