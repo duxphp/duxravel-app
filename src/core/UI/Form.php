@@ -48,8 +48,8 @@ class Form
     public $model;
     public $modelElo;
     public $info;
-    protected string $title;
-    protected bool $back;
+    protected string $title = '';
+    protected bool $back = false;
     protected array $attr = [];
     protected array $extend = [];
     protected string $method = 'post';
