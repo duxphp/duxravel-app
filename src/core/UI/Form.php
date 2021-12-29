@@ -49,7 +49,7 @@ class Form
     public $modelElo;
     public $info;
     protected string $title = '';
-    protected bool $back = false;
+    protected bool $back = true;
     protected array $attr = [];
     protected array $extend = [];
     protected string $method = 'post';
@@ -483,9 +483,9 @@ class Form
         }
 
         $node = new Node($action, $this->method, $this->title);
-        $node->dialog((bool)$this->dialog);
-        $node->vertical((bool)$this->vertical);
-        $node->back((bool)$this->back);
+        $node->dialog($this->dialog);
+        $node->vertical($this->vertical);
+        $node->back($this->back);
 
         // 表单元素·
         $node->element($this->renderForm());

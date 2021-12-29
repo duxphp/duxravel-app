@@ -127,6 +127,7 @@ class Node
                 'class' => 'flex-grow w-10',
                 'title' => $this->title ?: '信息详情',
                 'form' => true,
+                'back' => $this->back,
                 'vBind:formLoading' => 'loading',
                 'child' => [
                     [
@@ -141,8 +142,7 @@ class Node
                                 'nodeName' => 'div',
                                 'class' => 'flex items-center justify-end gap-2 flex-row ',
                                 'child' => [
-
-                                    [
+                                    $this->back ? [
                                         'nodeName' => 'route',
                                         'type' => 'back',
                                         'child' => [
@@ -150,7 +150,7 @@ class Node
                                             'nodeName' => 'a-button',
                                             'child' => '返回',
                                         ]
-                                    ],
+                                    ] : [],
                                     [
                                         'nodeName' => 'a-button',
                                         'html-type' => 'submit',
