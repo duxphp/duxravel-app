@@ -53,10 +53,9 @@ class Images extends Element implements Component
     }
 
     /**
-     * @param $value
-     * @return string[]
+     * @return array
      */
-    public function render($value): array
+    public function render(): array
     {
         $data = [
             'nodeName' => 'app-images',
