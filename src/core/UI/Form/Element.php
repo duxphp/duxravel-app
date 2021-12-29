@@ -14,8 +14,8 @@ class Element
     protected string $name = '';
     protected string $field = '';
     protected string $has = '';
-    protected string $help = '';
-    protected string $helpLine = '';
+    protected $help = '';
+    protected $helpLine = '';
     protected string $prompt = '';
     protected string $model = 'data.';
     protected array $class = [];
@@ -198,11 +198,11 @@ class Element
 
     /**
      * 设置帮助信息
-     * @param string $value
+     * @param string|array $value
      * @param bool $line
      * @return $this
      */
-    public function help(string $value, bool $line = false): self
+    public function help( $value, bool $line = false): self
     {
         if ($line) {
             $this->helpLine = $value;
@@ -337,9 +337,9 @@ class Element
 
     /**
      * 获取帮助行
-     * @return string
+     * @return string|array
      */
-    public function getHelpLine(): string
+    public function getHelpLine()
     {
         return $this->helpLine;
     }
@@ -423,9 +423,9 @@ class Element
 
     /**
      * 获取帮助信息
-     * @return string
+     * @return string|array
      */
-    public function getHelp(): string
+    public function getHelp()
     {
         return $this->help;
     }
