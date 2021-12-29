@@ -32,11 +32,11 @@ class Choice extends Element implements Component
     /**
      * @param string   $url
      * @param string   $key
-     * @param ChoiceColumn $column
+     * @param callable $column
      * @param array    $types
      * @return $this
      */
-    public function ajax(string $url, string $key, ChoiceColumn $column, array $types = []): self
+    public function ajax(string $url, string $key, callable $column, array $types = []): self
     {
         $this->ajax = [
             'url' => $url,
