@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 class Build
 {
 
-    private array $data = [];
+    private $data = [];
 
     /**
      * 获取编译数据
