@@ -18,7 +18,7 @@ class TreeList extends Widget
     private bool $search = true;
     private array $keyword = [];
     private array $menu = [];
-    private array $labelNode = [];
+    private $labelNode = [];
 
     /**
      * @param        $default
