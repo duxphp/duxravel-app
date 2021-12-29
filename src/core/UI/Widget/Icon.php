@@ -20,7 +20,7 @@ class Icon extends Widget
      * @param string        $content
      * @param callable|null $callback
      */
-    public function __construct(string $content, callable $callback = null)
+    public function __construct(string $content, ?callable $callback = null)
     {
         $this->content = $content;
         $this->callback = $callback;

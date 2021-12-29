@@ -10,7 +10,7 @@ use Duxravel\Core\UI\Tools;
  */
 class Widget
 {
-    protected \Closure $callback;
+    protected ?\Closure $callback;
 
     protected array $class = [];
     protected array $attr = [];
