@@ -14,7 +14,7 @@ class TreeList extends Widget
     private string $event;
     private ?string $url = null;
     private ?string $sortUrl = null;
-    private ?array $filter = null;
+    private ?string $filter = null;
     private bool $search = true;
     private array $keyword = [];
     private array $menu = [];
@@ -75,10 +75,10 @@ class TreeList extends Widget
     }
 
     /**
-     * @param array $filter
+     * @param string $filter
      * @return $this
      */
-    public function filter(array $filter): self
+    public function filter(string $filter): self
     {
         $this->filter = $filter;
         return $this;
@@ -103,7 +103,7 @@ class TreeList extends Widget
             'search' => $this->search,
             'keywords' => $this->keyword,
             'requestEventName' => $this->event ?: url_class($this->url)['class'],
-            'vBind:filter' => $this->filter ?: [],
+            'vBind:filter' => $this->filter ?: '',
             'refreshUrls' => [trim($urlPaths['path'], '/')],
             'iconColor' => ['blue', 'cyan', 'green', 'orange', 'red', 'purple'],
             'vModel:value' => "data.filter['{$this->field}']",
