@@ -14,8 +14,6 @@ use React\Promise\PromiseInterface;
 
 class Installer extends LibraryInstaller
 {
-
-    private $config = [];
     private $process;
 
     public function __construct(IOInterface $io, Composer $composer, $type = 'library', Filesystem $filesystem = null, BinaryInstaller $binaryInstaller = null)
@@ -26,7 +24,28 @@ class Installer extends LibraryInstaller
 
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-        return parent::install($repo, $package);
+        $this->initializeVendorDir();
+        $downloadPath = $this->getInstallPath($package);
+
+        if (!Filesystem::isReadable($downloadPath) && $repo->hasPackage($package)) {
+            $this->binaryInstaller->removeBinaries($package);
+        }
+
+        $promise = $this->installCode($package);
+        if (!$promise instanceof PromiseInterface) {
+            $promise = \React\Promise\resolve();
+        }
+
+        $binaryInstaller = $this->binaryInstaller;
+        $installPath = $this->getInstallPath($package);
+
+        return $promise->then(function () use ($binaryInstaller, $installPath, $package, $repo) {
+            $binaryInstaller->installBinaries($package, $installPath);
+            if (!$repo->hasPackage($package)) {
+                $repo->addPackage(clone $package);
+                $this->process->execute('php artisan app:install ' . $package->getName());
+            }
+        });
     }
 
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
@@ -51,47 +70,15 @@ class Installer extends LibraryInstaller
             $repo->removePackage($initial);
             if (!$repo->hasPackage($target)) {
                 $repo->addPackage(clone $target);
-                $config = $this->getAppConfig($target);
-                $this->process->execute('php artisan app:install ' . $config['name']);
+                $this->process->execute('php artisan app:install ' . $target->getName() . ' --update');
             }
         });
     }
 
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-        $config = $this->getAppConfig($package);
-        $this->process->execute('php artisan app:uninstall ' . $config['name']);
+        $this->process->execute('php artisan app:uninstall ' . $package->getName());
         return parent::uninstall($repo, $package);
-    }
-
-    /**
-     * @param PackageInterface $package
-     * @return string
-     * @throws \Exception
-     */
-    public function getInstallPath(PackageInterface $package)
-    {
-        $config = $this->getAppConfig($package);
-        return './modules/' . ucfirst($config['name']);
-        return parent::getInstallPath($package);
-    }
-
-    private function getAppConfig($package)
-    {
-        if ($this->config) {
-            return $this->config;
-        }
-        $extra = $package->getExtra();
-        $extra = $extra['duxravel'];
-        if (!$extra) {
-            throw new \InvalidArgumentException('Duxravel extension information does not exist');
-        }
-        $name = $extra['name'];
-        if (!$name) {
-            throw new \InvalidArgumentException('Duxravel is missing an extension parameter');
-        }
-        $this->config = $extra;
-        return $extra;
     }
 
     /**

@@ -10,7 +10,7 @@ class Install extends Command
      * The name and signature of the console command.
      * @var string
      */
-    protected $signature = 'app:install {name} {--update=}';
+    protected $signature = 'app:install {name} {--update}';
 
     /**
      * The console command description.
@@ -33,25 +33,26 @@ class Install extends Command
      */
     public function handle()
     {
+
         $name = $this->argument('name');
-        $update = $this->argument('update');
+        $update = $this->option('update');
 
         if (strpos($name, '/') === false) {
+            // 本地应用
             $appDir = ucfirst($name);
             $dir = base_path('modules/' . $appDir);
             $database = $dir . '/Database';
             $migrations = $database . '/Migrations';
             $seeders = $database . '/Seeders/DatabaseSeeder.php';
-            $publish = 'duxravel-' . strtolower($name);
+            $publish = 'duxapp-' . strtolower($name);
         } else {
+            // 包应用
             $dir = base_path('vendor/' . trim($name, '/'));
             $database = $dir . '/database';
             $migrations = $database . '/migrations';
             $seeders = $database . '/seeders/DatabaseSeeder.php';
-            $dir = explode('/', $name);
-            $publish = str_replace('/', '-', end($dir));
+            $publish = $name;
         }
-
 
         // 数据表安装
         if (is_dir($migrations)) {
@@ -66,14 +67,23 @@ class Install extends Command
             }
         }
 
+        // 安装前注册数据库
+        if(is_dir($database . '/seeders')) {
+            $files = glob($database . '/seeders/*.php');
+            foreach($files as $file) {
+                require_once $file;
+            }
+        }
+
         // 数据安装
         if (is_file($seeders) && !$update) {
-            $path = $seeders;
-            $class = file_class($path);
-            $this->callSilent('db:seed', [
-                '--force' => true,
-                '--class' => $class,
-            ]);
+            $class = file_class($seeders);
+            if($class) {
+                $this->callSilent('db:seed', [
+                    '--force' => true,
+                    '--class' => $class,
+                ]);
+            }
         }
 
         // 发布配置
@@ -83,6 +93,11 @@ class Install extends Command
         ]);
 
         $this->callSilent('app:build');
-        $this->info('Installation and application successful');
+
+        if ($update) {
+            $this->info('Update and application successful');
+        }else {
+            $this->info('Installation and application successful');
+        }
     }
 }
