@@ -11,10 +11,10 @@ class Menu
 {
     /**
      * 获取所有菜单
-     * @param $layout
+     * @param string $layout
      * @return array
      */
-    public function getAll($layout)
+    public function getAll(string $layout): array
     {
         $layout = ucfirst($layout);
         $serviceList = app(Build::class)->getData('menu.' . $layout);
@@ -129,7 +129,7 @@ class Menu
      * 获取应用菜单
      * @return array
      */
-    public function getApps()
+    public function getApps(): array
     {
         $apps = \Duxravel\Core\Facades\Menu::getApps();
         foreach ($apps as $key => $vo) {
@@ -149,55 +149,9 @@ class Menu
         $path = trim(parse_url($url, PHP_URL_PATH), '/') . '/';
         if (strpos($path, $value, 0) === false) {
             return false;
-        } else {
-            return true;
         }
-    }
 
-    /**
-     * 渲染折叠菜单
-     * @param $data
-     * @return array [[label, key, children]]
-     */
-    public static function renderCollapse($title, $icon, $data)
-    {
-
-        return [
-            'node' => [
-                [
-                    'nodeName' => 'div',
-                    'class' => 'flex items-center p-4',
-                    'child' => [
-                        [
-                            'nodeName' => 'div',
-                            'class' => 'flex-none bg-blue-900 rounded-l text-white flex items-center justify-center w-10 h-10',
-                            'child' => (new Icon('academic-cap'))->class('flex-none')->size(20)->getRender()
-                        ],
-                        [
-                            'nodeName' => 'div',
-                            'class' => 'flex-grow bg-gray-300 h-10 flex rounded-r items-center pl-4',
-                            'child' => '新闻分类'
-                        ]
-                    ]
-                ],
-                [
-                    'nodeName' => 'n-menu',
-                    'root-indent' => 20,
-                    'indent' => 20,
-                    'class' => 'w-48',
-                    'vBind:default-value' => 'location.href.substr(location.origin.length)',
-                    'render-label:option' => [
-                        'nodeName' => 'route',
-                        'vBind:href' => 'option.key',
-                        'child' => [
-                            'nodeName' => 'n-ellipsis',
-                            'child' => '{{option.label}}'
-                        ]
-                    ],
-                    'options' => $data
-                ]
-            ]
-        ];
+        return true;
     }
 
 }

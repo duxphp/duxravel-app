@@ -25,17 +25,17 @@ class Images extends Widget
 
     /**
      * 图像大小
-     * @param $size
+     * @param int $size
      * @return $this
      */
-    public function size(int $size)
+    public function size(int $size): self
     {
         $this->size = $size;
         return $this;
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function render(): array
     {

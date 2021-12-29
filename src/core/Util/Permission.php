@@ -21,16 +21,16 @@ class Permission
      * 获取守护器
      * @return string
      */
-    public function getGuerd()
+    public function getGuerd(): string
     {
         return $this->guerd;
     }
 
     /**
      * 注册权限验证器
-     * @param string $has
+     * @param string $guerd
      */
-    public function register($guerd = '')
+    public function register(string $guerd = ''): void
     {
         $this->guerd = strtolower($guerd);
         $routes = \Route::getRoutes();
@@ -76,11 +76,12 @@ class Permission
     }
 
     /**
-     * 验证当前权限
+     * 验证权限
      * @param $user
      * @param $rule
+     * @return bool
      */
-    public function checkPermissions($user, $rule)
+    public function checkPermissions($user, $rule): bool
     {
         $this->setPermissions($user);
 
@@ -103,7 +104,6 @@ class Permission
 
     /**
      * 获取树形权限
-     * @param string $has
      * @return array
      */
     public function getPermissions(): array

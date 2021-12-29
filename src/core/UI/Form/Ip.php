@@ -3,7 +3,7 @@
 namespace Duxravel\Core\UI\Form;
 
 /**
- * Class Ip
+ * IP地址
  * @package Duxravel\Core\UI\Form
  */
 class Ip extends Element implements Component
@@ -11,7 +11,6 @@ class Ip extends Element implements Component
     protected Text $object;
 
     /**
-     * Text constructor.
      * @param  string  $name
      * @param  string  $field
      * @param  string  $has
@@ -26,9 +25,9 @@ class Ip extends Element implements Component
     }
 
     /**
-     * 渲染组件
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         return $this->object->getRender();
     }

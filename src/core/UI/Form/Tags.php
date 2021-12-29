@@ -2,11 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Tags
  * 标签输入框
@@ -17,7 +12,6 @@ class Tags extends Element implements Component
     protected int $limit = 0;
 
     /**
-     * Text constructor.
      * @param string $name
      * @param string $field
      * @param string $has
@@ -40,11 +34,9 @@ class Tags extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = [
             'nodeName' => 'a-input-tag',
@@ -58,12 +50,20 @@ class Tags extends Element implements Component
         return $data;
     }
 
-    public function dataValue($value)
+    /**
+     * @param $value
+     * @return array
+     */
+    public function dataValue($value): array
     {
-        return array_values(array_filter((array) $this->getValueArray($value)));
+        return array_values(array_filter((array)$this->getValueArray($value)));
     }
 
-    public function dataInput($data)
+    /**
+     * @param $data
+     * @return string
+     */
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

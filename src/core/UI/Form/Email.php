@@ -3,7 +3,7 @@
 namespace Duxravel\Core\UI\Form;
 
 /**
- * Class Email
+ * 邮箱输入
  * @package Duxravel\Core\UI\Form
  */
 class Email extends Element implements Component
@@ -26,11 +26,9 @@ class Email extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         return $this->object->getRender();
     }

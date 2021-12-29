@@ -2,13 +2,7 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
- * Class Files
  * 多文件上传
  * @package Duxravel\Core\UI\Form
  */
@@ -17,11 +11,12 @@ class Files extends Element implements Component
     protected string $type = 'manage';
     protected string $url = '';
     protected string $fileUrl = '';
+
     /**
      * Text constructor.
-     * @param  string  $name
-     * @param  string  $field
-     * @param  string  $has
+     * @param string $name
+     * @param string $field
+     * @param string $has
      */
     public function __construct(string $name, string $field, string $has = '')
     {
@@ -30,7 +25,12 @@ class Files extends Element implements Component
         $this->has = $has;
     }
 
-    public function type($type = 'manage')
+    /**
+     * 上传方式
+     * @param string $type
+     * @return $this
+     */
+    public function type(string $type = 'manage'): self
     {
         $this->type = $type;
         return $this;
@@ -59,11 +59,9 @@ class Files extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return string[]
      */
-    public function render($value)
+    public function render(): array
     {
         $data = [
             'nodeName' => 'app-files',

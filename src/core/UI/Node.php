@@ -10,9 +10,12 @@ use Duxravel\Core\UI\Node\NodeEl;
 class Node
 {
 
-    public $nodes = [];
+    public array $nodes = [];
 
-    public function render()
+    /**
+     * @return array
+     */
+    public function render(): array
     {
         $data = [];
         foreach ($this->nodes as $vo) {
@@ -21,6 +24,11 @@ class Node
         return $data;
     }
 
+    /**
+     * @param $method
+     * @param $arguments
+     * @return NodeEl
+     */
     public function __call($method, $arguments)
     {
         $nodeEl = new NodeEl($method, $arguments[0]);

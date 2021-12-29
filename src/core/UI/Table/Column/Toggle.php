@@ -17,9 +17,9 @@ class Toggle implements Component
     private string $url;
 
     /**
-     * Toggle constructor.
+     * @param string $field
      * @param string $route
-     * @param array $params
+     * @param array  $params
      */
     public function __construct(string $field, string $route, array $params = [])
     {
@@ -30,27 +30,27 @@ class Toggle implements Component
 
 
     /**
-     * 设置数据列字段
+     * 设置列字段
      * @param array $fields
-     * @return void
+     * @return $this
      */
-    public function fields(Array $fields = [])
+    public function fields(Array $fields = []): self
     {
         $this->fields = $fields;
         return $this;
     }
 
     /**
-     * @param $field
-     * @return string
+     * @param $label
+     * @return string[]
      */
-    public function render($field): array
+    public function render($label): array
     {
         $url = app_route($this->route, $this->params, false, 'rowData.record', $this->fields);
         return [
             'nodeName' => 'a-switch',
-            'vModel:model-value' => "rowData.record['$field']",
-            'vOn:change' => "rowData.record['$field'] = \$event, editValue($url, {'field': '$this->field', '$this->field': rowData.record['$field']})",
+            'vModel:model-value' => "rowData.record['$label']",
+            'vOn:change' => "rowData.record['$label'] = \$event, editValue($url, {'field': '$this->field', '$this->field': rowData.record['$label']})",
         ];
     }
 

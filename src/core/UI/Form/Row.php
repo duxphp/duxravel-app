@@ -2,10 +2,7 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Composite;
 use Duxravel\Core\UI\Form;
-use Duxravel\Core\UI\Tools;
 
 /**
  * Class Row
@@ -13,10 +10,6 @@ use Duxravel\Core\UI\Tools;
  */
 class Row extends Composite implements Component
 {
-    public function __construct()
-    {
-        $this->layout = false;
-    }
 
     /**
      * 设置列
@@ -36,16 +29,14 @@ class Row extends Composite implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render($value)
+    public function render(): array
     {
         $inner = [];
         foreach ($this->column as $vo) {
             $width = $vo['width'] ? "lg:row-span-{$vo['width']}" : '';
-            $form = $vo['object']->renderForm($value);
+            $form = $vo['object']->renderForm();
             $inner[] = [
                 'nodeName' => 'div',
                 'class' => $width,

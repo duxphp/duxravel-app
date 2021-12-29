@@ -28,10 +28,9 @@ class FilterType
     protected $value;
 
     /**
-     * FilterType constructor.
-     * @param string $name
+     * @param string        $name
      * @param callable|null $where
-     * @param string|null $url
+     * @param int           $value
      */
     public function __construct(string $name, callable $where = null, int $value = 0)
     {
@@ -58,19 +57,22 @@ class FilterType
         return $this;
     }
 
-    public function execute($query, $key)
+    public function execute($query, $key): void
     {
         if ($this->where instanceof \Closure && $this->value == $key) {
             call_user_func($this->where, $this->model);
         }
     }
 
-    public function render($key)
+    /**
+     * @param $key
+     * @return array
+     */
+    public function render($key): array
     {
         return [
             'nodeName' => 'a-radio',
             'value' => $key,
-            'child' => $this->name,
             'child' => [
                 $this->icon ? [
                     'nodeName' => $this->icon

@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\UI;
 
+use Duxravel\Core\Exceptions\ErrorException;
 use Duxravel\Core\UI\Form\Node;
 use Duxravel\Core\UI\Widget\Icon;
 use Illuminate\Database\Eloquent\Model as Eloquent;
@@ -47,10 +48,10 @@ class Form
     public $model;
     public $modelElo;
     public $info;
-    protected $title;
-    protected $back;
-    protected $attr = [];
-    protected $extend = [];
+    protected string $title;
+    protected bool $back;
+    protected array $attr = [];
+    protected array $extend = [];
     protected string $method = 'post';
     protected string $action = '';
     protected array $keys = [];
@@ -66,7 +67,7 @@ class Form
 
     /**
      * Form constructor.
-     * @param $data
+     * @param      $data
      * @param bool $model
      */
     public function __construct($data = null, bool $model = true)
@@ -138,7 +139,7 @@ class Form
      * 获取元素集合
      * @param null $class
      */
-    public function getElement($class = null, $num = 0)
+    public function getElement($class = null, $num = 0): Collection
     {
         if ($class) {
             $i = 0;
@@ -156,11 +157,11 @@ class Form
 
     /**
      * 表单标题
-     * @param $title
-     * @param bool $back
+     * @param string $title
+     * @param bool   $back
      * @return $this
      */
-    public function title($title, bool $back = true): self
+    public function title(string $title, bool $back = true): self
     {
         $this->title = $title;
         $this->back = $back;
@@ -286,12 +287,11 @@ class Form
     }
 
     /**
-     * 表单渲染
-     * @param $info
+     * @return array
      */
-    public function renderForm()
+    public function renderForm(): array
     {
-        $forms = $this->element->map(function ($vo, $key) {
+        return $this->element->map(function ($vo, $key) {
             $sort = $vo->getSort();
             $sort = $sort ?? $key;
 
@@ -370,11 +370,11 @@ class Form
             }
             return $item;
         })->filter()->sortBy('sort')->values()->toArray();
-        return $forms;
     }
 
     /**
-     * 设置表单内容
+     * @return mixed|void|null
+     * @throws ErrorException
      */
     public function setInfo()
     {
@@ -410,7 +410,7 @@ class Form
     /**
      * 指定模板变量
      * @param string $name
-     * @param null $value
+     * @param null   $value
      * @return $this
      */
     public function assign(string $name, $value = null): self
@@ -421,24 +421,24 @@ class Form
 
     /**
      * 是否弹窗
-     * @param $status
+     * @param bool $status
      * @return $this
      */
-    public function dialog($status): self
+    public function dialog(bool $status): self
     {
-        $this->dialog = (bool)$status;
+        $this->dialog = $status;
         $this->vertical = true;
         return $this;
     }
 
     /**
      * 纵向表单
-     * @param $status
+     * @param bool $status
      * @return $this
      */
-    public function vertical($status): self
+    public function vertical(bool $status): self
     {
-        $this->vertical = (bool)$status;
+        $this->vertical = $status;
         return $this;
     }
 
@@ -446,7 +446,7 @@ class Form
      * 获取弹窗状态
      * @return bool
      */
-    public function getDialog()
+    public function getDialog(): bool
     {
         return $this->dialog;
     }
@@ -464,6 +464,7 @@ class Form
 
     /**
      * 渲染表单
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
     public function render()
     {
@@ -507,10 +508,9 @@ class Form
     }
 
     /**
-     * 提交数据处理
+     * 获取提交数据
      * @param $time
      * @return Collection
-     * @throws ValidationException
      */
     public function getInput($time): Collection
     {
@@ -571,13 +571,15 @@ class Form
      */
     protected array $prepared = [];
 
+    /**
+     * 主键值
+     * @var null
+     */
     protected $modelId = null;
 
     /**
      * 保存数据
-     * @return Collection|mixed|\Tightenco\Collect\Support\Collection
-     * @throws ValidationException
-     * @throws \Throwable
+     * @return null $modelId
      */
     public function save()
     {
@@ -643,7 +645,7 @@ class Form
                             $model->{$item['has']}()->sync($item['value']);
                         };
                     }
-                } elseif (\Schema::hasColumn($model->getTable(), $key)) {
+                } else if (\Schema::hasColumn($model->getTable(), $key)) {
                     // 过滤无用字段
                     $model->$key = $item['value'];
                 }
@@ -687,6 +689,11 @@ class Form
         return $this;
     }
 
+    /**
+     * 验证表单扩展
+     * @param $callback
+     * @return $this
+     */
     public function validator($callback): Form
     {
         $this->flow['validator'][] = $callback;
@@ -738,10 +745,11 @@ class Form
 
 
     /**
-     * 回调前端事件
+     * 前端事件
      * @param $table
      * @param $name
-     * @return false|void
+     * @param $type
+     * @return array|false
      */
     public function callbackEvent($table, $name, $type)
     {
@@ -777,9 +785,8 @@ class Form
         if (!class_exists($class)) {
             if (!$this->extend[$method]) {
                 throw new \Exception('There is no form method "' . $method . '"');
-            } else {
-                $class = $this->extend[$method];
             }
+            $class = $this->extend[$method];
         }
         $object = new $class(...$arguments);
         $object->dialog($this->dialog);

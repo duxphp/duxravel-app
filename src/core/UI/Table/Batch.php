@@ -18,15 +18,15 @@ class Batch
     protected array $url = [];
 
     /**
-     * 普通按钮
+     * 按钮
      * @param string $name
      * @param string $type
      * @param string $route
-     * @param array $params
-     * @param string $type
+     * @param array  $params
+     * @param string $btnType
      * @return $this
      */
-    public function button(string $name, $type = '', string $route = '', array $params = [], string $btnType = 'normal'): self
+    public function button(string $name, string $type = '', string $route = '', array $params = [], string $btnType = 'normal'): self
     {
         $params['bath_type'] = $type;
         $url = route($route, $params);
@@ -40,7 +40,13 @@ class Batch
         return $this;
     }
 
-    public function select(string $name, string $route = '', array $params = [])
+    /**
+     * @param string $name
+     * @param string $route
+     * @param array  $params
+     * @return $this
+     */
+    public function select(string $name, string $route = '', array $params = []): self
     {
         $url = route($route, $params);
         $this->select[] = [
@@ -57,7 +63,6 @@ class Batch
      */
     public function render(): array
     {
-
         if ($this->select) {
             $this->nodes[] = [
                 'nodeName' => 'a-dropdown',

@@ -2,10 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class TreeSelect
  * @package Duxravel\Core\UI\Form
@@ -55,21 +51,21 @@ class TreeSelect extends Element implements Component
 
     /**
      * 设置动态地址
-     * @param $url
+     * @param string $url
      * @return $this
      */
-    public function url($url): self
+    public function url(string $url): self
     {
         $this->url = $url;
         return $this;
     }
 
     /**
-     * 搜索选择
      * @param string $route
+     * @param array  $params
      * @return $this
      */
-    public function route(string $route, $params = []): self
+    public function route(string $route, array $params = []): self
     {
         $this->route = $route;
         $this->url = app_route($route, $params);
@@ -91,7 +87,7 @@ class TreeSelect extends Element implements Component
      * @param bool $bool
      * @return $this
      */
-    public function tree(bool $bool = true)
+    public function tree(bool $bool = true): self
     {
         $this->treeData = $bool;
         return $this;
@@ -103,17 +99,16 @@ class TreeSelect extends Element implements Component
      * @param string $model
      * @return $this
      */
-    public function strategy(string $model)
+    public function strategy(string $model): self
     {
         $this->strategy = $model;
         return $this;
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
 
         $data = [];
@@ -165,12 +160,20 @@ class TreeSelect extends Element implements Component
         return $data;
     }
 
+    /**
+     * @param $value
+     * @return array|mixed
+     */
     public function dataValue($value)
     {
         return $this->multi ? array_values(array_filter((array)$this->getValueArray($value))) : $this->getValue($value);
     }
 
-    public function dataInput($data)
+    /**
+     * @param $data
+     * @return string
+     */
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

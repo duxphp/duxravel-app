@@ -2,11 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Image
  * 图片上传

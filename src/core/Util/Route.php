@@ -32,10 +32,10 @@ class Route
 
     /**
      * 指定前缀
-     * @param $name
+     * @param string $name
      * @return $this
      */
-    public function prefix($name): self
+    public function prefix(string $name): self
     {
         $this->prefix = $name;
         return $this;
@@ -43,7 +43,7 @@ class Route
 
     /**
      * 仅允许
-     * @param $name
+     * @param string|array $name
      * @return $this
      */
     public function only($name): self
@@ -55,7 +55,7 @@ class Route
 
     /**
      * 排除方法
-     * @param $name
+     * @param string|array $name
      * @return $this
      */
     public function except($name): self
@@ -67,7 +67,7 @@ class Route
 
     /**
      * 追加方法
-     * @param $name
+     * @param string|array $name
      * @return $this
      */
     public function append($name): self
@@ -98,13 +98,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemIndex($app, $layout, $name, $class)
+    private function addItemIndex(string $app, string $layout, string $name, string $class): array
     {
         return [
             [
@@ -125,13 +125,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemData($app, $layout, $name, $class)
+    private function addItemData(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'get',
@@ -143,13 +143,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemPage($app, $layout, $name, $class)
+    private function addItemPage(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'get',
@@ -162,13 +162,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemSave($app, $layout, $name, $class)
+    private function addItemSave(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'post',
@@ -181,13 +181,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemDel($app, $layout, $name, $class)
+    private function addItemDel(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'post',
@@ -199,13 +199,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemRecovery($app, $layout, $name, $class)
+    private function addItemRecovery(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'get',
@@ -217,13 +217,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemClear($app, $layout, $name, $class)
+    private function addItemClear(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'post',
@@ -235,13 +235,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemStatus($app, $layout, $name, $class)
+    private function addItemStatus(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'post',
@@ -252,7 +252,14 @@ class Route
         ];
     }
 
-    private function addItemexport($app, $layout, $name, $class)
+    /**
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
+     * @return array
+     */
+    private function addItemexport(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'get',
@@ -264,13 +271,13 @@ class Route
     }
 
     /**
-     * @param $app
-     * @param $layout
-     * @param $name
-     * @param $class
+     * @param string $app
+     * @param string $layout
+     * @param string $name
+     * @param string $class
      * @return array
      */
-    private function addItemSort($app, $layout, $name, $class)
+    private function addItemSort(string $app, string $layout, string $name, string $class): array
     {
         return [
             'type' => 'post',
@@ -284,8 +291,12 @@ class Route
 
     /**
      * 自定义方法
+     * @param string $type
+     * @param string $action
+     * @param string $name
+     * @return $this
      */
-    public function add($type, $action, $name)
+    public function add(string $type, string $action, string $name): Route
     {
         $this->extend['addItem' . ucfirst($action)] = [
             'type' => $type,
@@ -296,6 +307,12 @@ class Route
         return $this;
     }
 
+    /**
+     * @param $method
+     * @param $arguments
+     * @return array
+     * @throws \Exception
+     */
     public function __call($method, $arguments)
     {
         if (!isset($this->extend[$method])) {

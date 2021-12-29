@@ -11,59 +11,59 @@ use Carbon\CarbonPeriod;
  */
 class Charts
 {
-    private $type = '';
+    private string $type = '';
     private ?\Closure $option = null;
-    private $height = 200;
+    private int $height = 200;
     private $width = '100%';
-    private $zoom = false;
-    private $toolbar = false;
-    private $datatime = false;
-    private $legend = [
+    private bool $zoom = false;
+    private bool $toolbar = false;
+    private bool $datatime = false;
+    private array $legend = [
         'status' => false,
         'x' => 'right',
         'y' => 'top'
     ];
 
-    private $date = [
+    private array $date = [
         'start' => '',
         'stop' => '',
         'interval' => '1 days',
         'format' => 'Y-m-d'
     ];
 
-    private $series = [];
-    private $labels = [];
-    private $data = [];
-    private $title = [];
-    private $subtitle = [];
+    private array $series = [];
+    private array $labels = [];
+    private array $data = [];
+    private array $title = [];
+    private array $subtitle = [];
 
 
     /**
-     * @param $width
+     * @param int|string $width
      * @return $this
      */
-    public function width($width)
+    public function width($width): self
     {
         $this->width = $width;
         return $this;
     }
 
     /**
-     * @param $height
+     * @param int $height
      * @return $this
      */
-    public function height($height)
+    public function height(int $height): self
     {
         $this->height = $height;
         return $this;
     }
 
     /**
-     * @param        $title
+     * @param string $title
      * @param string $align
      * @return $this
      */
-    public function title($title, $align = 'left')
+    public function title(string $title, string $align = 'left'): self
     {
         $this->title = [
             'title' => $title,
@@ -73,11 +73,11 @@ class Charts
     }
 
     /**
-     * @param        $title
+     * @param string $title
      * @param string $align
      * @return $this
      */
-    public function subtitle($title, $align = 'left')
+    public function subtitle(string $title, string $align = 'left'): self
     {
         $this->subtitle = [
             'title' => $title,
@@ -90,7 +90,7 @@ class Charts
      * @param false $zoom
      * @return $this
      */
-    public function zoom($zoom = false)
+    public function zoom(bool $zoom = false): self
     {
         $this->zoom = $zoom;
         return $this;
@@ -100,7 +100,7 @@ class Charts
      * @param false $toolbar
      * @return $this
      */
-    public function toolbar($toolbar = false)
+    public function toolbar(bool $toolbar = false): self
     {
         $this->toolbar = $toolbar;
         return $this;
@@ -112,7 +112,7 @@ class Charts
      * @param string $y
      * @return $this
      */
-    public function legend($status, $x = "right", $y = 'top')
+    public function legend($status, string $x = "right", string $y = 'top'): self
     {
         $this->legend = [
             'status' => $status,
@@ -127,7 +127,7 @@ class Charts
      * @param bool $status
      * @return $this
      */
-    public function datetime(bool $status = true)
+    public function datetime(bool $status = true): self
     {
         $this->datatime = $status;
         return $this;
@@ -135,13 +135,13 @@ class Charts
     }
 
     /**
-     * @param        $start
-     * @param        $stop
+     * @param string $start
+     * @param string $stop
      * @param string $interval
      * @param string $format
      * @return $this
      */
-    public function date($start, $stop, $interval = '1 days', $format = 'Y-m-d')
+    public function date(string $start, string $stop, string $interval = '1 days', string $format = 'Y-m-d'): self
     {
         $this->date = [
             'start' => $start,
@@ -155,9 +155,10 @@ class Charts
     /**
      * @param string $name
      * @param array  $data
+     * @param string $format
      * @return $this
      */
-    public function data(string $name, array $data = [], string $format = 'Ymd')
+    public function data(string $name, array $data = [], string $format = 'Ymd'): self
     {
         $this->data[] = [
             'name' => $name,
@@ -172,7 +173,7 @@ class Charts
      * 线型图
      * @return $this
      */
-    public function line()
+    public function line(): self
     {
         $this->type = 'line';
 
@@ -200,7 +201,7 @@ class Charts
      * 区域图
      * @return $this
      */
-    public function area()
+    public function area(): self
     {
         $this->type = 'area';
 
@@ -226,7 +227,7 @@ class Charts
      * 柱状图
      * @return $this
      */
-    public function column()
+    public function column(): self
     {
         $this->type = 'bar';
 
@@ -253,9 +254,10 @@ class Charts
     }
 
     /**
-     * @return string
+     * @param bool $html
+     * @return array|string
      */
-    public function render($html = false)
+    public function render(bool $html = false)
     {
         $this->renderData();
 
@@ -337,7 +339,11 @@ class Charts
 
     }
 
-    private function renderHtml($option)
+    /**
+     * @param array$option
+     * @return string
+     */
+    private function renderHtml(array $option): string
     {
         $option = json_encode($option);
         $series = json_encode($this->series);
@@ -353,7 +359,11 @@ class Charts
         HTML;
     }
 
-    private function renderNode($option)
+    /**
+     * @param array $option
+     * @return array
+     */
+    private function renderNode(array $option): array
     {
         return [
             'nodeName' => 'apexchart',
@@ -367,16 +377,10 @@ class Charts
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function renderData()
+    private function renderData(): void
     {
-        $series = [];
-        $labels = [];
-
-        $group = [];
-        $names = [];
-
         $labels = $this->getDateFromRange($this->date['start'] ?: date($this->data['format'], strtotime('-7 day')), $this->date['stop'] ?: date($this->data['format']), $this->date['interval'], $this->date['format']);
         $this->labels = $labels;
 
@@ -396,11 +400,16 @@ class Charts
             ];
         }
 
-
-        return $this;
     }
 
-    private function getDateFromRange($startdate, $enddate, $interval = '1 days', $format = 'Y-m-d'): array
+    /**
+     * @param string $startdate
+     * @param string $enddate
+     * @param string $interval
+     * @param string $format
+     * @return array
+     */
+    private function getDateFromRange(string $startdate, string $enddate, $interval = '1 days', $format = 'Y-m-d'): array
     {
         $period = CarbonPeriod::create($startdate, $interval, $enddate)->toArray();
         $data = [];
@@ -411,11 +420,9 @@ class Charts
     }
 
     /**
-     * 自动方法类
      * @param $method
      * @param $arguments
-     * @return mixed
-     * @throws \Exception
+     * @return $this
      */
     public function __call($method, $arguments)
     {
@@ -428,7 +435,7 @@ class Charts
             ];
 
             if ($arguments && $arguments[0] instanceof \Closure) {
-                $option = call_user_func($arguments[0], $option, $this);
+                call_user_func($arguments[0], $option, $this);
             }
         };
         return $this;

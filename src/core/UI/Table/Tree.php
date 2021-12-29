@@ -2,27 +2,26 @@
 
 namespace Duxravel\Core\UI\Table;
 
-use Duxravel\Core\UI\Form\Select;
 use Duxravel\Core\UI\Widget\Link;
 
 /**
  * 树形列表
- * Class Column
  * @package Duxravel\Core\UI\Filter
  */
 class Tree
 {
 
-    protected $label = '';
+    protected string $label = '';
     protected array $node = [];
     protected array $prefix = [];
     protected array $suffix = [];
-    protected $link;
+    protected Column\Link $link;
 
     /**
-     * @param $label
+     * @param string $label
+     * @param array  $node
      */
-    public function __construct($label, $node = [])
+    public function __construct(string $label, array $node = [])
     {
         $this->label = $label;
         $this->node = $node;
@@ -85,16 +84,15 @@ class Tree
     /**
      * 组件行数据
      * @param $rowData
-     * @return array|\Closure[]
+     * @return array
      */
-    public function getData($rowData)
+    public function getData($rowData): array
     {
         $data = [];
         // 元素数据
         if ($this->link) {
             $data = array_merge($data, $this->link->getData($rowData));
         }
-
         return $data;
     }
 

@@ -15,8 +15,9 @@ class Build
     private array $data = [];
 
     /**
-     * 获取编译
-     * @return mixed
+     * 获取编译数据
+     * @return array|mixed
+     * @throws \Exception
      */
     public function getBuild()
     {
@@ -32,8 +33,10 @@ class Build
     }
 
     /**
+     * 获取数据
      * @param $key
      * @return mixed
+     * @throws \Exception
      */
     public function getData($key)
     {
@@ -43,8 +46,9 @@ class Build
 
     /**
      * 编译架构
+     * @throws \Exception
      */
-    public function build()
+    public function build(): void
     {
         $buildPath = app()->bootstrapPath('cache/duxravel.php');
 
@@ -181,11 +185,19 @@ class Build
         );
     }
 
+    /**
+     * @param $package
+     * @return string|string[]
+     */
     protected function format($package)
     {
         return str_replace(base_path('vendor') . '/', '', $package);
     }
 
+    /**
+     * @param $rule
+     * @return array
+     */
     protected function globList($rule): array
     {
         $list = [];
@@ -195,6 +207,10 @@ class Build
         return $list;
     }
 
+    /**
+     * @param $list
+     * @return string|void
+     */
     private function formatClass($list)
     {
         foreach ($list as $value) {

@@ -2,11 +2,10 @@
 
 namespace Duxravel\Core\UI\Widget;
 
-use Duxravel\Core\UI\Tools;
 use Duxravel\Core\UI\Widget\Append\Element;
 
 /**
- * Class Icon
+ *图标组件
  * @package Duxravel\Core\UI\Widget
  */
 class Icon extends Widget
@@ -18,8 +17,6 @@ class Icon extends Widget
     private int $size;
 
     /**
-     * Icon constructor.
-     *
      * @param string        $content
      * @param callable|null $callback
      */
@@ -32,7 +29,6 @@ class Icon extends Widget
     /**
      * 设置大小
      * @param int $size
-     *
      * @return $this
      */
     public function size(int $size): self
@@ -57,12 +53,12 @@ class Icon extends Widget
                     'nodes' => $icon
                 ]
             ];
-        } else {
-            return [
-                'nodeName' => 'icon-' . $icon,
-                'class' => implode(' ', $this->class),
-            ];
         }
+
+        return [
+            'nodeName' => 'icon-' . $icon,
+            'class' => implode(' ', $this->class),
+        ];
     }
 
 }

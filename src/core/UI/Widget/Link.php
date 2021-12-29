@@ -34,11 +34,10 @@ class Link extends Widget
     protected string $auth = '';
 
     /**
-     * Link constructor.
      * @param string $name
      * @param string $route
-     * @param array $params
-     * @param callable|null $callback
+     * @param array  $params
+     * @param bool   $absolute
      */
     public function __construct(string $name, string $route = '', array $params = [], bool $absolute = false)
     {
@@ -52,7 +51,7 @@ class Link extends Widget
      * @param $params
      * @return $this
      */
-    public function fields($params)
+    public function fields($params): self
     {
         $this->fields = $params;
         return $this;
@@ -75,7 +74,7 @@ class Link extends Widget
      * 获取类型
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -84,16 +83,17 @@ class Link extends Widget
      * 获取类型配置
      * @return array
      */
-    public function getTypeConfig()
+    public function getTypeConfig(): array
     {
         return $this->typeConfig;
     }
 
     /**
      * 数据模型
-     * @param bool $model
+     * @param string $model
+     * @return $this
      */
-    public function model($model): self
+    public function model(string $model): self
     {
         $this->model = $model;
         return $this;
@@ -148,10 +148,10 @@ class Link extends Widget
 
     /**
      * 自定义权限
-     * @param $name
+     * @param string $name
      * @return $this
      */
-    public function can($name): self
+    public function can(string $name): self
     {
         if (strpos($name, '.') !== false) {
             $this->auth = $name;
@@ -181,7 +181,7 @@ class Link extends Widget
     /**
      * @return array
      */
-    public function render()
+    public function render(): array
     {
         $url = $this->getUrl();
 
@@ -257,7 +257,7 @@ class Link extends Widget
 
     }
 
-    private function isAuth()
+    private function isAuth(): bool
     {
         // 路由不存在
         if (!\Route::has($this->route)) {

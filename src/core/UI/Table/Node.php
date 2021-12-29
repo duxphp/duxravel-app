@@ -11,9 +11,9 @@ use Duxravel\Core\UI\Widget\Icon;
  */
 class Node
 {
-    private string $url = '';
-    private ?string $key = '';
-    private ?string $title = '';
+    private string $url;
+    private ?string $key;
+    private ?string $title;
     private bool $tree = false;
     private string $class = '';
     private array $params = [];
@@ -24,6 +24,7 @@ class Node
     private array $quickFilter = [];
     private array $action = [];
     private array $bath = [];
+    private array $page = [];
     private array $type = [];
     private array $side = [];
     private array $sideSize = [];
@@ -35,7 +36,6 @@ class Node
 
     /**
      * Node constructor.
-     *
      * @param string      $url
      * @param string      $key
      * @param string|null $title
@@ -49,10 +49,9 @@ class Node
 
     /**
      * @param $class
-     *
      * @return $this
      */
-    public function class($class)
+    public function class($class): self
     {
         $this->class .= ' ' . $class;
         return $this;
@@ -60,10 +59,9 @@ class Node
 
     /**
      * @param $params
-     *
      * @return $this
      */
-    public function params($params)
+    public function params($params): self
     {
         $this->params = $params;
         return $this;
@@ -71,10 +69,9 @@ class Node
 
     /**
      * @param array $filter
-     *
      * @return $this
      */
-    public function data(array $filter)
+    public function data(array $filter): self
     {
         $this->data['filter'] = $filter;
         return $this;
@@ -85,7 +82,7 @@ class Node
      * @param $return
      * @return $this
      */
-    public function script($content, $return)
+    public function script($content, $return): self
     {
         if ($content instanceof \Closure) {
             $this->script[] = $content();
@@ -98,8 +95,9 @@ class Node
 
     /**
      * @param $data
+     * @return $this
      */
-    public function scriptData($data)
+    public function scriptData($data): self
     {
         $this->scriptData = array_merge($this->scriptData, $data);
         return $this;
@@ -107,10 +105,9 @@ class Node
 
     /**
      * @param $config
-     *
      * @return $this
      */
-    public function tree($config)
+    public function tree($config): self
     {
         $this->tree = $config;
         return $this;
@@ -118,10 +115,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function columns(array $node)
+    public function columns(array $node): self
     {
         $this->columns = $node;
         return $this;
@@ -129,10 +125,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function expand(array $node)
+    public function expand(array $node): self
     {
         $this->expand = $node;
         return $this;
@@ -140,10 +135,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function type(array $node)
+    public function type(array $node): self
     {
         $this->type = $node;
         return $this;
@@ -151,10 +145,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function filter(array $node)
+    public function filter(array $node): self
     {
         $this->filter = array_values(array_filter($node));
         return $this;
@@ -162,10 +155,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function quickFilter(array $node)
+    public function quickFilter(array $node): self
     {
         if ($node) {
             $this->quickFilter = $node;
@@ -175,10 +167,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function action(array $node)
+    public function action(array $node): self
     {
         $this->action = $node;
         return $this;
@@ -186,10 +177,9 @@ class Node
 
     /**
      * @param array $node
-     *
      * @return $this
      */
-    public function bath(array $node)
+    public function bath(array $node): self
     {
         $this->bath = $node;
         return $this;
@@ -200,10 +190,9 @@ class Node
      * @param string $type
      * @param false  $resize
      * @param string $width
-     *
      * @return $this
      */
-    public function side($node, $type = 'left', bool $resize = false, string $width = '100px')
+    public function side($node, string $type = 'left', bool $resize = false, string $width = '100px'): self
     {
         $this->side[$type] = is_callable($node) ? $node() : $node;
         if ($resize) {
@@ -215,10 +204,9 @@ class Node
     /**
      * @param        $node
      * @param string $type
-     *
      * @return $this
      */
-    public function page($node, $type = 'left')
+    public function page($node, string $type = 'left'): self
     {
         $this->page[$type] = is_callable($node) ? $node() : $node;
         return $this;
@@ -226,24 +214,28 @@ class Node
 
     /**
      * @param $node
+     * @return $this
      */
-    public function header($node)
+    public function header($node): self
     {
         $this->header = $node;
+        return $this;
     }
 
     /**
      * @param $node
+     * @return $this
      */
-    public function footer($node)
+    public function footer($node): self
     {
         $this->footer = $node;
+        return $this;
     }
 
     /**
      * @return array[]
      */
-    private function headNode()
+    private function headNode(): array
     {
 
         if ($this->filter) {
@@ -251,17 +243,10 @@ class Node
                 'nodeName' => 'a-trigger',
                 'position' => 'br',
                 'trigger' => 'click',
-                //'popupVisible' => 'show',
-                //'width' => 300,
-                //'class' => 'filter-popover',
-                /*'vBind:ref' => <<<JS
-                            el => dataRef.value = el
-                            JS,*/
                 'child' => [
                     [
                         'nodeName' => 'a-button',
                         'type' => 'secondary',
-                        //'attr-type' => 'button',
                         'child' => [
                             '筛选',
                             [
@@ -307,7 +292,7 @@ class Node
     /**
      * @return array
      */
-    public function tableNode()
+    public function tableNode(): array
     {
         // 指定行key
         $this->params['row-key'] = $this->key;
@@ -340,7 +325,7 @@ class Node
             'n-params' => $this->params,
             'columns' => $this->columns,
             'vBind:filter' => 'data.filter',
-            'select' => $this->bath ? true : false,
+            'select' => (bool)$this->bath,
             'table-layout-fixed' => true,
             'child' => [
                 'vSlot:footer' => 'footer',
@@ -355,10 +340,9 @@ class Node
     /**
      * @return array
      */
-    public function render()
+    public function render(): array
     {
 
-        clock($this->sideSize);
         /*$this->script[] = <<<JS
         JS;
         $this->scriptReturn[] = 'dataRef';*/

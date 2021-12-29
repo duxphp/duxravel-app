@@ -22,6 +22,9 @@ class NoData extends Component
         $this->reload = $reload;
     }
 
+    /**
+     * @return mixed
+     */
     public function render()
     {
         return view('vendor.duxphp.duxravel-app.src.core.UI.View.Components.nodata');

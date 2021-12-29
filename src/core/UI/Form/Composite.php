@@ -6,7 +6,6 @@ use Duxravel\Core\UI\Tools;
 
 /**
  * 复合组件
- * Class Composite
  * @package Duxravel\Core\UI
  */
 class Composite extends Element
@@ -17,11 +16,11 @@ class Composite extends Element
     public object $form;
 
     /**
-     * @param null $key
+     * @param null   $key
      * @param string $item
      * @return array|object
      */
-    public function getColumn($key = null, $item = '')
+    public function getColumn($key = null, string $item = '')
     {
         return $key !== null ? ($item ? $this->column[$key][$item] : $this->column[$key]) : $this->column;
     }
@@ -45,10 +44,10 @@ class Composite extends Element
     }
 
     /**
-     * 获取数据
-     * @return mixed|void
+     * @param $info
+     * @return array
      */
-    public function getData($info)
+    public function getData($info): array
     {
         $data = [];
         foreach ($this->column as $vo) {

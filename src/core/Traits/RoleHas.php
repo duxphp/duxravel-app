@@ -11,6 +11,9 @@ use Duxravel\Core\Model\Role;
 trait RoleHas
 {
 
+    /**
+     * @return mixed
+     */
     public function roles()
     {
         return $this->morphToMany(Role::class, 'role', 'role_has', 'user_id', 'role_id');

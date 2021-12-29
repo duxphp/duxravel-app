@@ -2,20 +2,14 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-use Duxravel\Core\UI\Widget\TreeList;
-use Illuminate\Support\Facades\Http;
-
 /**
- * Class Area
+ * 地区选择器
  * @package Duxravel\Core\UI\Form
  */
 class Area extends Element implements Component
 {
     protected bool $multi = false;
-    protected $map = [
+    protected array $map = [
         'province' => 'province',
         'city' => 'city',
         'region' => 'region',
@@ -23,10 +17,8 @@ class Area extends Element implements Component
     ];
 
     /**
-     * Select constructor.
      * @param string $name
-     * @param string $field
-     * @param array|callback|null $data
+     * @param array  $map
      * @param string $has
      */
     public function __construct(string $name, array $map = [], string $has = '')
@@ -40,7 +32,6 @@ class Area extends Element implements Component
     }
 
     /**
-     * 多选组件
      * @return $this
      */
     public function multi(): self
@@ -50,8 +41,7 @@ class Area extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
     public function render(): array
     {
@@ -74,7 +64,11 @@ class Area extends Element implements Component
         return $data;
     }
 
-    public function appendInput($data)
+    /**
+     * @param $data
+     * @return array
+     */
+    public function appendInput($data): array
     {
         $info = \Duxravel\Core\Model\Area::where(['code' => $data])->first();
 

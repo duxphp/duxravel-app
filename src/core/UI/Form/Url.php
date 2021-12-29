@@ -3,7 +3,6 @@
 namespace Duxravel\Core\UI\Form;
 
 /**
- * Class Url
  * url输入
  * @package Duxravel\Core\UI\Form
  */
@@ -27,11 +26,9 @@ class Url extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $this->object->attrArray($this->attr);
         return $this->object->getRender();

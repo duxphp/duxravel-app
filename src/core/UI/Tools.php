@@ -12,10 +12,10 @@ class Tools
 
     /**
      * 解析对象数据
-     * @param object $data
-     * @param string $relation
+     * @param object      $data
+     * @param string      $relation
      * @param string|null $field
-     * @return array|\ArrayAccess|mixed|string
+     * @return string|string[]|null
      */
     public static function parsingObjData(object $data, string $relation, string $field = null)
     {
@@ -38,9 +38,9 @@ class Tools
 
     /**
      * 解析数组数据
-     * @param $data
+     * @param             $data
      * @param string|null $field
-     * @param bool $source
+     * @param bool        $source
      * @return string|string[]|null
      */
     public static function parsingArrData($data, string $field = null, bool $source = false)

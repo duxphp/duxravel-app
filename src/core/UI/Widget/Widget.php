@@ -10,7 +10,7 @@ use Duxravel\Core\UI\Tools;
  */
 class Widget
 {
-    protected $callback;
+    protected \Closure $callback;
 
     protected array $class = [];
     protected array $attr = [];
@@ -76,7 +76,7 @@ class Widget
 
     /**
      * 合并数组
-     * @param array $array
+     * @param array  $array
      * @param string $str
      * @return string
      */
@@ -101,11 +101,10 @@ class Widget
     /**
      * @return array
      */
-    public function getRender()
+    public function getRender(): array
     {
         return array_merge($this->render(), $this->attr);
     }
-
 
 
 }

@@ -40,12 +40,12 @@ class Export
 
     /**
      * 列设置
-     * @param $name
-     * @param $value
-     * @param int $width
+     * @param string $name
+     * @param string $value
+     * @param int    $width
      * @return $this
      */
-    public function column($name, $value, int $width = 10): self
+    public function column(string $name, string $value, int $width = 10): self
     {
         $this->column[] = [
             'name' => $name,

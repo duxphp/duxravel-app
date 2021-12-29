@@ -5,12 +5,12 @@ namespace Duxravel\Core\UI\Form;
 use Duxravel\Core\UI\Form;
 
 /**
- * Class Tab
+ * 卡片布局
  * @package Duxravel\Core\UI\Table
  */
 class Card extends Composite implements Component
 {
-    protected $callback;
+    protected \Closure $callback;
 
     public function __construct($callback)
     {
@@ -25,15 +25,13 @@ class Card extends Composite implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render($info)
+    public function render(): array
     {
         $inner = [];
         foreach ($this->column as $vo) {
-            $inner = $vo['object']->renderForm($info);
+            $inner = $vo['object']->renderForm();
         }
 
         if (!$this->dialog) {

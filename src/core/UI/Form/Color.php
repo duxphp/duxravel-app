@@ -4,7 +4,6 @@ namespace Duxravel\Core\UI\Form;
 
 /**
  * 颜色选择器
- * Class Color
  * @package Duxravel\Core\UI\Form
  */
 class Color extends Element implements Component
@@ -26,7 +25,6 @@ class Color extends Element implements Component
     }
 
     /**
-     * 自定义选择器
      * @return $this
      */
     public function picker(): self
@@ -36,30 +34,24 @@ class Color extends Element implements Component
     }
 
     /**
-     * 预设颜色
-     * @param $data
+     * @param array $data
      * @return $this
      */
-    public function color($data): self
+    public function color(array $data): self
     {
         $this->color = $data;
         return $this;
     }
 
-
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         if ($this->picker) {
             // 暂无组件
             $data = [
-                'nodeName' => 'a-color-picker',
-                'showAlpha' => false,
-                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+
             ];
         }else {
             $data = [

@@ -5,8 +5,7 @@ namespace Duxravel\Core\UI\Form;
 use Duxravel\Core\UI\Widget\Icon;
 
 /**
- * Class Data
- * 表格数据编辑器
+ * 动态数据编辑器
  * @package Duxravel\Core\UI\Form
  */
 class Data extends Element implements Component
@@ -133,11 +132,9 @@ class Data extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render($value)
+    public function render(): array
     {
         $url = route('service.image.placeholder', ['w' => 64, 'h' => 64, 't' => $this->attr['placeholder'] ?: '图片']);
 
@@ -202,17 +199,5 @@ class Data extends Element implements Component
 
         return $data;
     }
-
-    /*public function dataInput($data)
-    {
-        clock($this->modelElo);
-        return is_array($data) ? json_encode($data, JSON_UNESCAPED_UNICODE) : [];
-    }
-
-    public function dataValue($value)
-    {
-        clock($value);
-        return array_filter(json_decode($this->getValue($value), true));
-    }*/
 
 }

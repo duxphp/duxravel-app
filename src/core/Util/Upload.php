@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Util;
 
+use Duxravel\Core\Exceptions\ErrorException;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
@@ -12,14 +13,14 @@ class Upload
 {
 
     /**
-     * @param $hasType
-     * @param array $config
-     * @param int $dirId
+     * @param string $hasType
+     * @param array  $config
+     * @param int    $dirId
      * @param string $driver
      * @return array
-     * @throws \Duxravel\Core\Exceptions\ErrorException
+     * @throws ErrorException
      */
-    public static function load($hasType, $config = [], $dirId = 0, $driver = ''): array
+    public static function load(string $hasType, array $config = [], int $dirId = 0, string $driver = ''): array
     {
         $thumb = $config['thumb'] ?? config('image.thumb');
         $width = $config['width'] ?? config('image.thumb_width');

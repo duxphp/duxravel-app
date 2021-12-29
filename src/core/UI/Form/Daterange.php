@@ -2,20 +2,16 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
 use Duxravel\Core\UI\Tools;
 
 /**
- * Class Daterange
  * 时间范围选择器
  * @package Duxravel\Core\UI\Form
  */
 class Daterange extends Element implements Component
 {
 
-    private $stopField;
+    private string $stopField;
 
     /**
      * Text constructor.
@@ -35,28 +31,29 @@ class Daterange extends Element implements Component
      * @param $field
      * @return $this
      */
-    public function stopField($field)
+    public function stopField($field): self
     {
         $this->stopField = $field;
         return $this;
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
-        $data = [
+        return [
             'nodeName' => 'a-range-picker',
             'allowClear' => true,
             'vModel:modelValue' => $this->getModelField()
         ];
-        return $data;
     }
 
-    public function appendInput($value)
+    /**
+     * @param $value
+     * @return array
+     */
+    public function appendInput($value): array
     {
         if (!$this->stopField) {
             return [];
@@ -66,25 +63,33 @@ class Daterange extends Element implements Component
         return $data;
     }
 
-    public function dataInput($value)
+    /**
+     * @param $value
+     * @return string|null
+     */
+    public function dataInput($value): ?string
     {
         if ($this->stopField) {
-            return is_array($value) && $value[0] ? strtotime($value[0]) : null;
+            return is_array($value) && $value[0] ? date('Y-m-d H:i:s',strtotime($value[0])) : null;
         }
         return is_array($value) ? date('Y-m-d H:i:s', strtotime($value[0])) . ',' . date('Y-m-d H:i:s', strtotime($value[1])) : null;
     }
 
-    public function dataValue($value, $info)
+    /**
+     * @param $value
+     * @param $info
+     * @return array|null
+     */
+    public function dataValue($value, $info): ?array
     {
         $value = $this->getValue($value);
+        $data = [];
         if ($this->stopField) {
-            $data = [];
             $data[] = $value ?: null;
             $stopValue = Tools::parsingArrData($info, $this->stopField);
             $data[] = $stopValue ?: null;
             return $data;
         }
-        $data = [];
         if ($value) {
             $data = explode(',', $value);
         }

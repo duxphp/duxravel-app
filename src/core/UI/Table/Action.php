@@ -18,14 +18,14 @@ class Action
     protected array $menu = [];
 
     /**
-     * 普通按钮
+     * 按钮
      * @param string $name
      * @param string $route
-     * @param array $params
+     * @param array  $params
      * @param string $type
      * @return Link
      */
-    public function button(string $name, string $route = '', array $params = [], $type = 'primary'): Link
+    public function button(string $name, string $route = '', array $params = [], string $type = 'primary'): Link
     {
         $link = new Link($name, $route, $params);
         $link->button($type);

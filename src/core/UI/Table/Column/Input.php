@@ -11,48 +11,44 @@ class Input implements Component
 {
 
     private string $route;
-    private array $params = [];
+    private array $params;
     private string $field;
     private array $fields;
-    private string $url;
 
     /**
-     * Toggle constructor.
      * @param string $field
-     * @param string|array $url
-     * @param array $params
+     * @param string $route
+     * @param array  $params
      */
-    public function __construct(string $field, $url, array $params = [])
+    public function __construct(string $field, string $route, array $params = [])
     {
         $this->field = $field;
         $this->params = $params;
         $this->route = $route;
     }
 
-
     /**
-     * 设置数据列字段
      * @param array $fields
-     * @return void
+     * @return $this
      */
-    public function fields(array $fields = [])
+    public function fields(array $fields = []): Input
     {
         $this->fields = $fields;
         return $this;
     }
 
     /**
-     * @param $field
-     * @return string
+     * @param $label
+     * @return array
      */
-    public function render($field): array
+    public function render($label): array
     {
         $url = app_route($this->route, $this->params, false, 'rowData.record', $this->fields);
         return [
             'nodeName' => 'n-input',
             'class' => 'shadow-sm',
-            'vModel:value' => "rowData.record['$field']",
-            'vOn:blur' => "editValue($url, {'field': '$this->field', '$this->field': rowData.record['$field']})",
+            'vModel:value' => "rowData.record['$label']",
+            'vOn:blur' => "editValue($url, {'field': '$this->field', '$this->field': rowData.record['$label']})",
         ];
     }
 

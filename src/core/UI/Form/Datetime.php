@@ -3,7 +3,6 @@
 namespace Duxravel\Core\UI\Form;
 
 /**
- * Class Datetime
  * 日期时间选择器
  * @package Duxravel\Core\UI\Form
  */
@@ -13,7 +12,6 @@ class Datetime extends Element implements Component
     protected string $string = 'YYYY-MM-DD HH:mm';
 
     /**
-     * Datetime constructor.
      * @param string $name
      * @param string $field
      * @param string $has
@@ -54,16 +52,19 @@ class Datetime extends Element implements Component
     }
 
     /**
-     * 获取输入值
      * @param $data
-     * @return false|int|null
+     * @return string|null
      */
-    public function dataInput($data)
+    public function dataInput($data): ?string
     {
         return $data ? date('Y-m-d H:i:s', strtotime($data)) : null;
     }
 
-    public function dataValue($data)
+    /**
+     * @param $data
+     * @return string|null
+     */
+    public function dataValue($data): ?string
     {
         $data = $this->getValue($data);
         return $data ?: null;

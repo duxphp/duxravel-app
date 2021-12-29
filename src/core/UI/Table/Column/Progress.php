@@ -12,9 +12,7 @@ class Progress implements Component
     private string $color;
 
     /**
-     * Progress constructor.
      * @param string $color
-     * @param int $max
      */
     public function __construct(string $color = 'default')
     {
@@ -22,13 +20,12 @@ class Progress implements Component
     }
 
     /**
-     * @param $value
-     * @param $data
+     * @param $label
      * @return array
      */
-    public function render($field): array
+    public function render($label): array
     {
-        return (new \Duxravel\Core\UI\Widget\Progress("rowData.record['$field']"))->color($this->color)->render();
+        return (new \Duxravel\Core\UI\Widget\Progress("rowData.record['$label']"))->color($this->color)->render();
     }
 
 }

@@ -8,6 +8,9 @@ namespace Duxravel\Core\Traits;
  */
 trait Form
 {
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
     public function form(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
         return $this->morphOne(\Duxravel\Core\Model\FormData::class, 'has', 'has_type');

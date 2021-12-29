@@ -6,7 +6,6 @@ use Illuminate\View\Component;
 
 /**
  * 加载数据中
- * Class Loading
  * @package Duxravel\Core\UI\Components
  */
 class Loading extends Component
@@ -20,6 +19,9 @@ class Loading extends Component
         $this->content = $content;
     }
 
+    /**
+     * @return mixed
+     */
     public function render()
     {
         return view('vendor.duxphp.duxravel-app.src.core.UI.View.Components.loading');

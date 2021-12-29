@@ -3,10 +3,8 @@
 namespace Duxravel\Core\UI\Form;
 
 use Duxravel\Core\UI\Widget\Icon;
-use Duxravel\Database\Seeders\DatabaseSeeder;
 
 /**
- * Class Text
  * 输入框
  * @package Duxravel\Core\UI\Form
  */
@@ -17,7 +15,6 @@ class Text extends Element implements Component
     protected array $after = [];
 
     /**
-     * Text constructor.
      * @param string $name
      * @param string $field
      * @param string $has
@@ -93,8 +90,7 @@ class Text extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
     public function render(): array
     {
@@ -107,14 +103,12 @@ class Text extends Element implements Component
             ];
         }
 
-        $data = [
+        return [
             'nodeName' => 'a-input',
             'vModel:modelValue' => $this->getModelField(),
             'child' => $child,
             'placeholder' => '请输入' . $this->name,
         ];
-
-        return $data;
     }
 
 

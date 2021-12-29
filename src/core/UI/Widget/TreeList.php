@@ -10,63 +10,81 @@ class TreeList extends Widget
 {
 
     private $key;
-    private $field;
-    private $url = null;
-    private $sortUrl = null;
-    private $filter = null;
-    private $search = true;
-    private $keyword = [];
-    private $expand = true;
-    private $menu = [];
-    private $menuLevel = [];
-    private $labelNode = [];
+    private string $field;
+    private string $event;
+    private ?string $url = null;
+    private ?string $sortUrl = null;
+    private ?array $filter = null;
+    private bool $search = true;
+    private array $keyword = [];
+    private array $menu = [];
+    private array $labelNode = [];
 
-    public function __construct($default, $field = '', $event = '')
+    /**
+     * @param        $default
+     * @param string $field
+     * @param string $event
+     */
+    public function __construct($default, string $field = '', string $event = '')
     {
         $this->key = $default;
         $this->field = $field;
         $this->event = $event;
     }
 
-    public function search(bool $bool = true, array $keyword = [])
+    /**
+     * @param bool  $bool
+     * @param array $keyword
+     * @return $this
+     */
+    public function search(bool $bool = true, array $keyword = []): self
     {
         $this->search = $bool;
         $this->keyword = $keyword;
         return $this;
     }
 
-    public function menu($data = [], $level = [])
+    /**
+     * @param array $data
+     * @return $this
+     */
+    public function menu(array $data = []): self
     {
         $this->menu = $data;
-        $this->menuLevel = $level;
         return $this;
     }
 
-    public function url(string $url = null)
+    /**
+     * @param string|null $url
+     * @return $this
+     */
+    public function url(string $url = null): self
     {
         $this->url = $url;
         return $this;
     }
 
-    public function sortUrl(string $url = null)
+    /**
+     * @param string|null $url
+     * @return $this
+     */
+    public function sortUrl(string $url = null): self
     {
         $this->sortUrl = $url;
         return $this;
     }
 
-    public function expand(bool $bool = true)
-    {
-        $this->expand = $bool;
-        return $this;
-    }
-
-    public function filter($filter)
+    /**
+     * @param array $filter
+     * @return $this
+     */
+    public function filter(array $filter): self
     {
         $this->filter = $filter;
         return $this;
     }
 
-    public function label($node)
+    public function label($node): TreeList
     {
         $this->labelNode = $node;
         return $this;

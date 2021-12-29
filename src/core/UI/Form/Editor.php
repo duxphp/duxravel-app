@@ -3,13 +3,12 @@
 namespace Duxravel\Core\UI\Form;
 
 /**
- * Class Editor
+ * 编辑器
  * @package Duxravel\Core\UI\Form
  */
 class Editor extends Element implements Component
 {
     /**
-     * Text constructor.
      * @param  string  $name
      * @param  string  $field
      * @param  string  $has
@@ -22,11 +21,9 @@ class Editor extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render($value)
+    public function render(): array
     {
         $data = [
             'nodeName' => 'app-editor'

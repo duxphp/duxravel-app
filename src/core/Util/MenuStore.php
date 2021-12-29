@@ -9,21 +9,21 @@ use Duxravel\Core\UI\Widget\Icon;
  */
 class MenuStore
 {
-    private $data = [];
-    private $pushData = [];
-    private $appData = [];
+    private array $data = [];
+    private array $pushData = [];
+    private array $appData = [];
 
-    private $lastIndex = null;
-    private $lastKey = 0;
+    private ?string $lastIndex = null;
+    private int $lastKey = 0;
 
 
     /**
      * 添加主菜单
-     * @param $index
-     * @param array $params
-     * @param null $rule
+     * @param string $index
+     * @param array  $params
+     * @param null   $rule
      */
-    public function add(string $index, array $params, $rule = null)
+    public function add(string $index, array $params, $rule = null): void
     {
         $this->lastIndex = $index;
         $this->lastKey = 0;
@@ -39,10 +39,11 @@ class MenuStore
 
     /**
      * 添加菜单组
-     * @param array $params
-     * @param callable|string $menus
+     * @param array         $params
+     * @param callable|null $callback
+     * @param null          $index
      */
-    public function group(array $params, ?callable $callback = null, $index = null)
+    public function group(array $params, ?callable $callback = null, $index = null): void
     {
         $lastGroup = $this->data[$this->lastIndex];
         if ($index) {
@@ -63,10 +64,10 @@ class MenuStore
      * 添加菜单链接
      * @param string $name
      * @param string $route
-     * @param array $params
-     * @param int $index
+     * @param array  $params
+     * @param int    $index
      */
-    public function link(string $name, string $route, array $params = [], int $index = 0)
+    public function link(string $name, string $route, array $params = [], int $index = 0): void
     {
         $data = [
             'name' => $name,
@@ -80,19 +81,18 @@ class MenuStore
     /**
      * 添加app菜单
      * @param array $data
-     * @param string $index
      */
-    public function app(array $data)
+    public function app(array $data): void
     {
         $this->appData[] = $data;
     }
 
-        /**
+    /**
      * 追加菜单
-     * @param string $index
+     * @param string   $index
      * @param callable $callback
      */
-    public function push(string $index, callable $callback)
+    public function push(string $index, callable $callback): void
     {
         $this->pushData[] = [
             'index' => $index,
@@ -104,7 +104,7 @@ class MenuStore
      * 获取菜单数据
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         foreach ($this->pushData as $vo) {
             $deep = explode('.', $vo['index']);
@@ -117,10 +117,9 @@ class MenuStore
 
     /**
      * 获取app数据
-     * @param string $name
-     * @return mixed
+     * @return array
      */
-    public function getApps()
+    public function getApps(): array
     {
         return $this->appData;
     }

@@ -10,7 +10,6 @@ use Duxravel\Core\UI\Tools;
  */
 class Item
 {
-
     public $params;
 
     public function __construct($params = [])

@@ -12,28 +12,16 @@ class Lists extends Widget
 {
 
     private array $data;
-    private bool $row = true;
 
     /**
      * Lists constructor.
-     * @param $data
-     * @param int $col
+     * @param               $data
      * @param callable|null $callback
      */
     public function __construct($data, callable $callback = NULL)
     {
         $this->data = $data;
         $this->callback = $callback;
-    }
-
-    /**
-     * @param $bool
-     * @return $this
-     */
-    public function row($bool)
-    {
-        $this->row = $bool;
-        return $this;
     }
 
 
@@ -44,7 +32,6 @@ class Lists extends Widget
     {
 
         $inner = [];
-        $count = count($this->data);
         $i = 0;
         foreach ($this->data as $item) {
             $inner[] = [

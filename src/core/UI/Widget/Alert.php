@@ -3,7 +3,7 @@
 namespace Duxravel\Core\UI\Widget;
 
 /**
- * Class Alert
+ * 警告信息
  * @package Duxravel\Core\UI\Widget
  */
 class Alert extends Widget
@@ -14,7 +14,6 @@ class Alert extends Widget
     private $content;
 
     /**
-     * Alert constructor.
      * @param string|array $content
      * @param string|null $title
      * @param callable|null $callback

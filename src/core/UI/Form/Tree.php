@@ -2,12 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Composite;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Form;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Tree
  * @package Duxravel\Core\UI\Table
@@ -33,10 +27,9 @@ class Tree extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = $this->data;
         if ($this->data instanceof \Closure) {
@@ -62,20 +55,32 @@ class Tree extends Element implements Component
         return $data;
     }
 
-    public function dataValue($value)
+    /**
+     * @param $value
+     * @return array|null
+     */
+    public function dataValue($value): ?array
     {
         return $this->getValueArray($value);
     }
 
-    public function dataInput($data)
+    /**
+     * @param $data
+     * @return string
+     */
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : '';
     }
 
-    protected function loop($data)
+    /**
+     * @param $data
+     * @return array
+     */
+    protected function loop($data): array
     {
         $newData = [];
-        foreach ($data as $key => $item) {
+        foreach ($data as $item) {
             $tmpData = [
                 'title' => $item['name'],
                 'key' => $item['id'],

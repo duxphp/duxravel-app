@@ -11,24 +11,30 @@ use Duxravel\Core\UI\Node;
 class NodeEl
 {
 
-    public $name = 'div';
+    public string $name = 'div';
     public $callback;
+    public array $attr = [];
 
-    public $attr = [];
-
+    /**
+     * @param      $name
+     * @param null $callback
+     */
     public function __construct($name, $callback = null)
     {
         $this->name = $name;
         if ($callback instanceof \Closure) {
             $node = new Node();
-            call_user_func($callback, $node);
+            $callback($node);
             $this->callback = $node;
         }else {
             $this->callback = $callback;
         }
     }
 
-    public function render()
+    /**
+     * @return array
+     */
+    public function render(): array
     {
         $data = [
             'nodeName' => $this->name,

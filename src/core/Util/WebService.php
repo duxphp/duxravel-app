@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Util;
 
+use Duxravel\Core\Exceptions\ErrorException;
 use Duxravel\Core\UI\Widget\Icon;
 
 /**
@@ -9,9 +10,12 @@ use Duxravel\Core\UI\Widget\Icon;
  */
 class WebService
 {
-    private $key = '';
+    private $key;
 
-    public function __construct($key = '')
+    /**
+     * @param string $key
+     */
+    public function __construct(string $key = '')
     {
         if ($key) {
             $this->key = $key;
@@ -20,6 +24,12 @@ class WebService
         }
     }
 
+    /**
+     * @param $url
+     * @param $data
+     * @return mixed
+     * @throws ErrorException
+     */
     private function request($url, $data)
     {
         $client = new \GuzzleHttp\Client();
@@ -36,7 +46,10 @@ class WebService
         return $data;
     }
 
-    public function getIp()
+    /**
+     * @return mixed|null
+     */
+    public function getIp(): ?string
     {
         $client = new \GuzzleHttp\Client();
         $text = $client->get('https://ip.tool.lu/')->getBody()->getContents();
@@ -44,7 +57,12 @@ class WebService
         return $arr[0] ?: null;
     }
 
-    public function getArea($ip = null)
+    /**
+     * @param null $ip
+     * @return array
+     * @throws ErrorException
+     */
+    public function getArea($ip = null): array
     {
         $data = $this->request('https://restapi.amap.com/v5/ip?parameters', [
             'type' => 4,
@@ -61,7 +79,12 @@ class WebService
         ];
     }
 
-    public function getWeather($city = null, $ip = null)
+    /**
+     * @param null $city
+     * @return array|mixed
+     * @throws ErrorException
+     */
+    public function getWeather($city = null)
     {
         $ipData = [];
         if (!$city) {

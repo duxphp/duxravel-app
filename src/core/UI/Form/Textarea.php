@@ -2,11 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Textarea
  * 多行输入框
@@ -40,11 +35,9 @@ class Textarea extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = [
             'nodeName' => 'a-textarea',

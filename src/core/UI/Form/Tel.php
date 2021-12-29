@@ -2,11 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Tel
  * @package Duxravel\Core\UI\Form
@@ -17,7 +12,6 @@ class Tel extends Element implements Component
     protected string $mask = '19999999999';
 
     /**
-     * Text constructor.
      * @param string $name
      * @param string $field
      * @param string $has
@@ -43,11 +37,9 @@ class Tel extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $this->object->attrArray($this->attr);
         return $this->object->getRender();

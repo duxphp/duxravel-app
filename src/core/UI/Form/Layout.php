@@ -2,30 +2,26 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Composite;
-use Duxravel\Core\UI\Form;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Row
  * @package Duxravel\Core\UI\Table
  */
 class Layout extends Composite implements Component
 {
-    protected $callback;
+    protected \Closure $callback;
 
+    /**
+     * @param $callback
+     */
     public function __construct($callback)
     {
         $this->callback = $callback;
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render($value)
+    public function render(): array
     {
         $callback = is_callable($this->callback) ? call_user_func($this->callback) : $this->callback;
         return [

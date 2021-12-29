@@ -2,7 +2,6 @@
 
 namespace Duxravel\Core\UI\Widget;
 
-use Duxravel\Core\UI\Tools;
 
 /**
  * Class Badges
@@ -51,7 +50,7 @@ class Badge extends Widget
     /**
      * @return array
      */
-    public function render()
+    public function render(): array
     {
         return [
             'nodeName' => 'a-tag',

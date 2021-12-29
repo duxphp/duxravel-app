@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\Util;
 
+use Duxravel\Core\Exceptions\ErrorException;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
@@ -9,7 +10,13 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 class Excel
 {
 
-    public static function import($url, $start = 1): ?array
+    /**
+     * @param     $url
+     * @param int $start
+     * @return array|null
+     * @throws ErrorException
+     */
+    public static function import($url, int $start = 1): array
     {
         $ext = strtolower(pathinfo($url, PATHINFO_EXTENSION));
         $extArr = ['xlsx', 'xls', 'csv'];
@@ -35,9 +42,16 @@ class Excel
             @unlink($tmpFile);
             app_error($e->getMessage());
         }
+        return [];
     }
 
-    public static function export($title, $subtitle, $label, $data)
+    /**
+     * @param $title
+     * @param $subtitle
+     * @param $label
+     * @param $data
+     */
+    public static function export($title, $subtitle, $label, $data): void
     {
         $count = count($label);
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();

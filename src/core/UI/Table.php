@@ -70,7 +70,6 @@ class Table
         $this->columns = Collection::make();
         $this->filters = Collection::make();
         $this->filtersType = Collection::make();
-        $this->filtersCallback = Collection::make();
 
         if (request()->header('x-dialog')) {
             $this->dialog = true;
@@ -82,7 +81,6 @@ class Table
      * @param string $name
      * @param string $label
      * @param null $callback
-     * @param false $multi
      * @return Column
      */
     public function column(string $name = '', string $label = '', $callback = null): Column
@@ -109,17 +107,18 @@ class Table
     /**
      * 展开行
      * @param string $title
-     * @param array $node
-     * @param int $width
+     * @param array  $node
+     * @param int    $width
+     * @return $this
      */
-    public function expand($title = '', $node = [], $width = 100)
+    public function expand(string $title = '', array $node = [], int $width = 100): self
     {
         $this->expand = [
             'title' => $title,
             'width' => $width,
             'vRender:expandedRowRender:rowData' => $node
-
         ];
+        return $this;
     }
 
     /**
@@ -145,7 +144,6 @@ class Table
      */
     protected function hasRelationColumn($relation): bool
     {
-        //$model = $this->model()->eloquent();
         if (!method_exists($this->model, $relation)) {
             return false;
         }
@@ -281,7 +279,8 @@ class Table
      * 设置筛选条件
      * @param string $name
      * @param string $field
-     * @param callable|string|bool $where
+     * @param bool   $where
+     * @param null   $default
      * @return Filter
      */
     public function filter(string $name, string $field, $where = true, $default = null): Filter
@@ -296,9 +295,8 @@ class Table
 
     /**
      * 筛选类型
-     * @param string $name
+     * @param string        $name
      * @param callable|null $where
-     * @param string|null $url
      * @return FilterType
      */
     public function filterType(string $name, callable $where = null): FilterType
@@ -341,7 +339,7 @@ class Table
      * 树形表格
      * @return $this
      */
-    public function tree()
+    public function tree(): self
     {
         $this->tree = true;
         return $this;
@@ -351,7 +349,7 @@ class Table
      * 树形状态
      * @return bool
      */
-    public function getTree()
+    public function getTree(): bool
     {
         return $this->tree;
     }
@@ -424,7 +422,7 @@ class Table
      * @param bool $status
      * @return $this
      */
-    public function dialog($status = true): self
+    public function dialog(bool $status = true): self
     {
         $this->dialog = $status;
         return $this;
@@ -445,7 +443,7 @@ class Table
      * 获取Url
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -455,7 +453,7 @@ class Table
      * @param string $return
      * @return $this
      */
-    public function script($content = '', $return = ''): self
+    public function script(string $content = '', string $return = ''): self
     {
         $this->script[] = $content;
         $this->scriptReturn[] = $return;
@@ -476,7 +474,7 @@ class Table
      * 数据导出
      * @param callable $callback
      */
-    public function export(callable $callback)
+    public function export(callable $callback): void
     {
         // 设置筛选信息
         $this->filters->map(function ($filter) {
@@ -506,23 +504,23 @@ class Table
     }
 
     /**
-     * 渲染列配置
+     * 渲染列node
      * @return array
      */
-    public function renderColumn()
+    public function renderColumn(): array
     {
-        $columnNode = $this->getColumns()->map(function ($column, $key) {
+        return $this->getColumns()->map(function ($column, $key) {
             $render = $column->getRender();
             if (!empty($render)) {
                 $render['sort'] = $render['sort'] ?? $key;
                 return $render;
             }
         })->filter()->sortBy('sort')->values()->toArray();
-        return $columnNode;
     }
 
     /**
      * 渲染表格
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
     public function render()
     {
@@ -587,7 +585,7 @@ class Table
             $node->side($vo['callback'], $vo['direction'], $vo['resize'], $vo['width']);
         }
         foreach ($this->pageNode as $vo) {
-            $node->page($vo['callback'], $vo['direction'], $vo['resize'], $vo['width']);
+            $node->page($vo['callback'], $vo['direction']);
         }
 
 
@@ -605,6 +603,7 @@ class Table
 
     /**
      * 数据渲染
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
     public function renderAjax()
     {
@@ -683,8 +682,11 @@ class Table
 
     /**
      * 渲染行数据
+     * @param Collection $data
+     * @param bool       $tree
+     * @return array
      */
-    public function renderRowData(Collection $data, bool $tree = true)
+    public function renderRowData(Collection $data, bool $tree = true): array
     {
         if ($this->dataCallback) {
             $data = call_user_func($this->dataCallback, $data);
@@ -703,17 +705,17 @@ class Table
         if ($this->tree) {
             $this->map['key'] = $key;
         }
-        $resetData = $this->formatData($data, $columns, $tree);
-        return $resetData;
+        return $this->formatData($data, $columns, $tree);
 
     }
 
     /**
-     * @param $data
-     * @param $columns
+     * @param      $data
+     * @param      $columns
+     * @param bool $tree
      * @return array
      */
-    private function formatData($data, $columns, $tree = true)
+    private function formatData($data, $columns, bool $tree = true): array
     {
         $resetData = [];
         foreach ($data as $vo) {

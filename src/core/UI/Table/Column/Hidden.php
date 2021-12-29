@@ -10,12 +10,12 @@ class Hidden implements Component
 {
 
     /**
-     * @param $field
-     * @return string
+     * @param $label
+     * @return array
      */
-    public function render($field): array
+    public function render($label): array
     {
-        $name = $field . '_show';
+        $name = $label . '_show';
         return [
             'nodeName' => 'div',
             'child' => [
@@ -23,7 +23,7 @@ class Hidden implements Component
                     'nodeName' => 'span',
                     'class' => 'mr-2',
                     'vIf' => "rowData.record['$name']",
-                    'child' => "{{rowData.record['$field']}}",
+                    'child' => "{{rowData.record['$label']}}",
                 ],
                 [
                     'nodeName' => 'a-button',

@@ -2,14 +2,8 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-use Duxravel\Core\UI\Widget\TreeList;
-use Illuminate\Support\Facades\Http;
-
 /**
- * Class Cascader
+ * 级联选择器
  * @package Duxravel\Core\UI\Form
  */
 class Cascader extends Element implements Component
@@ -23,10 +17,9 @@ class Cascader extends Element implements Component
     protected $data;
 
     /**
-     * Select constructor.
      * @param string $name
      * @param string $field
-     * @param array|callback|null $data
+     * @param null   $data
      * @param string $has
      */
     public function __construct(string $name, string $field, $data = null, string $has = '')
@@ -56,7 +49,6 @@ class Cascader extends Element implements Component
 
 
     /**
-     * 设置动态地址
      * @param $url
      * @return $this
      */
@@ -67,11 +59,11 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 搜索选择
      * @param string $route
+     * @param array  $params
      * @return $this
      */
-    public function route(string $route, $params = []): self
+    public function route(string $route, array $params = []): self
     {
         $this->route = $route;
         $this->url = app_route($route, $params);
@@ -79,7 +71,6 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 多选组件
      * @return $this
      */
     public function multi(): self
@@ -89,7 +80,8 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 节点选择
+     * leaf choice
+     * @param bool $leaf
      * @return $this
      */
     public function leaf(bool $leaf): self
@@ -99,7 +91,7 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 树形模式
+     * tree data
      * @param bool $bool
      * @return $this
      */
@@ -110,10 +102,9 @@ class Cascader extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
 
         $data = [];
@@ -165,12 +156,20 @@ class Cascader extends Element implements Component
         return $data;
     }
 
+    /**
+     * @param $value
+     * @return array|mixed
+     */
     public function dataValue($value)
     {
         return $this->multi ? array_values(array_filter((array)$this->getValueArray($value))) : $this->getValue($value);
     }
 
-    public function dataInput($data)
+    /**
+     * @param $data
+     * @return string
+     */
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

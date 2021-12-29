@@ -2,11 +2,10 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Widget\Icon;
+use Duxravel\Core\Exceptions\ErrorException;
 
 /**
- * 表格关联选择器
- * Class Choice
+ * 表格管理选择器
  * @package Duxravel\Core\UI\Form
  */
 class Choice extends Element implements Component
@@ -19,9 +18,9 @@ class Choice extends Element implements Component
 
     /**
      * Text constructor.
-     * @param  string  $name
-     * @param  string  $field
-     * @param  string  $has
+     * @param string $name
+     * @param string $field
+     * @param string $has
      */
     public function __construct(string $name, string $field, string $has = '')
     {
@@ -30,7 +29,14 @@ class Choice extends Element implements Component
         $this->has = $has;
     }
 
-    public function ajax($url, $key, $column, $types = []): self
+    /**
+     * @param string $url
+     * @param string $key
+     * @param array  $column
+     * @param array  $types
+     * @return $this
+     */
+    public function ajax(string $url, string $key, array $column, array $types = []): self
     {
         $this->ajax = [
             'url' => $url,
@@ -42,12 +48,12 @@ class Choice extends Element implements Component
     }
 
     /**
-     * 文本列
-     * @param $name
-     * @param $field
+     * text column
+     * @param string $name
+     * @param string $field
      * @return $this
      */
-    public function text($name, $field): self
+    public function text(string $name, string $field): self
     {
         $this->column[] = [
             'name' => $name,
@@ -58,12 +64,12 @@ class Choice extends Element implements Component
     }
 
     /**
-     * 图片列
-     * @param $name
-     * @param $field
+     * image column
+     * @param string $name
+     * @param string $field
      * @return $this
      */
-    public function image($name, $field): self
+    public function image(string $name, string $field): self
     {
         $this->column[] = [
             'name' => $name,
@@ -74,12 +80,12 @@ class Choice extends Element implements Component
     }
 
     /**
-     * 展示列
-     * @param $name
-     * @param $field
+     * show column
+     * @param string $name
+     * @param string $field
      * @return $this
      */
-    public function show($name, $field): self
+    public function show(string $name, string $field): self
     {
         $this->column[] = [
             'name' => $name,
@@ -90,12 +96,12 @@ class Choice extends Element implements Component
     }
 
     /**
-     * 隐藏列
-     * @param $name
-     * @param $field
+     * hidden column
+     * @param string $name
+     * @param string $field
      * @return $this
      */
-    public function hidden($name, $field): self
+    public function hidden(string $name, string $field): self
     {
         $this->column[] = [
             'name' => $name,
@@ -106,7 +112,7 @@ class Choice extends Element implements Component
     }
 
     /**
-     * 操作状态
+     * option status
      * @param bool $status
      * @return $this
      */
@@ -117,24 +123,23 @@ class Choice extends Element implements Component
     }
 
     /**
-     * 最大数量
+     * maximum number
      * @param int $num
      * @return $this
      */
-    public function num(int $num = 0)
+    public function num(int $num = 0): self
     {
         $this->number = $num;
         return $this;
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
+     * @throws ErrorException
      */
-    public function render()
+    public function render(): array
     {
         $url = route('service.image.placeholder', ['w' => 64, 'h' => 64, 't' => $this->attr['placeholder'] ?: '图片']);
-
 
         $ajaxColumn = $this->ajax['column'] ?: [];
         if (is_callable($ajaxColumn)) {
@@ -144,7 +149,6 @@ class Choice extends Element implements Component
             }
             $ajaxColumn = $ajaxColumn->getData();
         }
-
 
         return [
             'nodeName' => 'app-choice',
@@ -160,12 +164,16 @@ class Choice extends Element implements Component
 
     }
 
-    public function dataValue($value)
+    /**
+     * @param $value
+     * @return array|null
+     */
+    public function dataValue($value): ?array
     {
         $value = $this->getValue($value);
         if ($value instanceof \Illuminate\Database\Eloquent\Collection && $value->count()) {
             $values = $value->toArray();
-        } elseif (is_array($value)) {
+        } else if (is_array($value)) {
             $values = $value;
         } else {
             $values = [];

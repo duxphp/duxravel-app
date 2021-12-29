@@ -16,9 +16,9 @@ class Tree
      * @param string $son
      * @return array
      */
-    public static function arr2tree(array $list, string $id = 'id', string $pid = 'pid', string $son = 'sub')
+    public static function arr2tree(array $list, string $id = 'id', string $pid = 'pid', string $son = 'sub'): array
     {
-        list($tree, $map) = [[], []];
+        [$tree, $map] = [[], []];
         foreach ($list as $item) {
             $map[$item[$id]] = $item;
         }

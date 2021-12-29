@@ -2,13 +2,7 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
- * Class Password
  * 密码输入器
  * @package Duxravel\Core\UI\Form
  */
@@ -30,19 +24,16 @@ class Password extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
-        $data = [
+        return [
             'nodeName' => 'a-input-password',
             'vModel:modelValue' => $this->getModelField(),
             'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
             'allowClear' => true,
         ];
-        return $data;
     }
 
 

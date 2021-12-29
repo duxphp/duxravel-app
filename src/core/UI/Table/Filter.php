@@ -60,7 +60,7 @@ class Filter
 
     /**
      * 级联选择
-     * @param $data
+     * @param callable|array $data
      * @param callable|null $callback
      * @return $this
      */
@@ -74,7 +74,7 @@ class Filter
 
     /**
      * 下拉框
-     * @param $data
+     * @param callable|array $data
      * @param callable|null $callback
      * @return $this
      */
@@ -169,7 +169,7 @@ class Filter
      * @param $query
      * @return false
      */
-    public function execute($query)
+    public function execute($query): bool
     {
         if ($this->value === null) {
             return false;
@@ -192,7 +192,7 @@ class Filter
 
             $query->where($field, $condition, $value);
         }
-
+        return true;
     }
 
     /**

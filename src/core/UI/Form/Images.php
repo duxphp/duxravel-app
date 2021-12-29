@@ -2,13 +2,7 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
- * Class Images
  * 组图上传
  * @package Duxravel\Core\UI\Form
  */
@@ -59,11 +53,10 @@ class Images extends Element implements Component
     }
 
     /**
-     * 渲染组件
      * @param $value
-     * @return string
+     * @return string[]
      */
-    public function render($value)
+    public function render($value): array
     {
         $data = [
             'nodeName' => 'app-images',

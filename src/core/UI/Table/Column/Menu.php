@@ -38,7 +38,7 @@ class Menu implements Component
      * @param $rowData
      * @return array
      */
-    public function getData($rowData)
+    public function getData($rowData): array
     {
         $urls = [];
         foreach ($this->routes as $key => $vo) {
@@ -51,10 +51,8 @@ class Menu implements Component
         return $urls;
     }
 
-
     /**
-     * @param $value
-     * @param $data
+     * @param $label
      * @return array
      */
     public function render($label): array

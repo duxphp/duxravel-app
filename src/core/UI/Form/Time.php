@@ -36,19 +36,17 @@ class Time extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
-        $data = [
+        return [
             'nodeName' => 'a-time-picker',
             'allowClear' => true,
             'format' => $this->string,
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
             'vModel:model-value' => $this->getModelField()
         ];
-        return $data;
     }
 
 }

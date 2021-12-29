@@ -12,16 +12,14 @@ use Duxravel\Core\UI\Tools;
 class StatsCard extends Widget
 {
 
-    private int $column = 0;
+    private int $column;
     private array $items = [];
 
     /**
-     * StatsCard constructor.
-     *
      * @param callable|null $callback
      * @param int           $column
      */
-    public function __construct(callable $callback = null, $column = 4)
+    public function __construct(callable $callback = null, int $column = 4)
     {
         $this->callback = $callback;
         $this->column = $column;

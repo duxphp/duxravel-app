@@ -16,7 +16,6 @@ class Progress extends Widget
     private $value;
     private string $color = 'default';
     private string $size = 'medium';
-    private bool $number = true;
 
 
     /**
@@ -30,18 +29,20 @@ class Progress extends Widget
         $this->callback = $callback;
     }
 
-    public function color($color): self
+    /**
+     * @param string $color
+     * @return $this
+     */
+    public function color(string $color): self
     {
         $this->color = $color;
         return $this;
     }
 
-    public function number($status = true): self
-    {
-        $this->number = (bool)$status;
-        return $this;
-    }
-
+    /**
+     * @param string $size
+     * @return $this
+     */
     public function size($size = 'medium'): self
     {
         $this->size = (bool)$size;

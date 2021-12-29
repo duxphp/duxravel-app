@@ -13,6 +13,10 @@ class Table extends Widget
 
     private \Duxravel\Core\UI\Table $table;
 
+    /**
+     * @param               $data
+     * @param callable|null $callback
+     */
     public function __construct($data, callable $callback = NULL)
     {
         $this->callback = $callback;

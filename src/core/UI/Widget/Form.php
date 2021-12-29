@@ -2,8 +2,6 @@
 
 namespace Duxravel\Core\UI\Widget;
 
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Form
  * @package Duxravel\Core\UI\Widget
@@ -13,7 +11,7 @@ class Form extends Widget
 
     private \Duxravel\Core\UI\Form $form;
 
-    public function __construct($data, callable $callback = NULL)
+    public function __construct($data, callable $callback = null)
     {
         $this->callback = $callback;
         $this->form = new \Duxravel\Core\UI\Form($data, false);

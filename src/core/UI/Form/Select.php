@@ -2,10 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
  * Class Select
  * @package Duxravel\Core\UI\Form
@@ -15,7 +11,6 @@ class Select extends Element implements Component
     protected string $url = '';
     protected string $route = '';
     protected int $tagCount = 0;
-    protected bool $tags = false;
     protected bool $tip = false;
     protected bool $search = false;
     protected bool $multi = false;
@@ -72,7 +67,7 @@ class Select extends Element implements Component
     }
 
     /**
-     * 搜索选择
+     * 搜索地址
      * @param string $url
      * @return $this
      */
@@ -83,11 +78,12 @@ class Select extends Element implements Component
     }
 
     /**
-     * 搜索选择
+     * 路由地址
      * @param string $route
+     * @param array  $params
      * @return $this
      */
-    public function route(string $route, $params = []): self
+    public function route(string $route, array $params = []): self
     {
         $this->route = $route;
         $this->url = app_route($route, $params);
@@ -95,10 +91,11 @@ class Select extends Element implements Component
     }
 
     /**
-     * 多选组件
+     * 多选
+     * @param int $count
      * @return $this
      */
-    public function multi($count = 0): self
+    public function multi(int $count = 0): self
     {
         $this->multi = true;
         $this->tagCount = $count;
@@ -106,32 +103,20 @@ class Select extends Element implements Component
     }
 
     /**
-     * 标签组件
-     * @return $this
-     */
-    public function tags(): self
-    {
-        $this->tags = true;
-        $this->multi = true;
-        return $this;
-    }
-
-    /**
      * 选项渲染
-     * @param  array $data JS语法
+     * @param  array $data JS Node
      * @return $this
      */
-    public function optionRender(array $data)
+    public function optionRender(array $data): self
     {
         $this->optionRender = $data;
         return $this;
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = [];
         if ($this->data instanceof \Closure) {
@@ -164,10 +149,6 @@ class Select extends Element implements Component
         if ($this->multi) {
             $object['nParams']['multiple'] = true;
         }
-        if ($this->tags) {
-            $object['nParams']['multiple'] = true;
-            $object['nParams']['allowCreate'] = true;
-        }
         if ($this->url) {
             $object['nParams']['allowSearch'] = true;
             $object['nParams']['filterOption'] = false;
@@ -190,12 +171,20 @@ class Select extends Element implements Component
         return $object;
     }
 
+    /**
+     * @param $value
+     * @return array|mixed
+     */
     public function dataValue($value)
     {
         return $this->multi ? array_values(array_filter((array)$this->getValueArray($value))) : $this->getValue($value);
     }
 
-    public function dataInput($data)
+    /**
+     * @param $data
+     * @return string
+     */
+    public function dataInput($data): ?string
     {
         return is_array($data) ? implode(',', $data) : $data;
     }

@@ -44,11 +44,10 @@ class RichText implements Component
     }
 
     /**
-     * 获取数据
      * @param $rowData
      * @return array
      */
-    public function getData($rowData)
+    public function getData($rowData): array
     {
         $data = [];
         foreach ($this->image as $key => $vo) {
@@ -72,9 +71,8 @@ class RichText implements Component
     }
 
     /**
-     * @param $value
-     * @param $data
-     * @return string
+     * @param $label
+     * @return array
      */
     public function render($label): array
     {
@@ -101,8 +99,6 @@ class RichText implements Component
             }
         }
 
-
-
         return [
             'nodeName' => 'div',
             'class' => 'flex items-center gap-2',
@@ -123,54 +119,6 @@ class RichText implements Component
                 ]
             ]
         ];
-
-
-        // 设置图片
-        $imageHtml = '';
-        if ($this->image) {
-            foreach ($this->image as $vo) {
-                $url = Tools::parsingArrData($data, $vo['label'], true);
-                if ($vo['callback'] instanceof \Closure) {
-                    $url = call_user_func($vo['callback'], $url, $data);
-                }
-                if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                    $url = route('service.image.placeholder', ['w' => 100, 'h' => 100, 't' => $vo['placeholder'] ?: '暂无']);
-                }
-                $imageHtml .= <<<HTML
-                <span class="flex-none avatar w-{$vo['width']} h-{$vo['height']}" style="background-image: url('$url');"></span>
-            HTML;
-            }
-        }
-
-        // 设置描述
-        $descHtml = '';
-        if ($this->desc) {
-            $desc = [];
-            foreach ($this->desc as $vo) {
-                $var = Tools::parsingArrData($data, $vo['label']);
-                if ($vo['callback'] instanceof \Closure) {
-                    $var = call_user_func($vo['callback'], $var, $data);
-                }
-                $desc[] = is_array($var) ? implode(' ', $var) : $var;
-            }
-            $descHtml = implode(' ', array_map(static function ($value) {
-                if ($value === null) {
-                    return '';
-                }
-                $value = $value ?: '-';
-                return "<div class='text-gray-500 overflow-ellipsis max-w-md '>$value</div>";
-            }, $desc));
-        }
-
-        return <<<HTML
-            <div class="flex items-center space-x-2">
-                $imageHtml
-                <div class="flex-grow ">
-                <div class="overflow-ellipsis max-w-md">$value</div>
-                $descHtml
-                </div>
-            </div>
-        HTML;
 
     }
 

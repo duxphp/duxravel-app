@@ -26,7 +26,7 @@ class Tags implements Component
 
     /**
      * @param $label
-     * @return string
+     * @return array
      */
     public function render($label): array
     {
@@ -52,7 +52,7 @@ class Tags implements Component
         ];
     }
 
-    public function getData($rowData, $field, $value)
+    public function getData($rowData, $field, $value): array
     {
         return [$field => !is_array($value) ? explode(',', $value) : $value];
 

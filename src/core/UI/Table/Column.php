@@ -34,7 +34,6 @@ class Column
     protected $align = '';
     protected $fixed = '';
     protected $class = [];
-    protected $drag = false;
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
     protected ?int $sort = null;
@@ -117,7 +116,7 @@ class Column
      * @param string $fixed
      * @return $this
      */
-    public function fixed($fixed = 'right'): self
+    public function fixed(string $fixed = 'right'): self
     {
         $this->fixed = $fixed;
         return $this;
@@ -261,19 +260,10 @@ class Column
     /**
      * 排序条件
      */
-    public function sorter($sorter = true)
+    public function sorter($sorter = true): self
     {
         $this->sorter = $sorter;
         return $this;
-    }
-
-    /**
-     * 拖动排序
-     * @param bool $drag
-     */
-    public function drag($drag = true)
-    {
-        $this->drag = $drag;
     }
 
     /**
@@ -288,7 +278,7 @@ class Column
     }
 
     // 分组表格
-    public function children(string $name = '', string $label = '', $callback = null)
+    public function children(string $name = '', string $label = '', $callback = null): self
     {
         $this->children[] = new Column($name, $label, $callback);
         return $this;
@@ -298,7 +288,7 @@ class Column
      * 获取字段名
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return str_replace(['.', '->'], '_', $this->relation ? $this->relation . '_' . $this->label : $this->label);
     }
@@ -306,7 +296,7 @@ class Column
     /**
      * 获取列配置
      */
-    public function getRender()
+    public function getRender(): array
     {
         $render = $this->node;
         if ($this->node instanceof \Closure) {
@@ -346,17 +336,15 @@ class Column
             $node['render:rowData, rowIndex'] = $render;
         }
 
-        $node = array_merge($node, $this->attr);
-
-        return $node;
+        return array_merge($node, $this->attr);
     }
 
     /**
      * 行数据
      * @param $rowData
-     * @return array|\Closure[]
+     * @return array
      */
-    public function getData($rowData)
+    public function getData($rowData): array
     {
         if ($this->relation) {
             // 解析关联数组
@@ -427,11 +415,10 @@ class Column
     }
 
     /**
-     * 回调类库
      * @param $method
      * @param $arguments
-     * @return mixed
-     * @throws \Exception
+     * @return $this
+     * @throws Exception
      */
     public function __call($method, $arguments)
     {

@@ -15,7 +15,6 @@ class Row extends Widget
     private array $column = [];
 
     /**
-     * Row constructor.
      * @param callable|null $callback
      */
     public function __construct(callable $callback = NULL)

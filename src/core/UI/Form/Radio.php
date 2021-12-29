@@ -2,12 +2,8 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
- * Class Radio
+ * 单选框
  * @package Duxravel\Core\UI\Form
  */
 class Radio extends Element implements Component
@@ -66,10 +62,9 @@ class Radio extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
 
         $data = [];
@@ -87,19 +82,16 @@ class Radio extends Element implements Component
             $child[] = [
                 'nodeName' => 'a-radio',
                 'child' => $vo,
-                //'key' => $key,
                 'value' => $key,
             ];
         }
 
-        $data = [
+        return [
             'nodeName' => 'a-radio-group',
             'name' => $this->field,
             'vModel:modelValue' => $this->getModelField(),
             'child' => $child
         ];
-
-        return $data;
     }
 
     public function dataValue($value)

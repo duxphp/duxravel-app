@@ -10,23 +10,20 @@ class View
 
     private string $tpl;
     private array $data;
-    private $menuClass;
 
-    public function __construct($tpl = '', $data = [])
+    /**
+     * @param string $tpl
+     * @param array  $data
+     */
+    public function __construct(string $tpl = '', array $data = [])
     {
         $this->tpl = $tpl;
         $this->data = $data;
     }
 
-    public function menu($class): self
-    {
-        if (!method_exists($class, 'getData')) {
-            abort(500, '菜单类方法不存在');
-        }
-        $this->menuClass = $class;
-        return $this;
-    }
-
+    /**
+     * @return mixed
+     */
     public function render()
     {
         $assign = $this->data;
@@ -40,6 +37,9 @@ class View
         return view($this->tpl, $assign);
     }
 
+    /**
+     * @return mixed
+     */
     public static function manage()
     {
         $manifest = json_decode(file_get_contents(public_path('static/manage-manifest.json')), true);

@@ -11,15 +11,13 @@ use Duxravel\Core\UI\Form;
  */
 class Tab extends Composite implements Component
 {
-    public function __construct()
-    {
-    }
 
     /**
-     * @param $name
+     * @param          $name
      * @param callable $callback
-     * @param string $title
-     * @param string $desc
+     * @param int|null $order
+     * @param string   $title
+     * @param string   $desc
      * @return $this
      */
     public function column($name, callable $callback, int $order = null, string $title = '', string $desc = ''): self
@@ -32,7 +30,7 @@ class Tab extends Composite implements Component
             'name' => $name,
             'title' => $title,
             'desc' => $desc,
-            'order' => isset($order) ? $order : count($this->column) + 1,
+            'order' => $order ?? (count($this->column) + 1),
             'object' => $form,
 
         ];
@@ -40,10 +38,9 @@ class Tab extends Composite implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
 
         $nodes = [];
@@ -74,7 +71,7 @@ class Tab extends Composite implements Component
             $child[] = [
                 'nodeName' => 'div',
                 'class' => 'pt-2',
-                'child' => $vo['object']->renderForm($value)
+                'child' => $vo['object']->renderForm()
             ];
 
             $nodes[] = [

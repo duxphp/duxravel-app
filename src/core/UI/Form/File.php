@@ -2,10 +2,8 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-
 /**
- * Class File
+ * 文件上传
  * @package Duxravel\Core\UI\Form
  */
 class File extends Element implements Component
@@ -27,13 +25,16 @@ class File extends Element implements Component
         $this->has = $has;
     }
 
-    public function type($type = 'upload')
+    /**
+     * 上传方式
+     * @param string $type
+     * @return $this
+     */
+    public function type(string $type = 'upload'): self
     {
         $this->type = $type;
         return $this;
     }
-
-
 
     /**
      * 上传地址
@@ -58,10 +59,9 @@ class File extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = [
             'nodeName' => 'app-file',

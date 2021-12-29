@@ -2,13 +2,7 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
- * Class Number
  * 数字输入器
  * @package Duxravel\Core\UI\Form
  */
@@ -56,8 +50,9 @@ class Number extends Element implements Component
     }
 
     /**
-     * 步进小数
-     * @param int $default
+     * 步进数值
+     * @param int      $default
+     * @param int|null $precision
      * @return $this
      */
     public function step(int $default = 1, ?int $precision = null): self
@@ -68,11 +63,9 @@ class Number extends Element implements Component
     }
 
     /**
-     * 渲染组件
-     * @param $value
-     * @return string
+     * @return array
      */
-    public function render()
+    public function render(): array
     {
         $data = [
             'nodeName' => 'a-input-number',

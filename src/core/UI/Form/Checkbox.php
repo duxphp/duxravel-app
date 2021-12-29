@@ -2,26 +2,21 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Form\Component;
-use Duxravel\Core\UI\Form\Element;
-use Duxravel\Core\UI\Tools;
-
 /**
- * Class Checkbox
+ * 多选框
  * @package Duxravel\Core\UI\Form
  */
 class Checkbox extends Element implements Component
 {
 
     protected $data;
-    protected string $switch = '';
 
     /**
      * Select constructor.
-     * @param string $name
-     * @param string $field
+     * @param string              $name
+     * @param string              $field
      * @param null|array|callable $data
-     * @param string $has
+     * @param string              $has
      */
     public function __construct(string $name, string $field, $data = null, string $has = '')
     {
@@ -32,7 +27,7 @@ class Checkbox extends Element implements Component
     }
 
     /**
-     * 添加选项
+     * add data
      * @param $name
      * @param $value
      * @return $this
@@ -47,21 +42,9 @@ class Checkbox extends Element implements Component
     }
 
     /**
-     * 切换组件
-     * @param $group
-     * @return $this
+     * @return array
      */
-    public function switch($group): self
-    {
-        $this->switch = $group;
-        return $this;
-    }
-
-    /**
-     * 渲染组件
-     * @return string
-     */
-    public function render()
+    public function render(): array
     {
         $data = [];
         if ($this->data instanceof \Closure) {
@@ -92,13 +75,16 @@ class Checkbox extends Element implements Component
         return $data;
     }
 
-    public function dataValue($value)
+    /**
+     * @param $value
+     * @return array
+     */
+    public function dataValue($value): array
     {
-        return array_values(array_filter((array) $this->getValueArray($value)));
+        return array_values(array_filter((array)$this->getValueArray($value)));
     }
 
     /**
-     * 获取输入内容
      * @param $data
      * @return string
      */

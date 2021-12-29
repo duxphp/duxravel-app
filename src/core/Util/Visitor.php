@@ -12,11 +12,10 @@ class Visitor
 {
 
     /**
-     * 记录访问量
+     * 方可增加
      * @param $type
      * @param $id
      * @param $driver
-     * @throws \Throwable
      */
     public static function increment($type, $id, $driver): void
     {

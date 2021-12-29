@@ -2,9 +2,6 @@
 
 namespace Duxravel\Core\UI\Form;
 
-use Duxravel\Core\UI\Tools;
-use Duxravel\Core\UI\Widget\Icon;
-
 /**
  * 表单节点
  * @package Duxravel\Core\UI\Form
@@ -12,9 +9,9 @@ use Duxravel\Core\UI\Widget\Icon;
 class Node
 {
 
-    private string $url = '';
-    private string $method = 'get';
-    private ?string $title = '';
+    private string $url;
+    private string $method;
+    private ?string $title;
     private bool $back = false;
     private bool $dialog = false;
     private bool $vertical = false;
@@ -26,8 +23,8 @@ class Node
 
     /**
      * Node constructor.
-     * @param string $action
-     * @param string $method
+     * @param string      $action
+     * @param string      $method
      * @param string|null $title
      */
     public function __construct(string $action, string $method, ?string $title = '')
@@ -40,17 +37,17 @@ class Node
     /**
      * @param bool $bool
      */
-    public function back(bool $bool)
+    public function back(bool $bool): void
     {
         $this->back = $bool;
     }
 
     /**
-     * @param $content
-     * @param $return
+     * @param Closure|string $content
+     * @param string         $return
      * @return $this
      */
-    public function script($content, $return)
+    public function script($content, string $return): self
     {
         if ($content instanceof \Closure) {
             $this->script[] = $content();
@@ -65,7 +62,7 @@ class Node
      * @param bool $bool
      * @return $this
      */
-    public function dialog(bool $bool)
+    public function dialog(bool $bool): self
     {
         $this->dialog = $bool;
         $this->vertical = true;
@@ -76,7 +73,7 @@ class Node
      * @param bool $bool
      * @return $this
      */
-    public function vertical(bool $bool)
+    public function vertical(bool $bool): self
     {
         $this->vertical = $bool;
         return $this;
@@ -86,18 +83,18 @@ class Node
      * @param array $node
      * @return $this
      */
-    public function element(array $node)
+    public function element(array $node): self
     {
         $this->element = $node;
         return $this;
     }
 
     /**
-     * @param $node
-     * @param string $type
+     * @param Closure|array $node
+     * @param string        $type
      * @return $this
      */
-    public function side($node, $type = 'left')
+    public function side($node, string $type = 'left'): self
     {
         $this->side[$type] = is_callable($node) ? $node() : $node;
         return $this;
@@ -107,13 +104,17 @@ class Node
      * @param $data
      * @return $this
      */
-    public function data($data)
+    public function data($data): self
     {
         $this->data = $data;
         return $this;
     }
 
-    private function renderPage()
+    /**
+     * 渲染页面
+     * @return array[]
+     */
+    private function renderPage(): array
     {
         return [
             $this->side['left'] ? [
@@ -153,7 +154,7 @@ class Node
                                     [
                                         'nodeName' => 'a-button',
                                         'html-type' => 'submit',
-                                        'vBind:loading'=>"loading",
+                                        'vBind:loading' => "loading",
                                         'type' => 'primary',
                                         'child' => '提交',
                                     ],
@@ -172,7 +173,11 @@ class Node
         ];
     }
 
-    private function renderDialog()
+    /**
+     * 渲染弹窗
+     * @return array
+     */
+    private function renderDialog(): array
     {
 
         return [
@@ -219,7 +224,7 @@ class Node
                             'nodeName' => 'a-button',
                             'type' => 'primary',
                             'html-type' => 'submit',
-                            'vBind:loading'=>"loading",
+                            'vBind:loading' => "loading",
                             'child' => '提交'
                         ],
                     ]
@@ -230,7 +235,11 @@ class Node
 
     }
 
-    public function render()
+    /**
+     * 渲染布局
+     * @return array
+     */
+    public function render(): array
     {
         return [
             'node' => [

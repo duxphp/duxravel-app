@@ -134,11 +134,11 @@ class Element
 
     /**
      * 获取数组值
-     * @param $value
+     * @param      $value
      * @param bool $json
-     * @return array|false|string[]|null
+     * @return array|null
      */
-    public function getValueArray($value, bool $json = false)
+    public function getValueArray($value, bool $json = false): ?array
     {
         $value = $this->getValue($value);
         if ($value instanceof \Illuminate\Database\Eloquent\Collection) {
@@ -147,9 +147,9 @@ class Element
             } else {
                 $values = $json ? [] : null;
             }
-        } elseif (is_array($value)) {
+        } else if (is_array($value)) {
             $values = $value;
-        } elseif ($value !== null) {
+        } else if ($value !== null) {
             $values = $json ? json_decode($value, true) : explode(',', $value);
         } else {
             $values = $json ? [] : null;
@@ -199,10 +199,10 @@ class Element
     /**
      * 设置帮助信息
      * @param string|array $value
-     * @param bool $line
+     * @param bool         $line
      * @return $this
      */
-    public function help( $value, bool $line = false): self
+    public function help($value, bool $line = false): self
     {
         if ($line) {
             $this->helpLine = $value;
@@ -214,7 +214,7 @@ class Element
 
     /**
      * 属性数据
-     * @param string $name
+     * @param string       $name
      * @param string|array $value
      * @return $this
      */
@@ -225,11 +225,11 @@ class Element
     }
 
     /**
-     * 树形数组
+     * 属性数组
      * @param $attr
      * @return $this
      */
-    public function attrArray($attr)
+    public function attrArray($attr): self
     {
         $this->attr = $attr;
         return $this;
@@ -346,8 +346,8 @@ class Element
 
     /**
      * 设置字段验证
-     * @param  $rule
-     * @param array $msg
+     * @param        $rule
+     * @param array  $msg
      * @param string $time
      * @return $this
      */
@@ -374,10 +374,9 @@ class Element
     }
 
     /**
-     *
      * 设置表单格式化
      * @param string|callable $rule
-     * @param string $time
+     * @param string          $time
      * @return $this
      */
     public function format($rule, string $time = 'all'): self
@@ -452,20 +451,21 @@ class Element
      * 获取渲染组件
      * @return array
      */
-    public function getRender()
+    public function getRender(): array
     {
         if ($this->class) {
             $this->attr['class'] = implode(' ', $this->class);
         }
-        return array_merge($this->render(null), $this->attr);
+        return array_merge($this->render(), $this->attr);
     }
 
 
     /**
      * 获取数据值
-     * @return mixed
+     * @param $info
+     * @return array
      */
-    public function getData($info)
+    public function getData($info): array
     {
         $field = $this->getHas() ?: $this->getField();
         $value = Tools::parsingArrData($info, $field);

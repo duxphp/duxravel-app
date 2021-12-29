@@ -37,12 +37,13 @@ class Menu extends Widget
      */
     public function link(string $name, string $route = '', array $params = []): Link
     {
-        $this->link[] = new Link($name, $route, $params);
+        $link = new Link($name, $route, $params);
+        $this->link[] = $link;
         return $link;
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function render(): array
     {

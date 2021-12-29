@@ -12,14 +12,12 @@ class Link implements Component
 
     private array $link;
     private array $fields;
-    private array $routes = [];
 
     /**
-     * 设置数据列字段
      * @param array $fields
-     * @return void
+     * @return $this
      */
-    public function fields(Array $fields = [])
+    public function fields(Array $fields = []): Link
     {
         $this->fields = $fields;
         return $this;
@@ -28,12 +26,13 @@ class Link implements Component
     /**
      * 添加条目
      * @param string $name
-     * @param string $label
+     * @param string $route
+     * @param array  $params
+     * @param bool   $absolute
      * @return \Duxravel\Core\UI\Widget\Link
      */
     public function add(string $name, string $route, array $params = [], bool $absolute = false): \Duxravel\Core\UI\Widget\Link
     {
-        $label = $route . '?' . http_build_query($params);
         $link = new \Duxravel\Core\UI\Widget\Link($name, $route, $params, $absolute);
         $link->fields($this->fields);
         $link = $link->model('rowData.record');
@@ -42,18 +41,14 @@ class Link implements Component
     }
 
     /**
-     * @param $value
-     * @param $data
+     * @param $label
      * @return array
      */
     public function render($label): array
     {
         $link = [];
         foreach ($this->link as $class) {
-
             $type = $class->getType();
-            $typeConfig = $class->getTypeConfig();
-
             $data = $class->render();
 
             if ($type === 'ajax' && (!$data['vBind:before'] || !$data['before'])) {

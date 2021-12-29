@@ -1,9 +1,9 @@
 <?php
 
 namespace Duxravel\Core\UI\Form;
+
 /**
  * 表格关联选择器列
- * Class Choice
  * @package Duxravel\Core\UI\Form
  */
 class ChoiceColumn
@@ -14,12 +14,11 @@ class ChoiceColumn
     private array $column;
 
     /**
-     * 文本列
-     * @param $name
-     * @param $field
+     * @param string $name
+     * @param string $field
      * @return $this
      */
-    public function text($name, $field): self
+    public function text(string $name, string $field): self
     {
         $this->column[] = [
             'name' => $name,
@@ -30,12 +29,11 @@ class ChoiceColumn
     }
 
     /**
-     * 图片列
-     * @param $name
-     * @param $field
+     * @param string $name
+     * @param string $field
      * @return $this
      */
-    public function image($name, $field): self
+    public function image(string $name, string $field): self
     {
         $this->column[] = [
             'name' => $name,
@@ -47,7 +45,6 @@ class ChoiceColumn
 
 
     /**
-     * 获取配置
      * @return array
      */
     public function getData(): array

@@ -13,10 +13,8 @@ class Status implements Component
     private array $map;
     private array $color;
     private string $type;
-    private string $field;
 
     /**
-     * Status constructor.
      * @param array $map
      * @param array $color
      * @param string $type
@@ -30,7 +28,7 @@ class Status implements Component
 
     /**
      * @param $label
-     * @return string
+     * @return array
      */
     public function render($label): array
     {
@@ -45,7 +43,7 @@ class Status implements Component
         $node = [];
         foreach ($statusArr as $key => $vo) {
 
-            if ($this->type == 'badge') {
+            if ($this->type === 'badge') {
                 $item = (new Badge($vo['name']))->color($vo['color'])->render();
                 $item['vIf'] = "rowData.record['{$label}'] == " . (is_numeric($key) ? $key : "'$key'");
             } else {
