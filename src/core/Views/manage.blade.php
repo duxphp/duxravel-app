@@ -17,7 +17,7 @@
         desc: '{{config('app.desc')}}',
         contact: '{{config('app.contact')}}',
         background: '{{is_file(public_path('/images/login-bg.png')) ? "/images/login-bg.png" : ""}}',
-        side: {{json_encode($sideImages ?: [])}}
+        side: {!! json_encode($sideImages ?: []) !!}
       }
     }
     // 屏蔽warn
