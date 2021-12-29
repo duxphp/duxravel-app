@@ -248,6 +248,7 @@ class Node
                 'method' => $this->method,
                 'value' => $this->data,
                 'layout' => $this->vertical ? 'vertical' : 'horizontal',
+                'back' => $this->back,
                 'child' => [
                     'nodeName' => 'div',
                     'class' => 'flex',
