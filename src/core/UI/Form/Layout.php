@@ -8,10 +8,10 @@ namespace Duxravel\Core\UI\Form;
  */
 class Layout extends Composite implements Component
 {
-    protected \Closure $callback;
+    protected $callback;
 
     /**
-     * @param $callback
+     * @param callable|array $callback
      */
     public function __construct($callback)
     {
