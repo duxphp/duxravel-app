@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // 编译包
-        app(Build::class)->getBuild();
+        $providers = app(Build::class)->getData('providers');
 
         // 扩展路由方法
         \Route::macro('manage', function ($class, $name = '') {
@@ -51,6 +51,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(CoreServiceProvider::class);
+
+        foreach ($providers as $vo) {
+            $this->app->register($vo);
+        }
     }
 
     /**

@@ -70,18 +70,22 @@ class Build
         $list = collect($packages)->mapWithKeys(function ($package) {
             return [$this->format($package['name']) => $package['extra']['duxravel'] ?? []];
         })->filter()->all();
+
         $service = [];
         $route = [];
         $menu = [];
         $config = [];
         $event = [];
         $listener = [];
+        $providers = [];
+
         $serviceList = $this->globList(base_path('modules') . '/*/Service/*.php');
         $menuList = $this->globList(base_path('modules') . '/*/Menu/*.php');
         $eventList = $this->globList(base_path('modules') . '/*/Events/*.php');
         $listenerList = $this->globList(base_path('modules') . '/*/Listeners/*.php');
         $roleList = $this->globList(base_path('modules') . '/*/Route/*.php');
         $configList = $this->globList(base_path('modules') . '/*/Config/*.php');
+        $providersList = $this->globList(base_path('modules') . '/*/Providers/*.php');
         $list['modules'] = [
             'service' => [],
             'route' => [],
@@ -89,6 +93,7 @@ class Build
             'config' => [],
             'event' => [],
             'listener' => [],
+            'providers' => []
         ];
         foreach ($roleList as $key => $vo) {
             $list['modules']['route'][] = str_replace(base_path('modules'), '', $vo);
@@ -103,65 +108,35 @@ class Build
         $list['modules']['service'] = $this->formatClass($serviceList);
         $list['modules']['event'] = $this->formatClass($eventList);
         $list['modules']['listener'] = $this->formatClass($listenerList);
+        $list['modules']['providers'] = $this->formatClass($providersList);
 
         foreach ($list as $key => $vo) {
-            if (isset($vo['service']) && $vo['service']) {
-                $vo['service'] = is_array($vo['service']) ? $vo['service'] : [$vo['service']];
-                foreach ($vo['service'] as $v) {
-                    $tmp = explode('\\', $v);
-                    $name = end($tmp);
-                    if ($name) {
-                        $service[$name][] = $v;
-                    }
-                }
-            }
             if (isset($vo['event']) && $vo['event']) {
                 $vo['event'] = is_array($vo['event']) ? $vo['event'] : [$vo['event']];
                 foreach ($vo['event'] as $v) {
                     $event[] = $v;
                 }
             }
+            if (isset($vo['service']) && $vo['service']) {
+                $service = array_merge_recursive($service, $this->getClassData($vo['service']));
+            }
             if (isset($vo['listener']) && $vo['listener']) {
-                $vo['listener'] = is_array($vo['listener']) ? $vo['listener'] : [$vo['listener']];
-                foreach ($vo['listener'] as $v) {
-                    $tmp = explode('\\', $v);
-                    $name = end($tmp);
-                    if ($name) {
-                        $listener[$name][] = $v;
-                    }
-                }
+                $listener = array_merge_recursive($listener, $this->getClassData($vo['listener']));
+            }
+            if (isset($vo['providers']) && $vo['providers']) {
+                $providers = array_merge_recursive($providers, $this->getClassData($vo['providers']));
             }
             if (isset($vo['route']) && $vo['route']) {
-                $vo['route'] = is_array($vo['route']) ? $vo['route'] : [$vo['route']];
-                foreach ($vo['route'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . trim($v, '/');
-                    $name = basename($file, '.php');
-                    if ($name) {
-                        $route[$name][] = $file;
-                    }
-                }
+                $route = array_merge_recursive($route, $this->getFileData($vo['route'], $key));
             }
             if (isset($vo['config']) && $vo['config']) {
-                $vo['config'] = is_array($vo['config']) ? $vo['config'] : [$vo['config']];
-                foreach ($vo['config'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . trim($v, '/');
-                    $name = basename($file, '.php');
-                    if ($name) {
-                        $config[$name][] = $file;
-                    }
-                }
+                $config = array_merge_recursive($config, $this->getFileData($vo['config'], $key));
             }
             if (isset($vo['menu']) && $vo['menu']) {
-                $vo['menu'] = is_array($vo['menu']) ? $vo['menu'] : [$vo['menu']];
-                foreach ($vo['menu'] as $v) {
-                    $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . trim($v, '/');
-                    $name = basename($file, '.php');
-                    if ($name) {
-                        $menu[$name][] = $file;
-                    }
-                }
+                $menu = array_merge_recursive($menu, $this->getFileData($vo['menu'], $key));
             }
         }
+
 
         $event = array_filter($event);
         $listener = array_filter($listener);
@@ -178,8 +153,10 @@ class Build
             'route' => array_filter($route),
             'config' => array_filter($config),
             'events' => array_filter($events),
-            'menu' => array_filter($menu)
+            'menu' => array_filter($menu),
+            'providers' => array_filter($providers)
         ];
+
         $files->replace(
             $buildPath, '<?php return ' . var_export($manifest, true) . ';'
         );
@@ -224,6 +201,43 @@ class Build
             $data[] = $class;
         }
         return array_filter($data);
+    }
+
+    /**
+     * @param $data
+     * @param $key
+     * @return array
+     */
+    private function getFileData($data, $key)
+    {
+        $data = is_array($data) ? $data : [$data];
+        $array = [];
+        foreach ($data as $v) {
+            $file = ($key === 'modules' ? 'modules' : 'vendor' . '/' . $key) . '/' . trim($v, '/');
+            $name = basename($file, '.php');
+            if ($name) {
+                $array[$name][] = $file;
+            }
+        }
+        return $array;
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    private function getClassData($data)
+    {
+        $data = is_array($data) ? $data : [$data];
+        $array = [];
+        foreach ($data as $v) {
+            $tmp = explode('\\', $v);
+            $name = end($tmp);
+            if ($name) {
+                $array[$name][] = $v;
+            }
+        }
+        return $array;
     }
 
 }
