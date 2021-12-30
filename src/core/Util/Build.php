@@ -123,6 +123,15 @@ class Build
                     $providers[] = $v;
                 }
             }
+            if (isset($vo['config']) && $vo['config']) {
+                $vo['config'] = is_array($vo['config']) ? $vo['config'] : [$vo['config']];
+                foreach ($vo['config'] as $v) {
+                    $name = lcfirst(basename($vo, '.php'));
+                    if ($name !== 'config') {
+                        $config[] = $v;
+                    }
+                }
+            }
 
             if (isset($vo['service']) && $vo['service']) {
                 $service = array_merge_recursive($service, $this->getClassData($vo['service']));
@@ -132,9 +141,6 @@ class Build
             }
             if (isset($vo['route']) && $vo['route']) {
                 $route = array_merge_recursive($route, $this->getFileData($vo['route'], $key));
-            }
-            if (isset($vo['config']) && $vo['config']) {
-                $config = array_merge_recursive($config, $this->getFileData($vo['config'], $key));
             }
             if (isset($vo['menu']) && $vo['menu']) {
                 $menu = array_merge_recursive($menu, $this->getFileData($vo['menu'], $key));

@@ -15,7 +15,6 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
      * @return void
      */
     public function register()
@@ -41,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
 
         // 编译包
         $providers = app(Build::class)->getData('providers');
+        $config = app(Build::class)->getData('config');
 
         // 扩展路由方法
         \Route::macro('manage', function ($class, $name = '') {
@@ -55,11 +55,14 @@ class AppServiceProvider extends ServiceProvider
         foreach ($providers as $vo) {
             $this->app->register($vo);
         }
+
+        foreach ($config as $vo) {
+            $this->mergeConfigFrom($vo, lcfirst(basename($vo, '.php')));
+        }
     }
 
     /**
      * Bootstrap any application services.
-     *
      * @return void
      */
     public function boot()
