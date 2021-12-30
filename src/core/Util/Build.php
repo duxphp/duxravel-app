@@ -126,7 +126,7 @@ class Build
             if (isset($vo['config']) && $vo['config']) {
                 $vo['config'] = is_array($vo['config']) ? $vo['config'] : [$vo['config']];
                 foreach ($vo['config'] as $v) {
-                    $name = lcfirst(basename($vo, '.php'));
+                    $name = lcfirst(basename($v, '.php'));
                     if ($name !== 'config') {
                         $config[] = $v;
                     }
