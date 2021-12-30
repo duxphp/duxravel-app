@@ -117,14 +117,18 @@ class Build
                     $event[] = $v;
                 }
             }
+            if (isset($vo['providers']) && $vo['providers']) {
+                $vo['providers'] = is_array($vo['providers']) ? $vo['providers'] : [$vo['providers']];
+                foreach ($vo['providers'] as $v) {
+                    $providers[] = $v;
+                }
+            }
+
             if (isset($vo['service']) && $vo['service']) {
                 $service = array_merge_recursive($service, $this->getClassData($vo['service']));
             }
             if (isset($vo['listener']) && $vo['listener']) {
                 $listener = array_merge_recursive($listener, $this->getClassData($vo['listener']));
-            }
-            if (isset($vo['providers']) && $vo['providers']) {
-                $providers = array_merge_recursive($providers, $this->getClassData($vo['providers']));
             }
             if (isset($vo['route']) && $vo['route']) {
                 $route = array_merge_recursive($route, $this->getFileData($vo['route'], $key));
@@ -136,7 +140,6 @@ class Build
                 $menu = array_merge_recursive($menu, $this->getFileData($vo['menu'], $key));
             }
         }
-
 
         $event = array_filter($event);
         $listener = array_filter($listener);
