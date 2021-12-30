@@ -70,7 +70,8 @@
         "src/core/Route/Api.php"
       ],
       "event": [
-        "Duxravel\\Core\\Events\\App",
+        "Duxravel\\Core\\Events\\ServiceRegister",
+        "Duxravel\\Core\\Events\\ServiceBoot",
         "Duxravel\\Core\\Events\\ManageTable",
         "Duxravel\\Core\\Events\\ManageForm",
         "Duxravel\\Core\\Events\\ManageExport",

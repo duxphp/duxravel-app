@@ -21,6 +21,8 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
 
+        // 调用系统扩展
+        event(new ServiceRegister);
     }
 
     /**
@@ -34,6 +36,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
 
         // 调用系统扩展
-        event(new App);
+        event(new ServiceBoot);
     }
 }

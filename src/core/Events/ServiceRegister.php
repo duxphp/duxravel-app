@@ -3,9 +3,9 @@
 namespace Duxravel\Core\Events;
 
 /**
- * 应用事件
+ * 服务注册事件
  */
-class App
+class ServiceRegister
 {
 
     public function __construct()
