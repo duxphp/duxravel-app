@@ -3,9 +3,9 @@
 namespace Duxravel\Core\Events;
 
 /**
- * 服务启动事件
+ * 服务注册事件
  */
-class ServiceRegister
+class ServiceBoot
 {
 
     public function __construct()

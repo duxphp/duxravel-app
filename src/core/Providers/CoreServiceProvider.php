@@ -2,9 +2,8 @@
 
 namespace Duxravel\Core\Providers;
 
-use Duxravel\Core\Events\App;
-use Duxravel\Core\Util\Build;
-use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Duxravel\Core\Events\ServiceBoot;
+use Duxravel\Core\Events\ServiceRegister;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Router;
