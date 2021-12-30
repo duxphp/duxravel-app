@@ -100,9 +100,9 @@ class Build
             $list['modules']['menu'][] = str_replace(base_path('modules'), '', $vo);
         }
 
-        $list['modules']['service'][] = $this->formatClass($serviceList);
-        $list['modules']['event'][] = $this->formatClass($eventList);
-        $list['modules']['listener'][] = $this->formatClass($listenerList);
+        $list['modules']['service'] = $this->formatClass($serviceList);
+        $list['modules']['event'] = $this->formatClass($eventList);
+        $list['modules']['listener'] = $this->formatClass($listenerList);
 
         foreach ($list as $key => $vo) {
             if (isset($vo['service']) && $vo['service']) {
@@ -213,6 +213,7 @@ class Build
      */
     private function formatClass($list)
     {
+        $data = [];
         foreach ($list as $value) {
             $path = substr($value, strlen(base_path('modules') . '/'), -4);
             $path = str_replace('\\', '/', $path);
@@ -220,8 +221,9 @@ class Build
             if (!class_exists('\\' . $class)) {
                 continue;
             }
-            return $class;
+            $data[] = $class;
         }
+        return array_filter($data);
     }
 
 }
