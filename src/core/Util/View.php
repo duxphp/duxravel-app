@@ -31,7 +31,7 @@ class View
 
         if (!$this->tpl) {
             $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
-            $this->tpl = implode('.', $view);
+            $this->tpl = 'modules.' . implode('.', $view);
         }
         $assign['manage'] = strtolower($parsing['layer']);
         return view( $this->tpl, $assign);
