@@ -34,7 +34,7 @@ class View
             $this->tpl = implode('.', $view);
         }
         $assign['manage'] = strtolower($parsing['layer']);
-        return view('modules.' . $this->tpl, $assign);
+        return view( $this->tpl, $assign);
     }
 
     /**
