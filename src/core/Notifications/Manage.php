@@ -11,8 +11,11 @@ class Manage extends Notification
 {
     use Queueable;
 
-    public function __construct()
+    private string $invoice;
+
+    public function __construct($invoice)
     {
+        $this->invoice = $invoice;
         //
     }
 
