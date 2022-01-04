@@ -57,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         foreach ($config as $vo) {
-            $this->mergeConfigFrom($vo, lcfirst(basename($vo, '.php')));
+            $this->mergeConfigFrom(base_path($vo), lcfirst(basename($vo, '.php')));
         }
     }
 
