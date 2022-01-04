@@ -7,7 +7,6 @@ use Duxravel\Core\Util\View;
 
 /**
  * 用户登录
- * @package Modules\System\System
  */
 trait Login
 {
