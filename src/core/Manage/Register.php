@@ -16,9 +16,12 @@ trait Register
 
     public function submit(Request $request)
     {
+        $parsing = app_parsing();
+        $app = $parsing['app'];
+        $layer = strtolower($parsing['layer']);
 
         Validator::make($request->input(), [
-            'username' => ['required', 'string', 'max:255', 'unique:system_user'],
+            'username' => ['required', 'string', 'max:255', 'unique:' . strtolower($app) . '_user'],
             'password' => ['required', 'string', 'min:4', 'max:20'],
         ], [
             'username.required' => '用户名输入错误',
@@ -26,17 +29,21 @@ trait Register
             'password.required' => '请输入4~20位密码',
         ])->validate();
 
-        $parsing = app_parsing();
-        $app = $parsing['app'];
-        $layer = strtolower($parsing['layer']);
 
         $model = '\\Modules\\' . $app . '\\Model\\' . $app . 'User';
         $user = new $model();
 
+        $role = \Duxravel\Core\Model\Role::firstOrCreate([
+            'guard' => $layer,
+        ], [
+            'name' => '管理员',
+            'purview' => []
+        ]);
+
         $user->username = $request->input('username');
         $user->password = $request->input('password');
         $user->user_id = 1;
-        $user->roles()->attach(1);
+        $user->roles()->attach($role->role_id);
         $user->save();
 
         return app_success('创建账号成功', [

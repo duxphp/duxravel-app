@@ -47,7 +47,6 @@ class Menu
         });
         $purview = array_filter($purview);
 
-
         $list = [];
         foreach ($data as $app => $appList) {
             if (empty($appList['menu']) && empty($appList['route'])) {
@@ -55,7 +54,8 @@ class Menu
             }
 
             if ($appList['route']) {
-                $public = app('router')->getRoutes()->getByName($appList['route'])->getAction('public');
+                $routeItem = app('router')->getRoutes()->getByName($appList['route']);
+                $public = $routeItem ? $routeItem->getAction('public') : false;
                 if (!$public && $purview && !in_array($appList['route'], $purview)) {
                     continue;
                 }
@@ -86,7 +86,8 @@ class Menu
                 $subData = [];
                 $parentList['menu'] = collect($parentList['menu'])->sortBy('order')->values();
                 foreach ($parentList['menu'] as $sub => $subList) {
-                    $public = app('router')->getRoutes()->getByName($subList['route'])->getAction('public');
+                    $routeItem = app('router')->getRoutes()->getByName($subList['route']);
+                    $public = $routeItem ? $routeItem->getAction('public') : false;
 
                     if (!$public && $purview && !in_array($subList['route'], $purview)) {
                         continue;
