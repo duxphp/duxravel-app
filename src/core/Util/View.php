@@ -48,6 +48,8 @@ class View
         $mainCss = $manifest['src/main.js']['css'][0];
 
 
+        $app = strtolower(app_parsing('layer'));
+
         $sideImages = [];
         $files = glob(public_path('/images/login-side*.png'));
         foreach ($files as $file) {
@@ -57,7 +59,8 @@ class View
         return response()->view('vendor.duxphp.duxravel-app.src.core.Views.manage', [
             'mainJs' => $mainJs,
             'mainCss' => $mainCss,
-            'sideImages' => $sideImages
+            'sideImages' => $sideImages,
+            'info' => config($app . '.info') ?: []
         ]);
     }
 }
