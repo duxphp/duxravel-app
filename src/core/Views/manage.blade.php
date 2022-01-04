@@ -14,6 +14,7 @@
       login: {
         logo: '/images/logo.svg',
         title: '{{$info['login']['title'] ?:config('app.name')}}',
+        name: '{{$info['login']['name'] ?: '系统登录'}}',
         desc: '{{$info['login']['desc'] ?:config('app.desc')}}',
         contact: '{{$info['login']['contact'] ?: config('app.contact')}}',
         background: '{{is_file(public_path('/images/login-bg.png')) ? "/images/login-bg.png" : ""}}',
