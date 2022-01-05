@@ -26,14 +26,14 @@ trait Login
     {
         $layer = strtolower(app_parsing('layer'));
         $credentials = $request->only('username', 'password');
-        if (auth($layer)->attempt($credentials)) {
+        if (auth($layer)->attempt([$this->usernameKey ?: 'username' => $credentials['username'], 'password' => $credentials['password']])) {
             $user = auth($layer)->user();
             return app_success('登录成功', [
                 'userInfo' => [
                     'user_id' => $user->user_id,
                     'avatar' => $user->avatar,
                     'avatar_text' => strtoupper(substr($user->username, 0, 1)),
-                    'username' => $user->username,
+                    'username' => $this->usernameKey ? $user->{$this->usernameKey} : $user->username,
                     'nickname' => $user->nickname,
                     'rolename' => $user->roles[0]['name'],
                 ],

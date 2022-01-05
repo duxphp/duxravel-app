@@ -60,6 +60,11 @@ class Manage extends BaseMiddleware
 
     private function checkPurview($layer)
     {
+        $user = auth($layer)->user();
+        if (!$user) {
+            app_error('登录失效', 401);
+        }
+
         // 权限检测
         $public = request()->route()->getAction('public');
         if ($public) {
