@@ -26,7 +26,6 @@ trait Common
 
     /**
      * @param string $tpl
-     *
      * @return mixed
      */
     public function systemView(string $tpl = '')
@@ -35,9 +34,22 @@ trait Common
     }
 
     /**
+     * @param array $node
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     */
+    public function systemNode(array $node = [])
+    {
+        return app_success('ok', [
+            'node' => [
+                'nodeName' => 'app-layout',
+                'child' => $node
+            ]
+        ]);
+    }
+
+    /**
      * @param string $title
      * @param array  $node
-     *
      * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
     public function dialogNode(string $title = '', array $node = [])
@@ -51,6 +63,10 @@ trait Common
         ]);
     }
 
+    /**
+     * @param $name
+     * @throws \Duxravel\Core\Exceptions\ErrorException
+     */
     public function can($name)
     {
         $parsing = app_parsing();

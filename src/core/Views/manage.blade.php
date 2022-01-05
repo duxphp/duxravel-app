@@ -9,13 +9,14 @@
   <link rel="stylesheet" href="/{{ $mainCss }}" />
   <script>
     window.appConfig = {
-      name: '{{config('app.name')}}',
+      name: '{{$info['name'] ?: config('app.name')}}',
       logo: '/images/logo.svg',
       login: {
         logo: '/images/logo.svg',
-        title: '{{config('app.name')}}',
-        desc: '{{config('app.desc')}}',
-        contact: '{{config('app.contact')}}',
+        title: '{{$info['login']['title'] ?:config('app.name')}}',
+        name: '{{$info['login']['name'] ?: '系统登录'}}',
+        desc: '{{$info['login']['desc'] ?:config('app.desc')}}',
+        contact: '{{$info['login']['contact'] ?: config('app.contact')}}',
         background: '{{is_file(public_path('/images/login-bg.png')) ? "/images/login-bg.png" : ""}}',
         side: {!! json_encode($sideImages ?: []) !!}
       }

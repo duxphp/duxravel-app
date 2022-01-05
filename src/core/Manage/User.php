@@ -16,6 +16,7 @@ trait User
         return [
             'route' => $route,
             'model' => $model,
+            'layer' => strtolower($parsing['layer'])
         ];
     }
 
@@ -64,8 +65,8 @@ trait User
         $form->dialog(true);
         $form->setKey('user_id', $id);
 
-        $form->select('角色', 'role_ids', function () {
-            return \Duxravel\Core\Model\Role::where('guard', 'admin')->pluck('name', 'role_id');
+        $form->select('角色', 'role_ids', function () use ($parser) {
+            return \Duxravel\Core\Model\Role::where('guard', $parser['layer'])->pluck('name', 'role_id');
         }, 'roles')->multi()->verify([
             'required',
         ], [

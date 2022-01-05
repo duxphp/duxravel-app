@@ -2,9 +2,8 @@
 
 namespace Duxravel\Core\Providers;
 
-use Duxravel\Core\Events\App;
-use Duxravel\Core\Util\Build;
-use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Duxravel\Core\Events\ServiceBoot;
+use Duxravel\Core\Events\ServiceRegister;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Router;
@@ -21,6 +20,8 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
 
+        // 调用系统扩展
+        event(new ServiceRegister);
     }
 
     /**
@@ -34,6 +35,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../../../database/migrations'));
 
         // 调用系统扩展
-        event(new App);
+        event(new ServiceBoot);
     }
 }

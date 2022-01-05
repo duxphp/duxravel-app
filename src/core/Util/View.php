@@ -31,10 +31,10 @@ class View
 
         if (!$this->tpl) {
             $view = [$parsing['app'], 'View', $parsing['layer'], $parsing['module'], $parsing['action']];
-            $this->tpl = implode('.', $view);
+            $this->tpl = 'modules.' . implode('.', $view);
         }
         $assign['manage'] = strtolower($parsing['layer']);
-        return view($this->tpl, $assign);
+        return view( $this->tpl, $assign);
     }
 
     /**
@@ -48,6 +48,8 @@ class View
         $mainCss = $manifest['src/main.js']['css'][0];
 
 
+        $app = strtolower(app_parsing('layer'));
+
         $sideImages = [];
         $files = glob(public_path('/images/login-side*.png'));
         foreach ($files as $file) {
@@ -57,7 +59,8 @@ class View
         return response()->view('vendor.duxphp.duxravel-app.src.core.Views.manage', [
             'mainJs' => $mainJs,
             'mainCss' => $mainCss,
-            'sideImages' => $sideImages
+            'sideImages' => $sideImages,
+            'info' => config($app . '.info') ?: []
         ]);
     }
 }
