@@ -102,7 +102,7 @@ class TreeList extends Widget
             'sortUrl' => $this->sortUrl,
             'search' => $this->search,
             'keywords' => $this->keyword,
-            'requestEventName' => $this->event ?: url_class($this->url)['class'],
+            'requestEventName' => md5($this->event ?: url_class($this->url)['class']),
             'vBind:filter' => $this->filter ?: '',
             'refreshUrls' => [trim($urlPaths['path'], '/')],
             'iconColor' => ['blue', 'cyan', 'green', 'orange', 'red', 'purple'],

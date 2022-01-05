@@ -18,7 +18,7 @@ class Event
      */
     public function __construct($name)
     {
-        $this->name = $name;
+        $this->name = md5($name);
     }
 
     /**

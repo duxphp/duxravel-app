@@ -318,7 +318,7 @@ class Node
 
         return [
             'nodeName' => 'app-table',
-            'requestEventName' => url_class($this->url)['class'],
+            'requestEventName' => md5(url_class($this->url)['class']),
             'class' => $this->class,
             'url' => $this->url,
             'urlBind' => true,
