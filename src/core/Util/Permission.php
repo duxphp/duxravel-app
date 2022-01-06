@@ -13,7 +13,7 @@ class Permission
 {
 
     public string $guerd = 'admin';
-    public $guerdHas = null;
+    public $guerdId = null;
     public bool $cache = false;
     public array $routePurviews = [];
     public array $allPurviews = [];
@@ -34,7 +34,7 @@ class Permission
     public function register(string $guerd = '', $has = null): void
     {
         $this->guerd = strtolower($guerd);
-        $this->guerdHas = $has;
+        $this->guerdId = $has;
         $routes = \Route::getRoutes();
         $data = [];
         foreach ($routes as $vo) {
@@ -62,7 +62,7 @@ class Permission
             return true;
         }
         // 获取用户权限
-        $roleList = $user->roles()->where('guard', $this->guerd)->where('guard_has', $this->guerdHas)->get();
+        $roleList = $user->roles()->where('guard', $this->guerd)->where('guard_id', $this->guerdId)->get();
         // 合并多角色权限
         $roleList->map(function ($item) {
             foreach ($item->purview as $vo) {

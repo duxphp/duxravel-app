@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateRoleTable extends Migration
+class UpdateRoleHasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class UpdateRoleTable extends Migration
      */
     public function up()
     {
-        Schema::table('role', function (Blueprint $table) {
-            $table->char('guard_id', 50)->nullable()->index('type_id');
+        Schema::table('role_has', function (Blueprint $table) {
+            $table->char('guard_id', 50)->nullable()->index('guard_id');
         });
     }
 
@@ -25,7 +25,7 @@ class UpdateRoleTable extends Migration
      */
     public function down()
     {
-        Schema::table('role', function (Blueprint $table) {
+        Schema::table('role_has', function (Blueprint $table) {
             $table->dropColumn(['guard_id']);
         });
     }

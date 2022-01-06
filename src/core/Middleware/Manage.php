@@ -62,9 +62,9 @@ class Manage extends BaseMiddleware
 
         // 注册权限
         $request->attributes->add([
-            'global_guard_has' => $payload['guard_has'] ?: null
+            'global_guard_id' => $payload['guard_id'] ?: null
         ]);
-        \Duxravel\Core\Facades\Permission::register($layer, $payload['guard_has'] ?: null);
+        \Duxravel\Core\Facades\Permission::register($layer, $payload['guard_id'] ?: null);
 
         // 权限检测
         $public = request()->route()->getAction('public');
