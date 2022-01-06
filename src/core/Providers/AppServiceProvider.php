@@ -95,8 +95,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->bootedCallbacks[] = function () {
-            // 权限注册
-            \Duxravel\Core\Facades\Permission::register('admin');
         };
 
     }
