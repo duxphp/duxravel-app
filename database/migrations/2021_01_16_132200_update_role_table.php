@@ -25,7 +25,7 @@ class UpdateRoleTable extends Migration
      */
     public function down()
     {
-        Schema::create('role', function (Blueprint $table) {
+        Schema::table('role', function (Blueprint $table) {
             $table->dropColumn(['guard_has']);
         });
     }
