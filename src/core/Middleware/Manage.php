@@ -22,28 +22,30 @@ class Manage extends BaseMiddleware
         }
 
         $layer = strtolower(app_parsing('layer'));
-        config(['auth.defaults.guard' => $layer]);
 
         // 检查此次请求中是否带有 token
         $this->checkForToken($request);
         try {
             // 检测用户的登录状态
-            if ($this->auth->parseToken()->authenticate()) {
-                $this->checkPurview($layer);
-                return $next($request);
+            if (!auth($layer)->getToken()) {
+                app_error('请先进行登录', 401);
             }
-            app_error('请先进行登录', 401);
+            if (!$payload = auth($layer)->payload()) {
+                app_error('请先进行登录', 401);
+            }
+            $this->checkPurview($layer);
+            return $next($request);
         } catch (TokenExpiredException $exception) {
-            try{
+            try {
                 // 刷新token
-                $token = $this->auth->refresh();
+                $token = auth($layer)->refresh();
                 $request->headers->set('Authorization', 'Bearer ' . $token);
                 //使用一次性登录
                 auth($layer)->onceUsingId(
-                    $this->auth->manager()->getPayloadFactory()->buildClaimsCollection()->toPlainArray()['sub']
+                    $payload['sub']
                 );
                 $this->checkPurview($layer);
-            }catch(JWTException $exception){
+            } catch (JWTException $exception) {
                 app_error('登录失效', 401);
             }
         }
