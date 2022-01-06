@@ -15,6 +15,7 @@ class UpdateRoleHasTable extends Migration
     {
         Schema::table('role_has', function (Blueprint $table) {
             $table->char('guard_id', 50)->nullable()->index('guard_id');
+            $table->char('guard', 50)->nullable()->index('guard');
         });
     }
 
@@ -26,7 +27,7 @@ class UpdateRoleHasTable extends Migration
     public function down()
     {
         Schema::table('role_has', function (Blueprint $table) {
-            $table->dropColumn(['guard_id']);
+            $table->dropColumn(['guard_id', 'guard']);
         });
     }
 }
