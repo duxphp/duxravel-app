@@ -43,7 +43,7 @@ trait Register
         $user->username = $request->input('username');
         $user->password = $request->input('password');
         $user->user_id = 1;
-        $user->roles()->attach($role->role_id);
+        $user->roles()->attach($role->role_id, ['guard' => $layer]);
         $user->save();
 
         return app_success('创建账号成功', [
