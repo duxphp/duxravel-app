@@ -62,7 +62,7 @@ class Permission
             return true;
         }
         // 获取用户权限
-        $roleList = $user->roles()->where('guard', $this->guerd)->where('guard_id', $this->guerdId)->get();
+        $roleList = $user->roles()->where('guard', $this->guerd)->wherePivot('guard_id', $this->guerdId)->get();
         // 合并多角色权限
         $roleList->map(function ($item) {
             foreach ($item->purview as $vo) {
