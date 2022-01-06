@@ -16,6 +16,7 @@ trait Role
         $parsing = app_parsing();
 
         $this->config['layer'] = $parsing['layer'];
+        $this->config['guard_has'] = request()->get('global_guard_has', null);
 
         $route = strtolower($parsing['layer']) . '.' . strtolower($parsing['app']) . '.role';
         $app = $parsing['app'];
@@ -30,7 +31,7 @@ trait Role
     {
         $parser = $this->parserData();
         $table = new Table(new AuthRole());
-        $table->model()->where('guard', $this->config['layer']);
+        $table->model()->where('guard', $this->config['layer'])->where('guard_has', $this->config['guard_has']);
         $table->title('角色管理');
 
         $table->filter('角色名称', 'name', function ($query, $value) {
@@ -49,7 +50,9 @@ trait Role
 
     public function form(int $id = 0): Form
     {
+        $this->parserData();
         $form = new Form(new AuthRole());
+        $form->model()->where('guard', $this->config['layer'])->where('guard_has', $this->config['guard_has']);
         $form->title('角色信息');
         $form->card(function ($form) {
             $this->formInner($form);
@@ -57,6 +60,7 @@ trait Role
 
         $form->before(function ($data, $type, $model) {
             $model->guard = strtolower($this->config['layer']);
+            $model->guard_has = $this->config['guard_has'];
             $purview = explode(',', $data['purview']);
             $purview = array_filter($purview, function ($item) {
                 if (stripos($item, 'desc_', 0) !== false) {
@@ -64,7 +68,7 @@ trait Role
                 }
                 return true;
             });
-            $model->purview = array_values($purview);
+            $model->purview = array_filter(array_values($purview));
         });
 
         return $form;

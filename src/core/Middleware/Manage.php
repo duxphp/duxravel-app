@@ -23,9 +23,6 @@ class Manage extends BaseMiddleware
 
         $layer = strtolower(app_parsing('layer'));
 
-        // 注册权限
-        \Duxravel\Core\Facades\Permission::register($layer);
-
         // 检查此次请求中是否带有 token
         $this->checkForToken($request);
         try {
@@ -36,7 +33,7 @@ class Manage extends BaseMiddleware
             if (!$payload = auth($layer)->payload()) {
                 app_error('请先进行登录', 401);
             }
-            $this->checkPurview($layer);
+            $this->checkPurview($layer, $request);
             return $next($request);
         } catch (TokenExpiredException $exception) {
             try {
@@ -47,7 +44,7 @@ class Manage extends BaseMiddleware
                 auth($layer)->onceUsingId(
                     $payload['sub']
                 );
-                $this->checkPurview($layer);
+                $this->checkPurview($layer, $request);
             } catch (JWTException $exception) {
                 app_error('登录失效', 401);
             }
@@ -55,12 +52,19 @@ class Manage extends BaseMiddleware
         return $this->setAuthenticationHeader($next($request), $token);
     }
 
-    private function checkPurview($layer)
+    private function checkPurview($layer, $request)
     {
         $user = auth($layer)->user();
         if (!$user) {
             app_error('登录失效', 401);
         }
+        $payload = auth($layer)->payload();
+
+        // 注册权限
+        $request->attributes->add([
+            'global_guard_has' => $payload['guard_has'] ?: null
+        ]);
+        \Duxravel\Core\Facades\Permission::register($layer, $payload['guard_has'] ?: null);
 
         // 权限检测
         $public = request()->route()->getAction('public');
