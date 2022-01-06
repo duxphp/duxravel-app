@@ -21,6 +21,7 @@ class Element
     protected array $class = [];
     protected array $attr = [];
     protected array $style = [];
+    protected array $pivot = [];
     protected array $verify = [];
     protected array $verifyMsg = [];
     protected array $format = [];
@@ -345,6 +346,17 @@ class Element
     }
 
     /**
+     * 同步附加数据
+     * @param $data
+     * @return $this
+     */
+    public function pivot($data)
+    {
+        $this->pivot = $data;
+        return $this;
+    }
+
+    /**
      * 设置字段验证
      * @param        $rule
      * @param array  $msg
@@ -415,7 +427,7 @@ class Element
         if (method_exists($this, 'dataInput') && !$this->has) {
             $data = $this->dataInput($data);
         }
-        $inputs[$this->field] = ['value' => $data, 'has' => $this->has, 'format' => $this->getFormat($time), 'verify' => $this->getVerify($time)];
+        $inputs[$this->field] = ['value' => $data, 'has' => $this->has, 'format' => $this->getFormat($time), 'verify' => $this->getVerify($time), 'pivot' => $this->pivot];
 
         return $inputs;
     }

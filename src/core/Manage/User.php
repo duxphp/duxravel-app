@@ -65,18 +65,15 @@ trait User
         $form->dialog(true);
         $form->setKey('user_id', $id);
 
-        $info = $form->info();
-        $ids = [];
-        if ($info) {
-            $ids = $info->roles()->wherePivot('guard', $parser['layer'])->get()->pluck('role_id')->toArray();
-        }
         $form->select('角色', 'role_ids', function () use ($parser) {
             return \Duxravel\Core\Model\Role::where('guard', $parser['layer'])->pluck('name', 'role_id');
-        })->multi()->verify([
+        }, 'roles')->multi()->verify([
             'required',
         ], [
             'required' => '请选择角色',
-        ])->sort(-1)->value($ids);
+        ])->sort(-1)->pivot([
+            'guard'=> $parser['layer']
+        ]);
 
         $form->text('用户名', 'username')->verify([
             'required',
@@ -103,15 +100,6 @@ trait User
             1 => '启用',
             0 => '禁用',
         ]);
-
-        $form->after(function ($formatData, $type, $model) use ($parser) {
-            $roleIds = request()->input('role_ids');
-            $sync = [];
-            foreach ($roleIds as $id) {
-                $sync[$id] = ['guard'=> $parser['layer']];
-            }
-            $model->roles()->sync($sync);
-        });
 
         return $form;
     }

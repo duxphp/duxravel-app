@@ -561,7 +561,7 @@ class Form
                     $value = call_user_func($vo, $item['value']);
                 }
             }
-            return ['value' => $value, 'has' => $item['has']];
+            return ['value' => $value, 'has' => $item['has'], 'pivot' => $item['pivot']];
         });
     }
 
@@ -642,7 +642,15 @@ class Form
                     // 多对多
                     if ($relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
                         $this->prepared[] = static function ($model) use ($item) {
-                            $model->{$item['has']}()->sync($item['value']);
+                            $sync = is_array($item['value']) ? $item['value'] : [$item['value']];
+                            $syncFormat = [];
+                            if ($item['pivot']) {
+                                foreach ($sync as $vo) {
+                                    $syncFormat[$vo] = $item['pivot'];
+                                }
+                                $sync = $syncFormat;
+                            }
+                            $model->{$item['has']}()->sync($sync);
                         };
                     }
                 } else if (\Schema::hasColumn($model->getTable(), $key)) {
