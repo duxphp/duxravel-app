@@ -23,6 +23,9 @@ class Manage extends BaseMiddleware
 
         $layer = strtolower(app_parsing('layer'));
 
+        // 注册权限
+        \Duxravel\Core\Facades\Permission::register($layer);
+
         // 检查此次请求中是否带有 token
         $this->checkForToken($request);
         try {
