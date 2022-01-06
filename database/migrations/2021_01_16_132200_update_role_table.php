@@ -14,7 +14,7 @@ class UpdateRoleTable extends Migration
     public function up()
     {
         Schema::table('role', function (Blueprint $table) {
-            $table->char('guard_has', 50)->index('guard_has');
+            $table->char('guard_has', 50)->nullable()->index('guard_has');
         });
     }
 
