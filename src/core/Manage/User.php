@@ -65,13 +65,18 @@ trait User
         $form->dialog(true);
         $form->setKey('user_id', $id);
 
+        $info = $form->info();
+        $ids = [];
+        if ($info) {
+            $ids = $info->roles()->wherePivot('guard', $parser['layer'])->get()->pluck('role_id')->toArray();
+        }
         $form->select('角色', 'role_ids', function () use ($parser) {
             return \Duxravel\Core\Model\Role::where('guard', $parser['layer'])->pluck('name', 'role_id');
         })->multi()->verify([
             'required',
         ], [
             'required' => '请选择角色',
-        ])->sort(-1);
+        ])->sort(-1)->value($ids);
 
         $form->text('用户名', 'username')->verify([
             'required',
