@@ -132,7 +132,7 @@ class Node
                 'child' => [
                     [
                         'nodeName' => 'div',
-                        'class' => 'p-5',
+                        'class' => 'p-4',
                         'child' => [
                             [
                                 'nodeName' => 'div',
