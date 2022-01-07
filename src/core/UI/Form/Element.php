@@ -20,6 +20,7 @@ class Element
     protected string $model = 'data.';
     protected array $class = [];
     protected array $attr = [];
+    protected array $layoutAttr = [];
     protected array $style = [];
     protected array $pivot = [];
     protected array $verify = [];
@@ -226,6 +227,18 @@ class Element
     }
 
     /**
+     * 布局树形
+     * @param string $name
+     * @param        $value
+     * @return $this
+     */
+    public function layoutAttr(string $name, $value): self
+    {
+        $this->layoutAttr[$name] = $value;
+        return $this;
+    }
+
+    /**
      * 属性数组
      * @param $attr
      * @return $this
@@ -343,6 +356,16 @@ class Element
     public function getHelpLine()
     {
         return $this->helpLine;
+    }
+
+
+    /**
+     * 获取层属性
+     * @return array
+     */
+    public function getLayoutAttr()
+    {
+        return $this->layoutAttr;
     }
 
     /**

@@ -298,17 +298,27 @@ class Form
             $groupRule = $vo->getGroup();
             $group = [];
             foreach ($groupRule as $rule) {
-                $group[] = "data.{$rule['name']} ==  '{$rule['value']}'";
+                if (is_array($rule['value'])) {
+                    $value = json_encode($rule['value']);
+                    $group[] = "{$value}.indexOf(data.{$rule['name']}) !== -1";
+                }else {
+                    $group[] = "data.{$rule['name']} ==  '{$rule['value']}'";
+                }
+
             }
-            $group = implode(' || ', $group) ?: null;
+            $group = $group ? implode(' || ', $group) : null;
 
             if ($vo instanceof Form\Composite) {
-                return [
+                $node = [
                     'nodeName' => 'div',
                     'child' => $vo->getRender(),
-                    'vIf' => $group,
                     'sort' => $sort,
                 ];
+                if ($group) {
+                    $node['vIf'] = $group;
+                }
+
+                return array_merge($node, $vo->getLayoutAttr());
             }
 
             $helpNode = [];
