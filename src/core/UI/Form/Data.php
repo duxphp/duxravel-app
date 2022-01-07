@@ -200,4 +200,14 @@ class Data extends Element implements Component
         return $data;
     }
 
+    /**
+     * @param $data
+     * @return array|null
+     */
+    public function dataValue($data): ?array
+    {
+        $data = $this->getValue($data);
+        return $data ?: [];
+    }
+
 }
