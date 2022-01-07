@@ -34,9 +34,8 @@ trait Login
                     'user_id' => $user->user_id,
                     'avatar' => $user->avatar,
                     'avatar_text' => strtoupper(substr($user->nickname ?: $username, 0, 1)),
-                    'username' => $username,
-                    'nickname' => $user->nickname,
                     'rolename' => $user->roles[0]['name'],
+                    'subname' => $user->nickname,
                 ],
                 'token' => 'Bearer ' . auth($layer)->tokenById($user->user_id),
             ]);
