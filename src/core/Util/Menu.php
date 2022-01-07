@@ -35,12 +35,15 @@ class Menu
     {
         $layout = strtolower($layout);
         $data = $this->getAll($layout);
-        $ruleName = $route ?: request()->path();
-        $ruleArr = explode('/', $ruleName);
-        $ruleName = $ruleArr[0] . '/' . $ruleArr[1] . ($ruleArr[2] ? '/' . $ruleArr[2] : '') . '/';
 
         $data = collect($data)->sortBy('order');
-        $roleList = auth(strtolower($layout))->user()->roles()->get();
+
+        $user = auth(strtolower($layout))->user();
+        if ($user->roles) {
+            $roleList = auth(strtolower($layout))->user()->roles()->get();
+        }else {
+            $roleList = collect();
+        }
         $purview = [];
         $roleList->map(function ($item) use (&$purview) {
             $purview = array_merge($purview, (array)$item->purview);
