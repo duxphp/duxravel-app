@@ -156,7 +156,7 @@ class Node
                                         'html-type' => 'submit',
                                         'vBind:loading' => "loading",
                                         'type' => 'primary',
-                                        'child' => '提交',
+                                        'child' => $this->back ? '提交' : '保存',
                                     ],
                                 ]
                             ],
