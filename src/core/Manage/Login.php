@@ -26,7 +26,7 @@ trait Login
     {
         $layer = strtolower(app_parsing('layer'));
         $credentials = $request->only('username', 'password');
-        if (auth($layer)->attempt([$this->usernameKey ?: 'username' => $credentials['username'], 'password' => $credentials['password']])) {
+        if ($token = auth($layer)->attempt([$this->usernameKey ?: 'username' => $credentials['username'], 'password' => $credentials['password']])) {
             $user = auth($layer)->user();
             $username = $this->usernameKey ? $user->{$this->usernameKey} : $user->username;
             return app_success('登录成功', [
@@ -37,7 +37,7 @@ trait Login
                     'rolename' => $user->roles[0]['name'],
                     'subname' => $user->nickname,
                 ],
-                'token' => 'Bearer ' . auth($layer)->tokenById($user->user_id),
+                'token' => 'Bearer ' . $token,
             ]);
         }
         app_error('账号密码错误');
