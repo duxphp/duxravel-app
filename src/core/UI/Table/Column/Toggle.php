@@ -14,7 +14,6 @@ class Toggle implements Component
     private array $params;
     private string $field;
     private array $fields;
-    private string $url;
 
     /**
      * @param string $field

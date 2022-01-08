@@ -80,7 +80,7 @@ class Table
      * 设置列
      * @param string $name
      * @param string $label
-     * @param null $callback
+     * @param null   $callback
      * @return Column
      */
     public function column(string $name = '', string $label = '', $callback = null): Column
@@ -189,6 +189,7 @@ class Table
 
     /**
      * 设置字段映射
+     * @param array $map
      * @return $this
      */
     public function map(array $map): self
@@ -222,7 +223,7 @@ class Table
 
     /**
      * 自定义底部
-     * @param string|callable $callback
+     * @param string|callable|object $callback
      * @return $this
      */
     public function footer($callback): self
@@ -233,9 +234,9 @@ class Table
 
     /**
      * 自定义侧边
-     * @param $callback
+     * @param        $callback
      * @param string $direction
-     * @param false $resize
+     * @param bool   $resize
      * @param string $width
      * @return $this
      */
@@ -252,7 +253,7 @@ class Table
 
     /**
      * 自定义page内容
-     * @param $callback
+     * @param        $callback
      * @param string $direction
      * @return $this
      */
@@ -267,6 +268,7 @@ class Table
 
     /**
      * 设置样式class
+     * @param string $class
      * @return $this
      */
     public function class(string $class): self
@@ -298,6 +300,8 @@ class Table
      * @param string        $name
      * @param callable|null $where
      * @return FilterType
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function filterType(string $name, callable $where = null): FilterType
     {
@@ -356,10 +360,10 @@ class Table
 
     /**
      * 表格标题
-     * @param $title
+     * @param string $title
      * @return $this
      */
-    public function title($title): self
+    public function title(string $title): self
     {
         $this->title = $title;
         return $this;
@@ -367,10 +371,10 @@ class Table
 
     /**
      * 分页数量
-     * @param $num
-     * @return self
+     * @param int $num
+     * @return $this
      */
-    public function limit($num): self
+    public function limit(int $num): self
     {
         $this->limit = $num;
         return $this;
@@ -749,10 +753,10 @@ class Table
 
     /**
      * 集合分页
-     * @param $collection
-     * @param $perPage
+     * @param        $collection
+     * @param        $perPage
      * @param string $pageName
-     * @param null $fragment
+     * @param null   $fragment
      * @return LengthAwarePaginator
      */
     protected function paginateCollection($collection, $perPage, $pageName = 'page', $fragment = null): LengthAwarePaginator
