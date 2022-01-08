@@ -17,7 +17,7 @@ class Link implements Component
      * @param array $fields
      * @return $this
      */
-    public function fields(Array $fields = []): Link
+    public function fields(array $fields = []): Link
     {
         $this->fields = $fields;
         return $this;
@@ -51,11 +51,11 @@ class Link implements Component
             $type = $class->getType();
             $data = $class->render();
 
-            if ($type === 'ajax' && (!$data['vBind:before'] || !$data['before'])) {
+            if (($type === 'ajax' || $type === 'dialog') && (!$data['vBind:before'] || !$data['before'])) {
                 $data['vBind:before'] = "() => rowData.record.__loading = true";
             }
 
-            if ($type === 'ajax' && (!$data['vBind:after'] || !$data['after'])) {
+            if (($type === 'ajax' || $type === 'dialog') && (!$data['vBind:after'] || !$data['after'])) {
                 $data['vBind:after'] = "() => rowData.record.__loading = false";
             }
 
