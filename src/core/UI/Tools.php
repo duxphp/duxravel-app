@@ -52,4 +52,16 @@ class Tools
         return \Arr::has($data, $field) ? \Arr::get($data, $field) : $field;
     }
 
+
+    /**
+     * 标签转换
+     * @param      $label
+     * @param null $relation
+     * @return string
+     */
+    public static function converLabel($label, $relation = null): string
+    {
+        return str_replace(['.', '->'], '_', $relation ? $relation . '_' . $label : $label);
+    }
+
 }

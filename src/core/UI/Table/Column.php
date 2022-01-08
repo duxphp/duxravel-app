@@ -48,7 +48,7 @@ class Column
      * Column constructor.
      * @param string $name
      * @param string $label
-     * @param null $callback
+     * @param null   $callback
      */
     public function __construct(string $name = '', string $label = '', $callback = null)
     {
@@ -136,7 +136,7 @@ class Column
     /**
      * 设置附加属性
      * @param string $name
-     * @param $value
+     * @param        $value
      * @return $this
      */
     public function attr(string $name, $value): self
@@ -160,8 +160,8 @@ class Column
      * 添加链接
      * @param string $name
      * @param string $route
-     * @param array $params
-     * @param bool $absolute
+     * @param array  $params
+     * @param bool   $absolute
      * @return Link
      */
     public function link(string $name, string $route, array $params = [], bool $absolute = false): Link
@@ -177,7 +177,7 @@ class Column
      * 添加菜单
      * @param string $name
      * @param string $route
-     * @param array $params
+     * @param array  $params
      * @return Link
      */
     public function menu(string $name, string $route, array $params = []): Link
@@ -190,7 +190,7 @@ class Column
 
     /**
      * 副标题
-     * @param string $label
+     * @param string        $label
      * @param callable|null $callback
      * @return $this
      */
@@ -198,6 +198,7 @@ class Column
     {
         if (!$this->element && !$this->element instanceof Table\Column\RichText) {
             $this->element = new Table\Column\RichText();
+            $this->element->setRelation($this->relation);
         }
         $this->element->desc($label, $callback);
         return $this;
@@ -205,11 +206,11 @@ class Column
 
     /**
      * 图片显示
-     * @param string $label
+     * @param string        $label
      * @param callable|null $callback
-     * @param int $width
-     * @param int $height
-     * @param string $placeholder
+     * @param int           $width
+     * @param int           $height
+     * @param string        $placeholder
      * @return $this
      */
     public function image(string $label, callable $callback = null, int $width = 10, int $height = 10, string $placeholder = ''): self
@@ -290,7 +291,7 @@ class Column
      */
     public function getLabel(): string
     {
-        return str_replace(['.', '->'], '_', $this->relation ? $this->relation . '_' . $this->label : $this->label);
+        return Tools::converLabel($this->label, $this->relation);
     }
 
     /**
@@ -409,7 +410,7 @@ class Column
         }
         if ($this->sorter instanceof \Closure) {
             call_user_func($this->sorter, $query, $value);
-        } elseif ($this->sorter !== false) {
+        } else if ($this->sorter !== false) {
             $query->orderBy(is_string($this->sorter) ? $this->sorter : $this->label, $value === 'desc' ? 'desc' : 'asc');
         }
     }
