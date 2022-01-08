@@ -27,11 +27,11 @@ class Menu
 
     /**
      * 获取所有菜单
-     * @param string $layout
-     * @param string $route
+     * @param string        $layout
+     * @param \Closure|null $check
      * @return array
      */
-    public function getManage(string $layout = '', string $route = ''): array
+    public function getManage(string $layout = '', ?\Closure $check = null): array
     {
         $layout = strtolower($layout);
         $data = $this->getAll($layout);
@@ -41,7 +41,7 @@ class Menu
         $user = auth(strtolower($layout))->user();
         if ($user->roles) {
             $roleList = auth(strtolower($layout))->user()->roles()->get();
-        }else {
+        } else {
             $roleList = collect();
         }
         $purview = [];
@@ -58,8 +58,15 @@ class Menu
 
             if ($appList['route']) {
                 $routeItem = app('router')->getRoutes()->getByName($appList['route']);
+                // 非公共路由检测权限
                 $public = $routeItem ? $routeItem->getAction('public') : false;
                 if (!$public && $purview && !in_array($appList['route'], $purview)) {
+                    continue;
+                }
+
+                // 自定义检测权限路由
+                $roteCheck = $routeItem ? $routeItem->getAction('auth_check') : false;
+                if ($roteCheck && $check && !$check($appList, $routeItem)) {
                     continue;
                 }
             }
@@ -90,11 +97,17 @@ class Menu
                 $parentList['menu'] = collect($parentList['menu'])->sortBy('order')->values();
                 foreach ($parentList['menu'] as $sub => $subList) {
                     $routeItem = app('router')->getRoutes()->getByName($subList['route']);
+                    // 非公共路由检测权限
                     $public = $routeItem ? $routeItem->getAction('public') : false;
-
                     if (!$public && $purview && !in_array($subList['route'], $purview)) {
                         continue;
                     }
+                    // 自定义检测权限路由
+                    $roteCheck = $routeItem ? $routeItem->getAction('auth_check') : false;
+                    if ($roteCheck && $check && !$check($subList, $routeItem)) {
+                        continue;
+                    }
+
                     $url = route($subList['route'], $subList['params'], false);
                     $subData[$sub] = [
                         'name' => $subList['name'],
