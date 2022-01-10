@@ -18,6 +18,7 @@ class TreeList extends Widget
     private bool $search = true;
     private array $keyword = [];
     private array $menu = [];
+    private array $fieldNames = [];
     private $labelNode = [];
 
     /**
@@ -84,6 +85,16 @@ class TreeList extends Widget
         return $this;
     }
 
+    public function fieldNames(array $map): self
+    {
+        $this->fieldNames = $map;
+        return $this;
+    }
+
+    /**
+     * @param $node
+     * @return $this
+     */
     public function label($node): TreeList
     {
         $this->labelNode = $node;
@@ -108,6 +119,10 @@ class TreeList extends Widget
             'iconColor' => ['blue', 'cyan', 'green', 'orange', 'red', 'purple'],
             'vModel:value' => "data.filter['{$this->field}']",
         ];
+
+        if ($this->fieldNames) {
+            $tree['fieldNames'] = $this->fieldNames;
+        }
 
         if ($this->labelNode) {
             $tree['child'] = [
