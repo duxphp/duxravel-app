@@ -34,7 +34,7 @@ class Date extends Element implements Component
      */
     public function type(string $type): self
     {
-        if (in_array($type, $this->types, true)) {
+        if (!in_array($type, $this->types)) {
             throw new \RuntimeException('There is no type "' . $type . '"');
         }
         $this->type = $type;
