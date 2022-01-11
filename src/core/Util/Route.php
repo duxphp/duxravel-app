@@ -291,12 +291,12 @@ class Route
 
     /**
      * 自定义方法
-     * @param string $type
+     * @param string|array $type
      * @param string $action
      * @param string $name
      * @return $this
      */
-    public function add(string $type, string $action, string $name): Route
+    public function add($type, string $action, string $name): Route
     {
         $this->extend['addItem' . ucfirst($action)] = [
             'type' => $type,
