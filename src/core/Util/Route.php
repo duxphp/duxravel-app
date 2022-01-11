@@ -92,7 +92,7 @@ class Route
                 $item = [$item];
             }
             foreach ($item as $vo) {
-                \Route::{$vo['type']}($vo['rule'], ['uses' => $vo['uses'], 'desc' => $vo['desc'], 'auth_list' => isset($vo['auth_list']) ? $vo['auth_list'] : []])->name($vo['name']);
+                \Route::match(is_array($vo['type']) ? $vo['type'] : [$vo['type']], $vo['rule'], ['uses' => $vo['uses'], 'desc' => $vo['desc'], 'auth_list' => isset($vo['auth_list']) ? $vo['auth_list'] : []])->name($vo['name']);
             }
         });
     }
