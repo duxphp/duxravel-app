@@ -769,12 +769,12 @@ class Form
      * @param $type
      * @return array|false
      */
-    public function callbackEvent($table, $name, $type)
+    public function callbackEvent($table, $name, $type, $data = null)
     {
         if (!$this->modelId) {
             return false;
         }
-        $rowsData = $this->modelElo->where($this->modelElo->getKeyName(), $this->modelId)->get();
+        $rowsData = $data ?: $this->modelElo->where($this->modelElo->getKeyName(), $this->modelId)->get();
         $list = $table->renderRowData($rowsData, false);
 
         $parentKey = null;

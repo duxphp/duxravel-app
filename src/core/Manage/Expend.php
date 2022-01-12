@@ -10,6 +10,7 @@ use Duxravel\Core\Events\ManageRecovery;
 use Duxravel\Core\Events\ManageExport;
 use Duxravel\Core\Events\ManageDel;
 use Duxravel\Core\UI\Event;
+use Duxravel\Core\UI\Form;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
  * @package Duxravel\Core\Controller
  * @method \Duxravel\Core\UI\Table table()
  * @method \Duxravel\Core\UI\Form form($id = 0)
+ * @method saveEvent($table, Form $form, $class, $type)
  * @method storeData($data, $id)
  * @method delData($id = 0)
  * @method clearData($id, $info)
@@ -84,6 +86,13 @@ trait Expend
         $data = [];
         if (method_exists($this, 'table')) {
             $data = $form->callbackEvent($this->table(), get_called_class(), $id ? 'edit' : 'add');
+        }
+        if (method_exists($this, 'table')) {
+            if (method_exists($this, 'saveEvent')) {
+                $data = $this->saveEvent($this->table(), $form, get_called_class(), $id ? 'edit' : 'add');
+            } else {
+                $data = $form->callbackEvent($this->table(), get_called_class(), $id ? 'edit' : 'add');
+            }
         }
 
         if ($this->indexUrl === null) {
