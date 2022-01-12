@@ -585,7 +585,7 @@ class Form
      * 主键值
      * @var null
      */
-    protected $modelId = null;
+    public $modelId = null;
 
     /**
      * 保存数据
