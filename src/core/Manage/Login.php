@@ -33,7 +33,7 @@ trait Login
                 'userInfo' => [
                     'user_id' => $user->user_id,
                     'avatar' => $user->avatar,
-                    'avatar_text' => strtoupper(substr($user->nickname ?: $username, 0, 1)),
+                    'avatar_text' => mb_substr($user->nickname ?: $username, 0, 1),
                     'rolename' => $user->roles[0]['name'],
                     'subname' => $user->nickname,
                 ],
