@@ -253,7 +253,7 @@ class Link extends Widget
 
         $object['child'] = $link;
 
-        return $object;
+        return array_merge($object, $this->attr);
 
     }
 
