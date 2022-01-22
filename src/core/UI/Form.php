@@ -478,7 +478,15 @@ class Form
      */
     public function render()
     {
+        return app_success('ok', $this->renderArray());
+    }
 
+    /**
+     * 渲染表单(数组)
+     * @return array
+     */
+    public function renderArray()
+    {
         // 提交地址
         if ($this->action) {
             $action = $this->action;
@@ -514,7 +522,7 @@ class Form
             $node->script($value, $this->scriptReturn[$key]);
         }
 
-        return app_success('ok', $node->render());
+        return $node->render();
     }
 
     /**

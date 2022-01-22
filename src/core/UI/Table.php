@@ -528,6 +528,15 @@ class Table
      */
     public function render()
     {
+        return app_success('ok',$this->renderArray());
+    }
+
+    /**
+     * 渲染表格(数组)
+     * @return array
+     */
+    public function renderArray()
+    {
         // 扩展节点
         $headerNode = [];
         foreach ($this->headerNode as $vo) {
@@ -602,7 +611,7 @@ class Table
         if ($batchNode) {
             $node->bath($batchNode);
         }
-        return app_success('ok', $node->render());
+        return $node->render();
     }
 
     /**
