@@ -37,9 +37,11 @@ class Table
     protected array $map = [];
     protected array $filterParams = [];
     protected string $url = '';
+    protected bool $urlBind = true;
     protected string $key = '';
     protected ?bool $dialog = null;
     protected string $title = '';
+    private ?string $eventName = null;
     protected array $headerNode = [];
     protected array $footerNode = [];
     protected array $sideNode = [];
@@ -274,6 +276,28 @@ class Table
     public function class(string $class): self
     {
         $this->class[] = $class;
+        return $this;
+    }
+
+    /**
+     * 设置绑定方式
+     * @param $urlBind true 使用url绑定控件
+     * @return $this
+     */
+    public function urlBind($urlBind): self
+    {
+        $this->urlBind = $urlBind;
+        return $this;
+    }
+
+    /**
+     * 设置请求事件绑定名称
+     * @param string|null $eventName
+     * @return $this
+     */
+    public function eventName(?string $eventName): self
+    {
+        $this->eventName = $eventName;
         return $this;
     }
 
@@ -523,19 +547,10 @@ class Table
     }
 
     /**
-     * 渲染表格
-     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     * 渲染组件
+     * @return Node
      */
-    public function render()
-    {
-        return app_success('ok',$this->renderArray());
-    }
-
-    /**
-     * 渲染表格(数组)
-     * @return array
-     */
-    public function renderArray()
+    private function renderNode()
     {
         // 扩展节点
         $headerNode = [];
@@ -578,11 +593,13 @@ class Table
 
         $keyName = $this->key ?: ($this->model ? $this->model->getKeyName() : '');
         $node = new Node($this->url ?: url(request()->path() . '/ajax'), $keyName, $this->title);
+        $node->urlBind($this->urlBind);
         $node->class(implode(' ', $this->class));
         $node->params($this->attr);
         $node->data($this->filterParams);
         $node->columns($columnNode);
         $node->expand($this->expand);
+        $node->eventName($this->eventName);
 
         foreach ($this->script as $key => $value) {
             $node->script($value, $this->scriptReturn[$key]);
@@ -594,13 +611,13 @@ class Table
         $node->type($typeNode);
         $node->quickFilter($quickNode);
         $node->filter($filterNode);
+
         foreach ($this->sideNode as $vo) {
             $node->side($vo['callback'], $vo['direction'], $vo['resize'], $vo['width']);
         }
         foreach ($this->pageNode as $vo) {
             $node->page($vo['callback'], $vo['direction']);
         }
-
 
         $node->header($headerNode);
         $node->footer($footerNode);
@@ -611,7 +628,36 @@ class Table
         if ($batchNode) {
             $node->bath($batchNode);
         }
+        return $node;
+    }
+
+    /**
+     * 渲染表格
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     */
+    public function render()
+    {
+        return app_success('ok',$this->renderArray());
+    }
+
+    /**
+     * 渲染表格(数组)
+     * @return array
+     */
+    public function renderArray()
+    {
+        $node = $this->renderNode();
         return $node->render();
+    }
+
+    /**
+     * 只渲染table
+     * @return array
+     */
+    public function renderTableCore()
+    {
+        $node = $this->renderNode();
+        return $node->renderTableCore();
     }
 
     /**

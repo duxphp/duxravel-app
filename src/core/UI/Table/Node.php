@@ -15,6 +15,7 @@ class Node
     private ?string $key;
     private ?string $title;
     private bool $tree = false;
+    private bool $urlBind = true;
     private string $class = '';
     private array $params = [];
     private array $data = [];
@@ -33,6 +34,7 @@ class Node
     private array $script = [];
     private array $scriptReturn = [];
     private array $scriptData = [];
+    private ?string $eventName = null;
 
     /**
      * Node constructor.
@@ -45,6 +47,16 @@ class Node
         $this->url = $url;
         $this->key = $key;
         $this->title = $title;
+    }
+
+    /**
+     * @param $urlBind
+     * @return $this
+     */
+    public function urlBind($urlBind): self
+    {
+        $this->urlBind = $urlBind;
+        return $this;
     }
 
     /**
@@ -186,6 +198,16 @@ class Node
     }
 
     /**
+     * @param string|null $eventName
+     * @return $this
+     */
+    public function eventName(?string $eventName): self
+    {
+        $this->eventName = $eventName;
+        return $this;
+    }
+
+    /**
      * @param        $node
      * @param string $type
      * @param false  $resize
@@ -318,10 +340,10 @@ class Node
 
         return [
             'nodeName' => 'app-table',
-            'requestEventName' => md5(url_class($this->url)['class']),
+            'requestEventName' => $this->eventName ?: md5(url_class($this->url)['class']),
             'class' => $this->class,
             'url' => $this->url,
-            'urlBind' => true,
+            'urlBind' => $this->urlBind,
             'n-params' => $this->params,
             'columns' => $this->columns,
             'vBind:filter' => 'data.filter',
@@ -425,4 +447,55 @@ class Node
             'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}'
         ];
     }
+
+    /**
+     * 渲染table核心
+     * @return array[]
+     */
+    public function renderTableCore(): array
+    {
+        $value = [
+            'filter' => $this->data['filter'] ?: [],
+            'show' => $this->data['show'] ?: []
+        ];
+        $value = array_merge($this->scriptData, $value);
+
+        return [
+            'nodeName' => 'app-form',
+            'value' => $value,
+            'child' => [
+                'nodeName' => 'div',
+                'class' => 'flex flex-row items-start gap-4 p-4',
+                'vSlot' => '{value: data}',
+                'child' => [
+                    $this->page['left'] ?: [],
+                    [
+                        'nodeName' => 'div',
+                        'class' => 'flex-grow lg:w-10 p-4 bg-white dark:bg-blackgray-4 rounded shadow',
+                        'child' => [
+                            $this->header ? [
+                                'nodeName' => 'div',
+                                'class' => 'pb-4',
+                                'child' => $this->header
+                            ] : [],
+                            [
+                                'nodeName' => 'div',
+                                'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
+                                'child' => $this->headNode()
+
+                            ],
+                            $this->tableNode(),
+                            $this->footer ? [
+                                'nodeName' => 'div',
+                                'class' => 'pb-4',
+                                'child' => $this->footer
+                            ] : [],
+                        ],
+                    ],
+                    $this->page['right'] ?: [],
+                ]
+            ]
+        ];
+    }
+
 }
