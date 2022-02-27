@@ -35,21 +35,18 @@ class Status implements Component
         $statusArr = [];
         foreach ($this->map as $key => $vo) {
             $statusArr[$key]['name'] = $vo;
-        }
-        foreach ($this->color as $key => $vo) {
-            $statusArr[$key]['color'] = $vo;
+            $statusArr[$key]['color'] = $this->color[$key] ?? 'blue';
         }
 
         $node = [];
         foreach ($statusArr as $key => $vo) {
-
             if ($this->type === 'badge') {
                 $item = (new Badge($vo['name']))->color($vo['color'])->render();
                 $item['vIf'] = "rowData.record['{$label}'] == " . (is_numeric($key) ? $key : "'$key'");
             } else {
                 $item = [
                     'nodeName' => 'div',
-                    'class' => 'text-' . ($vo['color'] ?: 'blue') . '-900',
+                    'class' => 'text-' . $vo['color'] . '-900',
                     'child' => $vo['name']
                 ];
             }
