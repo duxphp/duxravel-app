@@ -34,7 +34,7 @@
                     </svg>
                     <div>立即跳转</div>
                 </a>
-                <a href="{{route('web.index')}}"
+                <a href="/"
                    class="btn flex items-center space-x-3 text-sm">
                     <div>回到首页</div>
                 </a>
