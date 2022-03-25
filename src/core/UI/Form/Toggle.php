@@ -8,7 +8,8 @@ namespace Duxravel\Core\UI\Form;
  */
 class Toggle extends Element implements Component
 {
-
+    private $checkedValue = 1;
+    private $uncheckedValue = 0;
 
     /**
      * Toggle constructor.
@@ -31,7 +32,21 @@ class Toggle extends Element implements Component
         return [
             'nodeName' => 'a-switch',
             'vModel:modelValue' => $this->getModelField(),
+            'checkedValue' => $this->checkedValue,
+            'uncheckedValue' => $this->checkedValue
         ];
+    }
+
+    /**
+     * 开关数据
+     * @param $checkedValue
+     * @param $uncheckedValue
+     * @return $this
+     */
+    public function data($checkedValue,$uncheckedValue){
+        $this->checkedValue = $checkedValue;
+        $this->uncheckedValue = $uncheckedValue;
+        return $this;
     }
 
     /**

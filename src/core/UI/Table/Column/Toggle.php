@@ -14,6 +14,8 @@ class Toggle implements Component
     private array $params;
     private string $field;
     private array $fields;
+    private $checkedValue = 1;
+    private $uncheckedValue = 0;
 
     /**
      * @param string $field
@@ -27,7 +29,6 @@ class Toggle implements Component
         $this->route = $route;
     }
 
-
     /**
      * 设置列字段
      * @param array $fields
@@ -36,6 +37,18 @@ class Toggle implements Component
     public function fields(Array $fields = []): self
     {
         $this->fields = $fields;
+        return $this;
+    }
+
+    /**
+     * 开关数据
+     * @param $checkedValue
+     * @param $uncheckedValue
+     * @return $this
+     */
+    public function data($checkedValue,$uncheckedValue){
+        $this->checkedValue = $checkedValue;
+        $this->uncheckedValue = $uncheckedValue;
         return $this;
     }
 
@@ -50,6 +63,8 @@ class Toggle implements Component
             'nodeName' => 'a-switch',
             'vModel:model-value' => "rowData.record['$label']",
             'vOn:change' => "rowData.record['$label'] = \$event, editValue($url, {'field': '$this->field', '$this->field': rowData.record['$label']})",
+            'checkedValue' => $this->checkedValue,
+            'uncheckedValue' => $this->checkedValue
         ];
     }
 

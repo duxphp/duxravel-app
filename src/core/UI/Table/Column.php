@@ -416,6 +416,16 @@ class Column
     }
 
     /**
+     * 执行元素处理
+     * @param callable $callback
+     * @return $this
+     */
+    public function element(callable $callback){
+        $callback($this->element);
+        return $this;
+    }
+
+    /**
      * @param $method
      * @param $arguments
      * @return $this
