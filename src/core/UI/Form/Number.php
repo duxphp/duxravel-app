@@ -9,9 +9,18 @@ namespace Duxravel\Core\UI\Form;
 class Number extends Element implements Component
 {
     protected Text $object;
-    protected int $step = 1;
-    protected ?int $max = null;
-    protected ?int $min = 0;
+    /**
+     * @var int|float
+     */
+    protected $step = 1;
+    /**
+     * @var ?int|float
+     */
+    protected $max = null;
+    /**
+     * @var int|float
+     */
+    protected $min = 0;
     protected ?int $precision = null;
 
     /**
@@ -29,10 +38,10 @@ class Number extends Element implements Component
 
     /**
      * 最大值
-     * @param int $default
+     * @param int|float $default
      * @return $this
      */
-    public function max(int $default = 0): self
+    public function max($default = 0): self
     {
         $this->max = $default;
         return $this;
@@ -40,10 +49,10 @@ class Number extends Element implements Component
 
     /**
      * 最小值
-     * @param int $default
+     * @param int|float $default
      * @return $this
      */
-    public function min(int $default = 0): self
+    public function min($default = 0): self
     {
         $this->min = $default;
         return $this;
@@ -51,11 +60,11 @@ class Number extends Element implements Component
 
     /**
      * 步进数值
-     * @param int      $default
+     * @param int|float      $default
      * @param int|null $precision
      * @return $this
      */
-    public function step(int $default = 1, ?int $precision = null): self
+    public function step($default = 1, ?int $precision = null): self
     {
         $this->step = $default;
         $this->precision = $precision;
