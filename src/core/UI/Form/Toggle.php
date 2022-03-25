@@ -33,14 +33,14 @@ class Toggle extends Element implements Component
             'nodeName' => 'a-switch',
             'vModel:modelValue' => $this->getModelField(),
             'checkedValue' => $this->checkedValue,
-            'uncheckedValue' => $this->checkedValue
+            'uncheckedValue' => $this->uncheckedValue
         ];
     }
 
     /**
      * 开关数据
-     * @param $checkedValue
-     * @param $uncheckedValue
+     * @param string|number|boolean $checkedValue
+     * @param string|number|boolean $uncheckedValue
      * @return $this
      */
     public function data($checkedValue,$uncheckedValue){

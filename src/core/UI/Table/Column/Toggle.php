@@ -42,8 +42,8 @@ class Toggle implements Component
 
     /**
      * 开关数据
-     * @param $checkedValue
-     * @param $uncheckedValue
+     * @param string|number|boolean $checkedValue
+     * @param string|number|boolean $uncheckedValue
      * @return $this
      */
     public function data($checkedValue,$uncheckedValue){
@@ -64,7 +64,7 @@ class Toggle implements Component
             'vModel:model-value' => "rowData.record['$label']",
             'vOn:change' => "rowData.record['$label'] = \$event, editValue($url, {'field': '$this->field', '$this->field': rowData.record['$label']})",
             'checkedValue' => $this->checkedValue,
-            'uncheckedValue' => $this->checkedValue
+            'uncheckedValue' => $this->uncheckedValue
         ];
     }
 
