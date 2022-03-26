@@ -63,6 +63,7 @@ class Form
     protected array $sideNode = [];
     protected bool $dialog = false;
     protected bool $vertical = true;
+    protected array $map = [];
     public Collection $element;
 
     /**
@@ -272,6 +273,17 @@ class Form
     }
 
     /**
+     * 设置字段映射
+     * @param array $map
+     * @return $this
+     */
+    public function map(array $map): self
+    {
+        $this->map = array_merge($this->map, $map);
+        return $this;
+    }
+
+    /**
      * 获取表单数据
      */
     public function renderData($info)
@@ -283,6 +295,13 @@ class Form
                 $collection->put($key, $vo);
             }
         });
+        if ($this->map) {
+            foreach ($this->map as $k => $v) {
+                $key = is_int($k) ? str_replace(['.', '->'], '_', $v) : $k;
+                $vo = is_callable($v) ? call_user_func($v, $info) : Tools::parsingArrData($info,$v);
+                $collection->put($key, $vo);
+            }
+        }
         return $collection->toArray();
     }
 
