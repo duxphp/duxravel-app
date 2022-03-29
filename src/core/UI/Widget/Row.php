@@ -52,8 +52,9 @@ class Row extends Widget
             ];
         }
         return [
-          'nodeName' => 'grid grid-flow-col gap-x-4',
-            'child' => $nodes
+            'nodeName' => 'div',
+            'class'    => 'grid grid-flow-col gap-x-4',
+            'child'    => $nodes
         ];
 
 
