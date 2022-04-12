@@ -729,7 +729,7 @@ class Table
             $this->map['key'] = $key;
         }
 
-        $resetData = $this->formatData($data, $columns);
+        $resetData = $this->formatData($data, $columns,$this->tree);
 
         return app_success('ok', [
             'data' => $resetData,
