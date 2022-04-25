@@ -19,18 +19,26 @@ trait Role
         $this->config['guard_id'] = request()->get('global_guard_id', null);
 
         $route = strtolower($parsing['layer']) . '.' . strtolower($parsing['app']) . '.role';
-        $app = $parsing['app'];
-        $model = '\\Modules\\' . $app . '\\Model\\' . $app . 'Role';
+        $model = AuthRole::class;
         return [
             'route' => $route,
             'model' => $model
         ];
     }
 
+    /**
+     * 加载model
+     * @return void
+     */
+    protected function initModel(){
+        $parser = $this->parserData();
+        $this->model = $parser['model'];
+    }
+
     protected function table(): Table
     {
         $parser = $this->parserData();
-        $table = new Table(new AuthRole());
+        $table = new Table(new $parser['model']());
         $table->model()->where('guard', $this->config['layer'])->where('guard_id', $this->config['guard_id']);
         $table->title('角色管理');
 
@@ -44,14 +52,14 @@ trait Role
 
         $column = $table->column('操作')->width(200);
         $column->link('编辑', $parser['route'] . '.page', ['id' => 'role_id'])->type('dialog');
-        $column->link('删除', $parser['route'] . '.del')->type('ajax', ['method' => 'post']);
+        $column->link('删除', $parser['route'] . '.del', ['id' => 'role_id'])->type('ajax', ['method' => 'post']);
         return $table;
     }
 
     public function form(int $id = 0): Form
     {
-        $this->parserData();
-        $form = new Form(new AuthRole());
+        $parser = $this->parserData();
+        $form = new Form(new $parser['model']());
         $form->model()->where('guard', $this->config['layer'])->where('guard_id', $this->config['guard_id']);
         $form->title('角色信息');
         $form->card(function ($form) {
@@ -73,7 +81,6 @@ trait Role
 
         return $form;
     }
-
 
     public function formInner($form)
     {
@@ -130,6 +137,5 @@ trait Role
 
         return $form;
     }
-
 
 }
