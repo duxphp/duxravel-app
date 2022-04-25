@@ -15,7 +15,7 @@ class Images implements Component
     /**
      * Tags constructor.
      */
-    public function __construct(int $size)
+    public function __construct(int $size = 3)
     {
         $this->size = $size;
     }
