@@ -674,7 +674,7 @@ class Form
             $data->map(function ($item, $key) use ($model) {
                 $has = $item['has'];
                 // 查询关联对象
-                if (method_exists($model, $has)) {
+                if (method_exists($model, $has) && !is_null($item['value'])) {
                     $relation = $model->$has();
                     // 多对多
                     if ($relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
