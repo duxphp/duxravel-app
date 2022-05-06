@@ -213,7 +213,6 @@ trait Expend
         return app_success('更改状态成功');
     }
 
-
     public function data()
     {
         $name = request()->get('query');
@@ -238,8 +237,14 @@ trait Expend
             $ids = array_filter($ids);
             if ($ids) {
                 $ids = implode(',', $ids);
-                $data = $data->orderByRaw(DB::raw("FIELD($key, $ids) desc"))->orderBy($key, 'desc');
+                $data = $data->orderByRaw(DB::raw("FIELD($key, $ids) desc"));
             }
+        }
+
+        if (method_exists($this, 'dataOrder')) {
+            $data = $this->dataOrder($data);
+        }else{
+            $data->orderBy($key);
         }
 
         if (method_exists($this, 'dataWhere')) {
@@ -251,13 +256,20 @@ trait Expend
             $field = $this->dataField();
         }
         $field[] = $key . ' as id';
-        $data = $data->paginate($limit, $field);
+        $retData = [];
+        if($limit){
+            $paginate = $data->paginate($limit, $field);
+            $data = $paginate->getCollection();
 
-        $totalPage = $data->lastPage();
-        $total = $data['total'];
+            $retData['total'] = $paginate->total();
+            $retData['pageSize'] = $paginate->perPage();
+            $retData['totalPage'] = $paginate->lastPage();
+        }else{
+            $data = $data->get($field);
+        }
 
         if (method_exists($this, 'dataCallback')) {
-            $data->setCollection($this->dataCallback($data->getCollection()));
+            $data = $this->dataCallback($data);
         }
 
         $data = $data->toArray();
@@ -270,7 +282,7 @@ trait Expend
         if (method_exists($this, 'dataInfoUrl')) {
             $infoUrl = true;
         }
-        foreach ($data['data'] as &$item) {
+        foreach ($data as &$item) {
             if ($manageUrl) {
                 $item['manage_url'] = $this->dataManageUrl($item);
             }
@@ -279,11 +291,8 @@ trait Expend
             }
         }
 
-        return app_success('ok', [
-            'data' => $data['data'],
-            'total' => $total,
-            'pageSize' => $limit,
-            'totalPage' => $totalPage,
-        ]);
+        $retData['data'] = $data;
+        return app_success('ok', $retData);
     }
+
 }
