@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\UI\Table;
 
+use Closure;
 use Duxravel\Core\Util\Excel;
 use Duxravel\Core\UI\Tools;
 
@@ -41,14 +42,14 @@ class Export
     /**
      * 列设置
      * @param string $name
-     * @param string $value
-     * @param int    $width
+     * @param string|Closure $value
+     * @param int $width
      * @return $this
      */
-    public function column(string $name, string $value, int $width = 10): self
+    public function column(string $name, $value, int $width = 10): self
     {
         $this->column[] = [
-            'name' => $name,
+            'name'  => $name,
             'value' => $value,
             'width' => $width
         ];
