@@ -40,15 +40,21 @@ class Datetime extends Element implements Component
      */
     public function render(): array
     {
-        return [
+        $data = [
             'nodeName' => 'a-date-picker',
             'vModel:value' => $this->getModelField(),
             'showTime' => true,
             'allowClear' => true,
             'format' => $this->string,
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
-            'vModel:modelValue' => $this->getModelField(),
+            'vModel:modelValue' => $this->getModelField()
         ];
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
     /**

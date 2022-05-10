@@ -42,11 +42,16 @@ class Tags extends Element implements Component
             'nodeName' => 'a-input-tag',
             'vModel:modelValue' => $this->getModelField(),
             'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
-            'allowClear' => true,
+            'allowClear' => true
         ];
         if ($this->limit) {
             $data['maxTagCount'] = $this->limit;
         }
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
         return $data;
     }
 

@@ -86,12 +86,18 @@ class Radio extends Element implements Component
             ];
         }
 
-        return [
+        $data = [
             'nodeName' => 'a-radio-group',
             'name' => $this->field,
             'vModel:modelValue' => $this->getModelField(),
             'child' => $child
         ];
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
     public function dataValue($value)

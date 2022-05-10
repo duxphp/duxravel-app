@@ -28,12 +28,18 @@ class Password extends Element implements Component
      */
     public function render(): array
     {
-        return [
+        $data = [
             'nodeName' => 'a-input-password',
             'vModel:modelValue' => $this->getModelField(),
             'placeholder' => $this->attr['placeholder'] ?: '请输入' . $this->name,
-            'allowClear' => true,
+            'allowClear' => true
         ];
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
 

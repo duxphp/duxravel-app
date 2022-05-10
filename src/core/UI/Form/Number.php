@@ -90,6 +90,9 @@ class Number extends Element implements Component
         if ($this->precision) {
             $data['precision'] = $this->precision;
         }
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
         return $data;
     }
 

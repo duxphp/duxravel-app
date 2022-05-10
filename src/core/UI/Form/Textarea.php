@@ -49,6 +49,11 @@ class Textarea extends Element implements Component
         if ($this->limit) {
             $data['maxLength'] = $this->limit;
         }
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
         return $data;
     }
 

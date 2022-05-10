@@ -29,12 +29,18 @@ class Toggle extends Element implements Component
      */
     public function render(): array
     {
-        return [
+        $data = [
             'nodeName' => 'a-switch',
             'vModel:modelValue' => $this->getModelField(),
             'checkedValue' => $this->checkedValue,
             'uncheckedValue' => $this->uncheckedValue
         ];
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
     /**

@@ -34,6 +34,7 @@ class Column
     protected $align = '';
     protected $fixed = '';
     protected $class = [];
+    protected $replace = '';
     protected ?int $colspan = null;
     protected ?\Closure $show = null;
     protected ?int $sort = null;
@@ -153,6 +154,17 @@ class Column
     public function color(string $name): self
     {
         $this->class[] = 'text-' . $name;
+        return $this;
+    }
+
+    /**
+     * 字符串替换标签(数字字符串处理使用)
+     * @param $replace
+     * @return $this
+     */
+    public function replace($replace): self
+    {
+        $this->replace = $replace;
         return $this;
     }
 
@@ -319,6 +331,10 @@ class Column
 
         if ($this->fixed) {
             $node['fixed'] = $this->fixed;
+        }
+
+        if($this->replace){
+            $node['replace'] = $this->replace;
         }
 
         if ($this->children) {

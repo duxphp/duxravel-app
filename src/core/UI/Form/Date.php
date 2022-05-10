@@ -50,13 +50,17 @@ class Date extends Element implements Component
             'nodeName' => 'a-date-picker',
             'allowClear' => true,
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
-            'vModel:modelValue' => $this->getModelField(),
+            'vModel:modelValue' => $this->getModelField()
         ];
         if ($this->type) {
             $data['nodeName'] = 'a-' . $this->type . '-picker';
         }
-        return $data;
 
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
     /**

@@ -103,12 +103,18 @@ class Text extends Element implements Component
             ];
         }
 
-        return [
+        $data = [
             'nodeName' => 'a-input',
             'vModel:modelValue' => $this->getModelField(),
             'child' => $child,
-            'placeholder' => '请输入' . $this->name,
+            'placeholder' => '请输入' . $this->name
         ];
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
 

@@ -19,6 +19,7 @@ class Element
     protected string $prompt = '';
     protected string $model = 'data.';
     protected array $class = [];
+    protected $replace = '';
     protected array $attr = [];
     protected array $layoutAttr = [];
     protected array $style = [];
@@ -257,6 +258,17 @@ class Element
     public function class(string $name): self
     {
         $this->class[] = $name;
+        return $this;
+    }
+
+    /**
+     * 字符串替换标签(数字字符串处理使用)
+     * @param $replace
+     * @return $this
+     */
+    public function replace($replace): self
+    {
+        $this->replace = $replace;
         return $this;
     }
 

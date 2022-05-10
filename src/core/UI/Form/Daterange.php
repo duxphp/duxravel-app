@@ -42,11 +42,17 @@ class Daterange extends Element implements Component
      */
     public function render(): array
     {
-        return [
+        $data = [
             'nodeName' => 'a-range-picker',
             'allowClear' => true,
             'vModel:modelValue' => $this->getModelField()
         ];
+
+        if($this->replace != ''){
+            $data['vStringReplace'] = $this->replace;
+        }
+
+        return $data;
     }
 
     /**
