@@ -2,6 +2,7 @@
 
 namespace Duxravel\Core\UI\Table;
 
+use Duxravel\Core\UI\Form\Cascader;
 use Duxravel\Core\UI\Tools;
 use Duxravel\Core\UI\Widget\Icon;
 
@@ -76,6 +77,17 @@ class Node
     public function params($params): self
     {
         $this->params = $params;
+        return $this;
+    }
+
+    /**
+     * 附加参数
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function nParams($key,$value){
+        $this->params[$key] = $value;
         return $this;
     }
 

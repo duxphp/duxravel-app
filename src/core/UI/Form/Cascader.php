@@ -11,6 +11,7 @@ class Cascader extends Element implements Component
     protected bool $tip = false;
     protected bool $multi = false;
     protected bool $leaf = true;
+    private array $params = [];
     protected bool $treeData = false;
     protected string $url = '';
     protected string $route = '';
@@ -102,6 +103,26 @@ class Cascader extends Element implements Component
     }
 
     /**
+     * 标签显示最大条数
+     * @param int $num
+     * @return $this
+     */
+    public function maxTagCount(int $num){
+        return $this->nParams('maxTagCount',$num);
+    }
+
+    /**
+     * 附加参数
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function nParams($key,$value){
+        $this->params[$key] = $value;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function render(): array
@@ -135,12 +156,12 @@ class Cascader extends Element implements Component
 
         $data = [
             'nodeName' => 'app-cascader',
-            'nParams' => [
+            'nParams'  => array_merge($this->params, [
                 'check-strictly' => !$this->leaf,
-                'multiple' => $this->multi,
-                'options' => $options,
-                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
-            ]
+                'multiple'       => $this->multi,
+                'options'        => $options,
+                'placeholder'    => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            ])
         ];
 
         if ($this->route) {

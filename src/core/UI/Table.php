@@ -433,6 +433,15 @@ class Table
         return $this;
     }
 
+    /**
+     * 窗口滚动参数
+     * @param $x
+     * @param $y
+     * @return $this
+     */
+    public function scroll($x,$y){
+        return $this->attr('scroll',['x' => $x,'y' => $y]);
+    }
 
     /**
      * 设置表格主键
