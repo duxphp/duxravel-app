@@ -216,7 +216,7 @@ trait Expend
     public function data()
     {
         $name = request()->get('query');
-        $limit = request()->get('limit', 10);
+        $limit = request()->get('limit', 0);
         $id = request()->get('id');
         $data = new $this->model();
         $key = $data->getKeyName();
