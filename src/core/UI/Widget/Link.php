@@ -219,6 +219,9 @@ class Link extends Widget
                 $object['type'] = 'ajax';
                 $object['title'] = '确认进行' . $this->name . '操作?';
                 break;
+            case 'download':
+                $object['vOn:click'] = "dux.request.download('" . $url +"')";
+                break;
         }
         $object = array_merge($object, $this->typeConfig);
 
