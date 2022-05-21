@@ -32,6 +32,7 @@ class Link extends Widget
     protected array $typeConfig = [];
     protected string $icon = '';
     protected string $auth = '';
+    protected string $urlQuery = "";
 
     /**
      * @param string $name
@@ -161,6 +162,12 @@ class Link extends Widget
         return $this;
     }
 
+    public function urlJoin(string $query): self
+    {
+        $this->urlQuery = $query;
+        return $this;
+    }
+
     /**
      * 获取url
      * @return false|string
@@ -175,7 +182,15 @@ class Link extends Widget
             return false;
         }
 
-        return app_route($this->route, $this->params, $this->absolute, $this->model, $this->fields);
+        $url = app_route($this->route, $this->params, $this->absolute, $this->model, $this->fields);
+        if ($this->urlQuery) {
+            if (strpos($url, "?") !== -1) {
+                $url .= "&".$this->urlQuery;
+            }else {
+                $url .= "?".$this->urlQuery;
+            }
+        }
+        return $url;
     }
 
     /**

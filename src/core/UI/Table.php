@@ -513,14 +513,14 @@ class Table
      */
     public function export(callable $callback): void
     {
-        // 设置筛选信息
+        // 筛选数据
         $this->filters->map(function ($filter) {
-            return $filter->render();
+            $filter->execute($this->query);
         });
-        // 设置筛选类型
         $this->filtersType->map(function ($filter, $key) {
-            return $filter->render($key);
+            $filter->execute($this->query, $key);
         });
+
         // 查询导出数据
         $data = $this->query->eloquent()->get();
         // 执行渲染输出
