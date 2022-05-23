@@ -356,7 +356,7 @@ class Node
             'class' => $this->class,
             'url' => $this->url,
             'urlBind' => $this->urlBind,
-            'n-params' => $this->params,
+            'n-params' => array_merge(app('config')->get('table.default.nParams',[]),$this->params),
             'columns' => $this->columns,
             'vBind:filter' => 'data.filter',
             'select' => (bool)$this->bath,
