@@ -547,12 +547,15 @@ class Form
     /**
      * 获取提交数据
      * @param $time
+     * @param array|null $data
      * @return Collection
      */
-    public function getInput($time): Collection
+    public function getInput($time,?array $data = null): Collection
     {
         // 获取提交数据
-        $data = request()->input();
+        if(is_null($data)){
+            $data = request()->input();
+        }
 
         // 提交数据处理
         if ($this->flow['submit']) {
