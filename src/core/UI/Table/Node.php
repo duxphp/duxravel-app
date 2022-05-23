@@ -366,7 +366,8 @@ class Node
                 'nodeName' => 'div',
                 'class' => 'flex gap-2',
                 'child' => $this->bath
-            ]
+            ],
+            'nowrap' => app('config')->get('table.default.nowrap',false)
         ];
     }
 
