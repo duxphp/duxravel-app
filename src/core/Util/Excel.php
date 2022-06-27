@@ -119,7 +119,7 @@ class Excel
 
         unset($worksheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $title . '-' . date('YmdHis') . '.xlsx"');
+        header('Content-Disposition: attachment;filename="' . rawurlencode($title . '-' . date('YmdHis')) . '.xlsx"');
         header('Cache-Control: max-age=0');
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $writer->save('php://output');
