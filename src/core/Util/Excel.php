@@ -112,7 +112,7 @@ class Excel
                 $worksheet->setCellValueExplicitByColumnAndRow($k + 1, $headRow, $content, DataType::TYPE_STRING);
                 $item = $worksheet->getStyleByColumnAndRow($k + 1, $headRow)->applyFromArray($styleArray);
                 if (is_callable($callback)) {
-                    $callback($item);
+                    $callback($item,$worksheet);
                 }
             }
         }
