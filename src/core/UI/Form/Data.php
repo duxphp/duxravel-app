@@ -83,6 +83,22 @@ class Data extends Element implements Component
     }
 
     /**
+     * Html内容
+     * @param string|array $field
+     * @param $callback
+     * @return $this
+     */
+    public function html($field,$callback): self
+    {
+        $this->column[] = [
+            'key'      => $field,
+            'type'     => 'html',
+            'callback' => $callback
+        ];
+        return $this;
+    }
+
+    /**
      * 隐藏列
      * @param string $name
      * @param string $field
@@ -141,6 +157,19 @@ class Data extends Element implements Component
         $inner = [];
         $default = [];
         foreach ($this->column as $column) {
+            if ($column['type'] === 'html') {
+                $keys = is_array($column['key']) ? $column['key'] : [$column['key']];
+                foreach ($keys as $key){
+                    $default[$key] = '';
+                }
+                if ($column['callback'] instanceof \Closure) {
+                    $inner[] = call_user_func($column['callback']);
+                }else if(is_array($column['callback'])){
+                    $inner[] = $column['callback'];
+                }
+                continue;
+            }
+
             $default[$column['key']] = '';
             $field = "value['{$column['key']}']";
             if ($column['type'] === 'text') {
