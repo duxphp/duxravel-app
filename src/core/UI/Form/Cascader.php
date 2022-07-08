@@ -11,7 +11,7 @@ class Cascader extends Element implements Component
     protected bool $tip = false;
     protected bool $multi = false;
     protected bool $leaf = true;
-    private array $params = [];
+    protected array $params = [];
     protected bool $treeData = false;
     protected string $url = '';
     protected string $route = '';
