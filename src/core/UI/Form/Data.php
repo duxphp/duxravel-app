@@ -159,8 +159,12 @@ class Data extends Element implements Component
         foreach ($this->column as $column) {
             if ($column['type'] === 'html') {
                 $keys = is_array($column['key']) ? $column['key'] : [$column['key']];
-                foreach ($keys as $key){
-                    $default[$key] = '';
+                foreach ($keys as $key => $vo){
+                    if(is_numeric($key)){
+                        $key = $vo;
+                        $vo = '';
+                    }
+                    $default[$key] = $vo;
                 }
                 if ($column['callback'] instanceof \Closure) {
                     $inner[] = call_user_func($column['callback']);
