@@ -95,9 +95,9 @@ class Node
      * @param array $filter
      * @return $this
      */
-    public function data(array $filter): self
+    public function data(array $filter,string $type = 'filter'): self
     {
-        $this->data['filter'] = $filter;
+        $this->data[$type] = $filter;
         return $this;
     }
 
@@ -367,7 +367,8 @@ class Node
                 'class' => 'flex gap-2',
                 'child' => $this->bath
             ],
-            'nowrap' => app('config')->get('table.default.nowrap',false)
+            'nowrap' => app('config')->get('table.default.nowrap',false),
+            'vBind:defaultData' => isset($this->data['data']) ? 'data.data' : false
         ];
     }
 
@@ -384,10 +385,10 @@ class Node
 
         $value = [
             'filter' => $this->data['filter'] ?: [],
-            'show' => $this->data['show'] ?: []
+            'show'   => $this->data['show'] ?: [],
+            'data'   => $this->data['data'] ?? null
         ];
         $value = array_merge($this->scriptData, $value);
-
 
         return [
             'node' => [
@@ -469,7 +470,8 @@ class Node
     {
         $value = [
             'filter' => $this->data['filter'] ?: [],
-            'show' => $this->data['show'] ?: []
+            'show'   => $this->data['show'] ?: [],
+            'data'   => $this->data['data'] ?? null
         ];
         $value = array_merge($this->scriptData, $value);
 

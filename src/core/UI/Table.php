@@ -606,6 +606,9 @@ class Table
         $node->class(implode(' ', $this->class));
         $node->params($this->attr);
         $node->data($this->filterParams);
+        if(isset($this->data)){
+            $node->data($this->data,'data');
+        }
         $node->columns($columnNode);
         $node->expand($this->expand);
         $node->eventName($this->eventName);
