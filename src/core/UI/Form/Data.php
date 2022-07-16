@@ -47,6 +47,26 @@ class Data extends Element implements Component
     }
 
     /**
+     * 选择框
+     * @param string $name
+     * @param string $field
+     * @param null $data
+     * @param null $width
+     * @return $this
+     */
+    public function select(string $name, string $field, $data = null, $width = null): self
+    {
+        $this->column[] = [
+            'name'  => $name,
+            'key'   => $field,
+            'type'  => 'select',
+            'data'  => $data,
+            'width' => $width,
+        ];
+        return $this;
+    }
+
+    /**
      * 图片列
      * @param string $name
      * @param string $field
@@ -205,6 +225,28 @@ class Data extends Element implements Component
                     'nodeName' => 'div',
                     'class' => 'flex-grow',
                     'child' => "{{ $field || '-'}}"
+                ];
+            }
+            if ($column['type'] === 'select') {
+                $options = [];
+                foreach ($column['data'] as $key => $vo) {
+                    $options[] = [
+                        'label' => $vo,
+                        'value' => $key
+                    ];
+                }
+                $inner[] = [
+                    'nodeName' => 'div',
+                    'class'    => 'flex-grow',
+                    'child'    => [
+                        'nodeName'     => 'app-select',
+                        'nParams'      => [
+                            'placeholder' => '请选择' . $column['name'],
+                            'options'     => $options,
+                            'allowSearch' => true
+                        ],
+                        'vModel:value' => $field
+                    ]
                 ];
             }
         }
