@@ -310,19 +310,22 @@ class Node
         }
 
         $header2 = array_filter(array_merge($this->quickFilter, $this->action));
+        if(empty($header) && empty($header2)){
+            return [];
+        }
 
-        return array_filter([
-            $header ? [
+        return [
+            [
                 'nodeName' => 'div',
                 'class' => 'flex-grow lg:w-10 flex justify-center lg:justify-start',
                 'child' => $header
-            ] : [],
-            $header2 ? [
+            ],
+            [
                 'nodeName' => 'div',
                 'class' => 'flex-none flex gap-2',
                 'child' => $header2
-            ] : []
-        ]);
+            ]
+        ];
     }
 
     /**
