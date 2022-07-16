@@ -309,18 +309,20 @@ class Node
             ];
         }
 
-        return [
-            [
+        $header2 = array_filter(array_merge($this->quickFilter, $this->action));
+
+        return array_filter([
+            $header ? [
                 'nodeName' => 'div',
                 'class' => 'flex-grow lg:w-10 flex justify-center lg:justify-start',
                 'child' => $header
-            ],
-            [
+            ] : [],
+            $header2 ? [
                 'nodeName' => 'div',
                 'class' => 'flex-none flex gap-2',
-                'child' => array_filter(array_merge($this->quickFilter, $this->action))
-            ]
-        ];
+                'child' => $header2
+            ] : []
+        ]);
     }
 
     /**
@@ -390,6 +392,8 @@ class Node
         ];
         $value = array_merge($this->scriptData, $value);
 
+        $headNode = $this->headNode();
+
         return [
             'node' => [
                 'nodeName' => 'app-form',
@@ -427,12 +431,11 @@ class Node
                                                     'class' => 'pb-4',
                                                     'child' => $this->header
                                                 ] : [],
-                                                [
+                                                $headNode ? [
                                                     'nodeName' => 'div',
                                                     'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
-                                                    'child' => $this->headNode()
-
-                                                ],
+                                                    'child' => $headNode
+                                                ] : [],
                                                 $this->tableNode(),
                                                 $this->footer ? [
                                                     'nodeName' => 'div',
@@ -475,6 +478,8 @@ class Node
         ];
         $value = array_merge($this->scriptData, $value);
 
+        $headNode = $this->headNode();
+
         return [
             'nodeName' => 'app-form',
             'value' => $value,
@@ -493,12 +498,11 @@ class Node
                                 'class' => 'pb-4',
                                 'child' => $this->header
                             ] : [],
-                            [
+                            $headNode ? [
                                 'nodeName' => 'div',
                                 'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
-                                'child' => $this->headNode()
-
-                            ],
+                                'child' => $headNode
+                            ] : [],
                             $this->tableNode(),
                             $this->footer ? [
                                 'nodeName' => 'div',
