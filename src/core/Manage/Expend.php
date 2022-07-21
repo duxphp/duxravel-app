@@ -85,9 +85,6 @@ trait Expend
 
         $data = [];
         if (method_exists($this, 'table')) {
-            $data = $form->callbackEvent($this->table(), get_called_class(), $id ? 'edit' : 'add');
-        }
-        if (method_exists($this, 'table')) {
             if (method_exists($this, 'saveEvent')) {
                 $data = $this->saveEvent($this->table(), $form, get_called_class(), $id ? 'edit' : 'add');
             } else {
