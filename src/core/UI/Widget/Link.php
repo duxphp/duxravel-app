@@ -33,6 +33,7 @@ class Link extends Widget
     protected string $icon = '';
     protected string $auth = '';
     protected string $urlQuery = "";
+    protected string $bindFilter = 'data.filter';
 
     /**
      * @param string $name
@@ -146,6 +147,17 @@ class Link extends Widget
         return $this;
     }
 
+    /**
+     * 设置筛选绑定数据
+     * @param string $filterName
+     * @param string $name
+     * @return $this
+     */
+    public function bindFilter(string $filterName,string $name = 'filter'): self
+    {
+        $this->bindFilter = "{$filterName}.{$name}";
+        return $this;
+    }
 
     /**
      * 自定义权限
@@ -244,7 +256,7 @@ class Link extends Widget
                 'class'     => implode(' ', $this->class),
                 'type'      => 'primary',
                 'status'    => $this->status,
-                'vOn:click' => "dux.request.download(" . $url . "+'?'+dux.qs.stringify(data.filter),'absolute')",
+                'vOn:click' => "dux.request.download(" . $url . "+'?'+dux.qs.stringify({$this->bindFilter}),'absolute')",
                 'child'     => [
                     $this->name
                 ]

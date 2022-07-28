@@ -55,6 +55,8 @@ class Table
     protected $scriptData = [];
     protected ?\Closure $dataCallback = null;
     protected $data;
+    protected array $bindFilter = [];
+    protected array $statics = [];
 
     /**
      * Table constructor.
@@ -340,6 +342,18 @@ class Table
     }
 
     /**
+     * 绑定其他筛选数据
+     * @param string $filterName
+     * @param string $name
+     * @return $this
+     */
+    public function bindFilter(string $filterName,string $name = 'filter'): self
+    {
+        $this->bindFilter[] = "{$filterName}.{$name}";
+        return $this;
+    }
+
+    /**
      * 设置动作
      * @return Action
      */
@@ -498,6 +512,18 @@ class Table
     }
 
     /**
+     * 前端静态覆盖数据
+     * @param string|array $statics
+     * @param string $key stype|css|scriptString|script
+     * @return $this
+     */
+    public function statics($statics,string $key = 'style'): self
+    {
+        $this->statics[$key] = array_merge($this->statics[$key] ?? [],is_array($statics) ? $statics : [$statics]);
+        return $this;
+    }
+
+    /**
      * @param $data
      * @return $this
      */
@@ -609,6 +635,7 @@ class Table
         if(isset($this->data)){
             $node->data($this->formatData($this->data, $this->columns ?? [],$this->tree),'data');
         }
+        $node->bindFilter($this->bindFilter);
         $node->columns($columnNode);
         $node->expand($this->expand);
         $node->eventName($this->eventName);
@@ -620,6 +647,7 @@ class Table
             $node->scriptData($this->scriptData);
         }
 
+        $node->statics($this->statics);
         $node->type($typeNode);
         $node->quickFilter($quickNode);
         $node->filter($filterNode);

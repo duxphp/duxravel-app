@@ -36,6 +36,8 @@ class Node
     private array $scriptReturn = [];
     private array $scriptData = [];
     private ?string $eventName = null;
+    private array $bindFilter = [];
+    private array $statics = [];
 
     /**
      * Node constructor.
@@ -247,6 +249,17 @@ class Node
     }
 
     /**
+     * 绑定其他筛选数据
+     * @param string $bindFilter
+     * @return $this
+     */
+    public function bindFilter(array $bindFilter): self
+    {
+        $this->bindFilter = $bindFilter;
+        return $this;
+    }
+
+    /**
      * @param $node
      * @return $this
      */
@@ -363,7 +376,7 @@ class Node
             'urlBind' => $this->urlBind,
             'n-params' => array_merge(app('config')->get('table.default.nParams',[]),$this->params),
             'columns' => $this->columns,
-            'vBind:filter' => 'data.filter',
+            'vBind:filter' => empty($this->bindFilter) ? 'data.filter' : 'dux.util.watchAssignObject('. implode(',',$this->bindFilter) .',data.filter)',
             'select' => (bool)$this->bath,
             'table-layout-fixed' => true,
             'child' => [
@@ -377,6 +390,16 @@ class Node
         ];
     }
 
+    /**
+     * 前端静态覆盖数据
+     * @param array $statics
+     * @return $this
+     */
+    public function statics(array $statics): self
+    {
+        $this->statics = $statics;
+        return $this;
+    }
 
     /**
      * @return array
@@ -464,7 +487,8 @@ class Node
                     ]
                 ],
             ],
-            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}'
+            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}',
+            'static' => $this->renderStatics()
         ];
     }
 
@@ -518,6 +542,23 @@ class Node
                 ]
             ]
         ];
+    }
+
+    /**
+     * 前端覆盖数据
+     * @return array
+     */
+    public function renderStatics(): array
+    {
+        $statics = [];
+        $stringData = ['style','scriptString'];
+        foreach ($this->statics as $key => $vo){
+            if(in_array($key,$stringData) && is_array($vo)){
+                $vo = implode("\n",$vo);
+            }
+            $statics[$key] = $vo;
+        }
+        return $statics;
     }
 
 }

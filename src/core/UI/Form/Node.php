@@ -20,6 +20,9 @@ class Node
     private array $side = [];
     private array $script = [];
     private array $scriptReturn = [];
+    private string $layout = 'app-layout';
+    private ?array $bottom = null;
+    private array $statics = [];
 
     /**
      * Node constructor.
@@ -111,6 +114,28 @@ class Node
     }
 
     /**
+     * 布局属性
+     * @param $layout
+     * @return $this
+     */
+    public function layout(string $layout): self
+    {
+        $this->layout = $layout;
+        return $this;
+    }
+
+    /**
+     * 底部组件
+     * @param null|array $bottom
+     * @return $this
+     */
+    public function bottom(?array $bottom): self
+    {
+        $this->bottom = $bottom;
+        return $this;
+    }
+
+    /**
      * 渲染页面
      * @return array[]
      */
@@ -123,7 +148,7 @@ class Node
                 'child' => $this->side['left']
             ] : [],
             [
-                'nodeName' => 'app-layout',
+                'nodeName' => $this->layout,
                 'class' => 'flex-grow w-10',
                 'title' => $this->title ?: '信息详情',
                 'form' => true,
@@ -141,7 +166,7 @@ class Node
                             [
                                 'nodeName' => 'div',
                                 'class' => 'flex items-center justify-end gap-2 flex-row ',
-                                'child' => [
+                                'child' => !is_null($this->bottom) ? $this->bottom : [
                                     $this->back ? [
                                         'nodeName' => 'route',
                                         'type' => 'back',
@@ -211,7 +236,7 @@ class Node
                     'nodeName' => 'div',
                     'vSlot:footer' => '',
                     'class' => 'arco-modal-footer',
-                    'child' => [
+                    'child' => !is_null($this->bottom) ? $this->bottom : [
                         [
                             'nodeName' => 'route',
                             'type' => 'back',
@@ -236,29 +261,73 @@ class Node
     }
 
     /**
+     * 前端静态覆盖数据
+     * @param array $statics
+     * @return $this
+     */
+    public function statics(array $statics): self
+    {
+        $this->statics = $statics;
+        return $this;
+    }
+
+    /**
      * 渲染布局
      * @return array
      */
     public function render(): array
     {
         return [
-            'node' => [
-                'nodeName' => 'app-form',
-                'url' => $this->url,
-                'method' => $this->method,
-                'value' => $this->data,
-                'layout' => $this->vertical ? 'vertical' : 'horizontal',
-                'back' => $this->back,
-                'child' => [
-                    'nodeName' => 'div',
-                    'class' => 'flex',
-                    'vSlot' => '{value: data, submitStatus: loading}',
-                    'child' => $this->dialog ? $this->renderDialog() : $this->renderPage()
-                ]
-            ],
-            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}'
-
+            'node' => $this->renderFormCore(),
+            'setupScript' => $this->renderScript(),
+            'static' => $this->renderStatics()
         ];
+    }
+
+    /**
+     * 渲染表单核心代码
+     * @return array
+     */
+    public function renderFormCore(){
+        return [
+            'nodeName' => 'app-form',
+            'url' => $this->url,
+            'method' => $this->method,
+            'value' => $this->data,
+            'layout' => $this->vertical ? 'vertical' : 'horizontal',
+            'back' => $this->back,
+            'child' => [
+                'nodeName' => 'div',
+                'class' => 'flex',
+                'vSlot' => '{value: data, submitStatus: loading}',
+                'child' => $this->dialog ? $this->renderDialog() : $this->renderPage()
+            ]
+        ];
+    }
+
+    /**
+     * 渲染表单js
+     * @return string
+     */
+    public function renderScript(){
+        return implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}';
+    }
+
+    /**
+     * 前端覆盖数据
+     * @return array
+     */
+    public function renderStatics(): array
+    {
+        $statics = [];
+        $stringData = ['style','scriptString'];
+        foreach ($this->statics as $key => $vo){
+            if(in_array($key,$stringData) && is_array($vo)){
+                $vo = implode("\n",$vo);
+            }
+            $statics[$key] = $vo;
+        }
+        return $statics;
     }
 
 }
