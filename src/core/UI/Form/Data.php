@@ -14,6 +14,7 @@ class Data extends Element implements Component
     protected bool $option = true;
     protected ?int $numberMax = null;
     protected ?int $numberMin = null;
+    protected bool $wrap = false;
 
     /**
      * Text constructor.
@@ -168,12 +169,21 @@ class Data extends Element implements Component
     }
 
     /**
+     * 自动换行
+     * @param bool $wrap
+     * @return $this
+     */
+    public function wrap(bool $wrap = true): self
+    {
+        $this->wrap = $wrap;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function render(): array
     {
-        $url = route('service.image.placeholder', ['w' => 64, 'h' => 64, 't' => $this->attr['placeholder'] ?: '图片']);
-
         $inner = [];
         $default = [];
         foreach ($this->column as $column) {
@@ -196,8 +206,9 @@ class Data extends Element implements Component
 
             $default[$column['key']] = '';
             $field = "value['{$column['key']}']";
+            $innerNode = [];
             if ($column['type'] === 'text') {
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class' => 'flex-grow',
                     'child' => [
@@ -208,7 +219,7 @@ class Data extends Element implements Component
                 ];
             }
             if ($column['type'] === 'image') {
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class' => 'flex-none',
                     'child' => [
@@ -221,7 +232,7 @@ class Data extends Element implements Component
                 ];
             }
             if ($column['type'] === 'show') {
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class' => 'flex-grow',
                     'child' => "{{ $field || '-'}}"
@@ -235,7 +246,7 @@ class Data extends Element implements Component
                         'value' => $key
                     ];
                 }
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class'    => 'flex-grow',
                     'child'    => [
@@ -249,6 +260,13 @@ class Data extends Element implements Component
                     ]
                 ];
             }
+
+            if ($column['width']) {
+                $innerNode['style'] = [
+                    'width' => $column['width']
+                ];
+            }
+            $inner[] = $innerNode;
         }
 
         $create = json_encode($default);
@@ -259,7 +277,7 @@ class Data extends Element implements Component
             'child' => [
                 'vSlot' => '{ index, value }',
                 'nodeName' => 'div',
-                'class' => 'flex flex-grow gap-4 items-center',
+                'class' => 'flex flex-grow gap-4 items-center' . ($this->wrap ? ' flex-wrap' : ''),
                 'child' => $inner
             ]
         ];
