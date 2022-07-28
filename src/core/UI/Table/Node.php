@@ -38,6 +38,7 @@ class Node
     private ?string $eventName = null;
     private array $bindFilter = [];
     private array $statics = [];
+    private ?int $limit = null;
 
     /**
      * Node constructor.
@@ -260,6 +261,17 @@ class Node
     }
 
     /**
+     * 分页数量
+     * @param int $num
+     * @return $this
+     */
+    public function limit(int $num): self
+    {
+        $this->limit = $num;
+        return $this;
+    }
+
+    /**
      * @param $node
      * @return $this
      */
@@ -386,7 +398,8 @@ class Node
                 'child' => $this->bath
             ],
             'nowrap' => app('config')->get('table.default.nowrap',false),
-            'vBind:defaultData' => isset($this->data['data']) ? 'data.data' : false
+            'vBind:defaultData' => isset($this->data['data']) ? 'data.data' : false,
+            'limit' => $this->limit
         ];
     }
 

@@ -647,6 +647,7 @@ class Table
             $node->scriptData($this->scriptData);
         }
 
+        $node->limit($this->limit);
         $node->statics($this->statics);
         $node->type($typeNode);
         $node->quickFilter($quickNode);
