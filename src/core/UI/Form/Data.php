@@ -109,7 +109,7 @@ class Data extends Element implements Component
      * @param $callback
      * @return $this
      */
-    public function html($field,$callback): self
+    public function html($field, $callback): self
     {
         $this->column[] = [
             'key'      => $field,
@@ -189,8 +189,8 @@ class Data extends Element implements Component
         foreach ($this->column as $column) {
             if ($column['type'] === 'html') {
                 $keys = is_array($column['key']) ? $column['key'] : [$column['key']];
-                foreach ($keys as $key => $vo){
-                    if(is_numeric($key)){
+                foreach ($keys as $key => $vo) {
+                    if (is_numeric($key)) {
                         $key = $vo;
                         $vo = '';
                     }
@@ -198,7 +198,7 @@ class Data extends Element implements Component
                 }
                 if ($column['callback'] instanceof \Closure) {
                     $inner[] = call_user_func($column['callback']);
-                }else if(is_array($column['callback'])){
+                } else if (is_array($column['callback'])) {
                     $inner[] = $column['callback'];
                 }
                 continue;
@@ -274,8 +274,7 @@ class Data extends Element implements Component
             'nodeName' => 'app-dynamic-data',
             'vModel:value' => $this->getModelField(),
             'vBind:on-create' => "() => { return $create }",
-            'child' => [
-                'vSlot' => '{ index, value }',
+            'renderRow: value, index' => [
                 'nodeName' => 'div',
                 'class' => 'flex flex-grow gap-4 items-center' . ($this->wrap ? ' flex-wrap' : ''),
                 'child' => $inner
@@ -302,5 +301,4 @@ class Data extends Element implements Component
         $data = $this->getValue($data);
         return $data ?: [];
     }
-
 }
