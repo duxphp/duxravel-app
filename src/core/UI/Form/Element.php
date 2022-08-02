@@ -38,6 +38,10 @@ class Element
     protected $value;
     protected $default;
 
+    /**
+     * @var \Closure|null 自定义回调函数(格式化字段)
+     */
+    protected ?\Closure $formatFunc = null;
 
     /**
      * 设置弹窗
@@ -442,6 +446,22 @@ class Element
         return (array)$this->format['all'] + (array)$this->format[$time];
     }
 
+    /**
+     * 自定义回调函数
+     * (格式化字段，适用于跨字段读取数据)
+     * e.g.
+     * $form->text('URL', 'url')->custom(function ($info) {
+     *     return $info->scheme . '://' . $info->url;
+     * });
+     *
+     * @param  \Closure $func
+     * @return $this
+     */
+    public function custom(\Closure $func)
+    {
+        $this->formatFunc = $func;
+        return $this;
+    }
 
     /**
      * 获取提交数据
@@ -529,6 +549,12 @@ class Element
         } else {
             $value = $this->getValue($value);
         }
+
+        // 自定义回调函数(格式化字段)
+        if ($this->formatFunc && is_callable($this->formatFunc)) {
+            $value = call_user_func($this->formatFunc, $info);
+        }
+
         $data[$this->getField()] = $value;
 
         return $data;
