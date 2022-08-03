@@ -10,13 +10,13 @@ use Exception;
 /**
  * 表格列
  * Class Column
- * @method static Column\Hidden hidden()
- * @method static Column\Progress progress(string $color = 'default')
- * @method static Column\Status status(array $map, array $color, string $type = 'badge')
- * @method static Column\Chart chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area')
- * @method static Column\Tags tags(array $map, array $color)
- * @method static Column\Toggle toggle(string $field, string $url, array $params = [])
- * @method static Column\Input input(string $field, $url, array $params = [])
+ * @method Column\Hidden hidden()
+ * @method Column\Progress progress(string $color = 'default')
+ * @method Column\Status status(array $map, array $color, string $type = 'badge')
+ * @method Column\Chart chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area')
+ * @method Column\Tags tags(array $map, array $color)
+ * @method Column\Toggle toggle(string $field, string $url, array $params = [])
+ * @method Column\Input input(string $field, $url, array $params = [])
  * @package Duxravel\Core\UI\Table
  */
 class Column
