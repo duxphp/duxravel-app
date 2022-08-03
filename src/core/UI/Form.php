@@ -17,6 +17,8 @@ use Duxravel\Core\Util\View;
  * 表单UI
  * Class Form
  * @package Duxravel\Core\UI
+ *
+ * @method Form\Area area(string $name, array $map = [], string $has = '')
  * @method Form\Cascader cascader(string $name, string $field, $data = null, string $has = '')
  * @method Form\CheckBox checkbox(string $name, string $field, $data = null, string $has = '')
  * @method Form\Choice choice(string $name, string $field, string $has = '')
@@ -28,17 +30,21 @@ use Duxravel\Core\Util\View;
  * @method Form\Editor editor(string $name, string $field, string $has = '')
  * @method Form\Email email(string $name, string $field, string $has = '')
  * @method Form\File file(string $name, string $field, string $has = '')
+ * @method Form\Files files(string $name, string $field, string $has = '')
  * @method Form\Image image(string $name, string $field, string $has = '')
  * @method Form\Images images(string $name, string $field, string $has = '')
  * @method Form\Ip ip(string $name, string $field, string $has = '')
+ * @method Form\Location location(string $name, string $field, string $has = '')
  * @method Form\Password password(string $name, string $field, string $has = '')
  * @method Form\Radio radio(string $name, string $field, $data = null, string $has = '')
  * @method Form\Select select(string $name, string $field, $data = null, string $has = '')
  * @method Form\Tree tree(string $name, string $field, $data = null, string $has = '')
+ * @method Form\TreeSelect treeSelect(string $name, string $field, $data = null, string $has = '')
  * @method Form\Toggle toggle(string $name, string $field, string $has = '')
  * @method Form\Tags tags(string $name, string $field, string $has = '')
  * @method Form\Tel tel(string $name, string $field, string $has = '')
  * @method Form\Text text(string $name, string $field, string $has = '')
+ * @method Form\Textarea textarea(string $name, string $field, string $has = '')
  * @method Form\Number number(string $name, string $field, string $has = '')
  * @method Form\Time time(string $name, string $field, string $has = '')
  * @method Form\Url url(string $name, string $field, string $has = '')
