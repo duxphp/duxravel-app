@@ -190,7 +190,7 @@ class Route
     private function addItemDel(string $app, string $layout, string $name, string $class): array
     {
         return [
-            'type' => 'post',
+            'type' => ['get', 'post'],
             'rule' => $this->prefix . '/del/{id?}',
             'uses' => $class . '@del',
             'desc' => '删除',
