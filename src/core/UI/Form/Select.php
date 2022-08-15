@@ -11,6 +11,7 @@ class Select extends Element implements Component
     protected string $url = '';
     protected string $route = '';
     protected int $tagCount = 0;
+    protected array $params = [];
     protected bool $tip = false;
     protected bool $search = false;
     protected bool $multi = false;
@@ -41,6 +42,17 @@ class Select extends Element implements Component
     public function add($name, $value): self
     {
         $this->data[$value] = $name;
+        return $this;
+    }
+
+    /**
+     * 附加参数
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function nParams($key,$value){
+        $this->params[$key] = $value;
         return $this;
     }
 
@@ -136,10 +148,10 @@ class Select extends Element implements Component
 
         $object = [
             'nodeName' => 'app-select',
-            'nParams' => [
+            'nParams'  => array_merge($this->params, [
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
                 'options' => $options
-            ],
+            ])
         ];
 
         if ($this->model) {

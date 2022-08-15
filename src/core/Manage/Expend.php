@@ -85,9 +85,6 @@ trait Expend
 
         $data = [];
         if (method_exists($this, 'table')) {
-            $data = $form->callbackEvent($this->table(), get_called_class(), $id ? 'edit' : 'add');
-        }
-        if (method_exists($this, 'table')) {
             if (method_exists($this, 'saveEvent')) {
                 $data = $this->saveEvent($this->table(), $form, get_called_class(), $id ? 'edit' : 'add');
             } else {
@@ -139,6 +136,39 @@ trait Expend
         //$action = "routerPush:";
 
         return app_success('删除记录成功', (new Event(get_called_class()))->add('del', $id)->render(), $action);
+    }
+
+    public function batchDel($ids = 0){
+        if (!$ids) {
+            $ids = request()->input('ids');
+        }
+        if (!$ids) {
+            app_error('删除参数错误');
+        }
+        if(!is_array($ids)){
+            $ids = explode(',',$ids);
+        }
+        DB::beginTransaction();
+        $status = false;
+        if (method_exists($this, 'delData')) {
+            foreach ($ids as $id){
+                $status = $this->delData($id);
+                if (!$status) {
+                    DB::rollBack();
+                    app_error('删除记录失败');
+                }
+            }
+        }
+        if ($this->model) {
+            $status = $this->model::destroy($ids);
+        }
+        if (!$status) {
+            DB::rollBack();
+            app_error('删除记录失败');
+        }
+        DB::commit();
+
+        return app_success('删除记录成功');
     }
 
     public function export()

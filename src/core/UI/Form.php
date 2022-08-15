@@ -65,6 +65,8 @@ class Form
     protected bool $vertical = true;
     protected array $map = [];
     public Collection $element;
+    private ?array $bottom = null;
+    protected array $statics = [];
 
     /**
      * Form constructor.
@@ -269,6 +271,29 @@ class Form
             'callback' => $callback,
             'direction' => $direction
         ];
+        return $this;
+    }
+
+    /**
+     * 前端静态覆盖数据
+     * @param string|array $statics
+     * @param string $key stype|css|scriptString|script
+     * @return $this
+     */
+    public function statics($statics,string $key = 'style'): self
+    {
+        $this->statics[$key] = array_merge($this->statics[$key] ?? [],is_array($statics) ? $statics : [$statics]);
+        return $this;
+    }
+
+    /**
+     * 弹框宽度
+     * @param string $width
+     * @return $this
+     */
+    public function width(string $width): self
+    {
+        $this->statics(".page-dialog{width: {$width};max-width:none;}");
         return $this;
     }
 
@@ -492,6 +517,17 @@ class Form
     }
 
     /**
+     * 底部组件
+     * @param array|null $bottom
+     * @return $this
+     */
+    public function bottom(?array $bottom): self
+    {
+        $this->bottom = $bottom;
+        return $this;
+    }
+
+    /**
      * 渲染表单
      * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
@@ -505,6 +541,26 @@ class Form
      * @return array
      */
     public function renderArray()
+    {
+        $node = $this->renderNode();
+        return $node->render();
+    }
+
+    /**
+     * 只渲染form
+     * @return array
+     */
+    public function renderFormCore()
+    {
+        $node = $this->renderNode();
+        return $node->renderFormCore();
+    }
+
+    /**
+     * 渲染组件
+     * @return Node
+     */
+    public function renderNode()
     {
         // 提交地址
         if ($this->action) {
@@ -527,6 +583,8 @@ class Form
         // 表单元素·
         $node->element($this->renderForm());
 
+        $node->bottom($this->bottom);
+        $node->statics($this->statics);
 
         // 表单数据
         $node->data($this->renderData($this->info));
@@ -541,18 +599,21 @@ class Form
             $node->script($value, $this->scriptReturn[$key]);
         }
 
-        return $node->render();
+        return $node;
     }
 
     /**
      * 获取提交数据
      * @param $time
+     * @param array|null $data
      * @return Collection
      */
-    public function getInput($time): Collection
+    public function getInput($time,?array $data = null): Collection
     {
         // 获取提交数据
-        $data = request()->input();
+        if(is_null($data)){
+            $data = request()->input();
+        }
 
         // 提交数据处理
         if ($this->flow['submit']) {

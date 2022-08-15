@@ -36,6 +36,9 @@ class Node
     private array $scriptReturn = [];
     private array $scriptData = [];
     private ?string $eventName = null;
+    private array $bindFilter = [];
+    private array $statics = [];
+    private ?int $limit = null;
 
     /**
      * Node constructor.
@@ -95,9 +98,9 @@ class Node
      * @param array $filter
      * @return $this
      */
-    public function data(array $filter): self
+    public function data(array $filter,string $type = 'filter'): self
     {
-        $this->data['filter'] = $filter;
+        $this->data[$type] = $filter;
         return $this;
     }
 
@@ -247,6 +250,28 @@ class Node
     }
 
     /**
+     * 绑定其他筛选数据
+     * @param string $bindFilter
+     * @return $this
+     */
+    public function bindFilter(array $bindFilter): self
+    {
+        $this->bindFilter = $bindFilter;
+        return $this;
+    }
+
+    /**
+     * 分页数量
+     * @param int $num
+     * @return $this
+     */
+    public function limit(int $num): self
+    {
+        $this->limit = $num;
+        return $this;
+    }
+
+    /**
      * @param $node
      * @return $this
      */
@@ -309,6 +334,11 @@ class Node
             ];
         }
 
+        $header2 = array_filter(array_merge($this->quickFilter, $this->action));
+        if(empty($header) && empty($header2)){
+            return [];
+        }
+
         return [
             [
                 'nodeName' => 'div',
@@ -318,7 +348,7 @@ class Node
             [
                 'nodeName' => 'div',
                 'class' => 'flex-none flex gap-2',
-                'child' => array_filter(array_merge($this->quickFilter, $this->action))
+                'child' => $header2
             ]
         ];
     }
@@ -356,9 +386,9 @@ class Node
             'class' => $this->class,
             'url' => $this->url,
             'urlBind' => $this->urlBind,
-            'n-params' => $this->params,
+            'n-params' => array_merge(app('config')->get('table.default.nParams',[]),$this->params),
             'columns' => $this->columns,
-            'vBind:filter' => 'data.filter',
+            'vBind:filter' => empty($this->bindFilter) ? 'data.filter' : 'dux.util.watchAssignObject('. implode(',',$this->bindFilter) .',data.filter)',
             'select' => (bool)$this->bath,
             'table-layout-fixed' => true,
             'child' => [
@@ -366,10 +396,23 @@ class Node
                 'nodeName' => 'div',
                 'class' => 'flex gap-2',
                 'child' => $this->bath
-            ]
+            ],
+            'nowrap' => app('config')->get('table.default.nowrap',false),
+            'vBind:defaultData' => isset($this->data['data']) ? 'data.data' : false,
+            'limit' => $this->limit
         ];
     }
 
+    /**
+     * 前端静态覆盖数据
+     * @param array $statics
+     * @return $this
+     */
+    public function statics(array $statics): self
+    {
+        $this->statics = $statics;
+        return $this;
+    }
 
     /**
      * @return array
@@ -383,10 +426,12 @@ class Node
 
         $value = [
             'filter' => $this->data['filter'] ?: [],
-            'show' => $this->data['show'] ?: []
+            'show'   => $this->data['show'] ?: [],
+            'data'   => $this->data['data'] ?? null
         ];
         $value = array_merge($this->scriptData, $value);
 
+        $headNode = $this->headNode();
 
         return [
             'node' => [
@@ -425,12 +470,11 @@ class Node
                                                     'class' => 'pb-4',
                                                     'child' => $this->header
                                                 ] : [],
-                                                [
+                                                $headNode ? [
                                                     'nodeName' => 'div',
                                                     'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
-                                                    'child' => $this->headNode()
-
-                                                ],
+                                                    'child' => $headNode
+                                                ] : [],
                                                 $this->tableNode(),
                                                 $this->footer ? [
                                                     'nodeName' => 'div',
@@ -456,7 +500,8 @@ class Node
                     ]
                 ],
             ],
-            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}'
+            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}',
+            'static' => $this->renderStatics()
         ];
     }
 
@@ -468,9 +513,12 @@ class Node
     {
         $value = [
             'filter' => $this->data['filter'] ?: [],
-            'show' => $this->data['show'] ?: []
+            'show'   => $this->data['show'] ?: [],
+            'data'   => $this->data['data'] ?? null
         ];
         $value = array_merge($this->scriptData, $value);
+
+        $headNode = $this->headNode();
 
         return [
             'nodeName' => 'app-form',
@@ -490,12 +538,11 @@ class Node
                                 'class' => 'pb-4',
                                 'child' => $this->header
                             ] : [],
-                            [
+                            $headNode ? [
                                 'nodeName' => 'div',
                                 'class' => 'flex-none flex flex-row gap-2 items-center pb-4',
-                                'child' => $this->headNode()
-
-                            ],
+                                'child' => $headNode
+                            ] : [],
                             $this->tableNode(),
                             $this->footer ? [
                                 'nodeName' => 'div',
@@ -508,6 +555,23 @@ class Node
                 ]
             ]
         ];
+    }
+
+    /**
+     * 前端覆盖数据
+     * @return array
+     */
+    public function renderStatics(): array
+    {
+        $statics = [];
+        $stringData = ['style','scriptString'];
+        foreach ($this->statics as $key => $vo){
+            if(in_array($key,$stringData) && is_array($vo)){
+                $vo = implode("\n",$vo);
+            }
+            $statics[$key] = $vo;
+        }
+        return $statics;
     }
 
 }

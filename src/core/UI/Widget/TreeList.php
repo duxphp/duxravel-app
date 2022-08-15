@@ -20,6 +20,7 @@ class TreeList extends Widget
     private array $menu = [];
     private array $fieldNames = [];
     private $labelNode = [];
+    protected string $bindFilter = 'data.filter';
 
     /**
      * @param        $default
@@ -102,6 +103,18 @@ class TreeList extends Widget
     }
 
     /**
+     * 设置筛选绑定数据
+     * @param string $filterName
+     * @param string $name
+     * @return $this
+     */
+    public function bindFilter(string $filterName,string $name = 'filter'): self
+    {
+        $this->bindFilter = "{$filterName}.{$name}";
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function render(): array
@@ -117,7 +130,7 @@ class TreeList extends Widget
             'vBind:filter' => $this->filter ?: '',
             'refreshUrls' => [trim($urlPaths['path'], '/')],
             'iconColor' => ['blue', 'cyan', 'green', 'orange', 'red', 'purple'],
-            'vModel:value' => "data.filter['{$this->field}']",
+            'vModel:value' => "{$this->bindFilter}['{$this->field}']",
         ];
 
         if ($this->fieldNames) {

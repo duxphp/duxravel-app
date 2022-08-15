@@ -11,6 +11,7 @@ class Radio extends Element implements Component
     protected array $box = [];
     protected $data = [];
     protected string $switch = '';
+    protected array $disabled = [];
 
     /**
      * Select constructor.
@@ -51,6 +52,17 @@ class Radio extends Element implements Component
     }
 
     /**
+     * 设置禁用选项
+     * @param $disabled ['value1', 'value2']
+     * @return $this
+     */
+    public function disabled(array $disabled): self
+    {
+        $this->disabled = $disabled;
+        return $this;
+    }
+
+    /**
      * 类型选择
      * @param array $data
      * @return $this
@@ -79,11 +91,15 @@ class Radio extends Element implements Component
 
         $child = [];
         foreach ($data as $key => $vo) {
-            $child[] = [
+            $item = [
                 'nodeName' => 'a-radio',
                 'child' => $vo,
                 'value' => $key,
             ];
+            if (in_array($key, $this->disabled)) {
+                $item['disabled'] = true;
+            }
+            $child[] = $item;
         }
 
         $data = [
@@ -93,7 +109,7 @@ class Radio extends Element implements Component
             'child' => $child
         ];
 
-        if($this->replace != ''){
+        if ($this->replace != '') {
             $data['vStringReplace'] = $this->replace;
         }
 
@@ -104,5 +120,4 @@ class Radio extends Element implements Component
     {
         return $this->getValue($value) ?? array_key_first((array)$this->data);
     }
-
 }

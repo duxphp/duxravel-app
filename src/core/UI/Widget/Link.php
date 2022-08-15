@@ -33,6 +33,7 @@ class Link extends Widget
     protected string $icon = '';
     protected string $auth = '';
     protected string $urlQuery = "";
+    protected string $bindFilter = 'data.filter';
 
     /**
      * @param string $name
@@ -146,6 +147,17 @@ class Link extends Widget
         return $this;
     }
 
+    /**
+     * 设置筛选绑定数据
+     * @param string $filterName
+     * @param string $name
+     * @return $this
+     */
+    public function bindFilter(string $filterName,string $name = 'filter'): self
+    {
+        $this->bindFilter = "{$filterName}.{$name}";
+        return $this;
+    }
 
     /**
      * 自定义权限
@@ -234,13 +246,29 @@ class Link extends Widget
                 $object['type'] = 'ajax';
                 $object['title'] = '确认进行' . $this->name . '操作?';
                 break;
-            case 'download':
-                $object['vOn:click'] = "dux.request.download('" . $url +"')";
-                break;
         }
+
         $object = array_merge($object, $this->typeConfig);
 
-        if ($this->button) {
+        if ($this->type == 'download') {
+            $link = [
+                'nodeName'  => 'a-button',
+                'class'     => implode(' ', $this->class),
+                'type'      => 'primary',
+                'status'    => $this->status,
+                'vOn:click' => "dux.request.download(" . $url . "+'?'+dux.qs.stringify({$this->bindFilter}),'absolute')",
+                'child'     => [
+                    $this->name
+                ]
+            ];
+            if ($this->icon) {
+                $link['child'][] = (new Icon($this->icon))->attr('vSlot:icon', '')->getRender();
+            }
+            if ($this->block) {
+                $link['long'] = true;
+            }
+            return $link;
+        }else if ($this->button) {
             $link = [
                 'nodeName' => 'a-button',
                 'class' => implode(' ', $this->class),
@@ -272,7 +300,6 @@ class Link extends Widget
         $object['child'] = $link;
 
         return array_merge($object, $this->attr);
-
     }
 
     private function isAuth(): bool

@@ -14,6 +14,7 @@ class Data extends Element implements Component
     protected bool $option = true;
     protected ?int $numberMax = null;
     protected ?int $numberMin = null;
+    protected bool $wrap = false;
 
     /**
      * Text constructor.
@@ -41,6 +42,26 @@ class Data extends Element implements Component
             'name' => $name,
             'key' => $field,
             'type' => 'text',
+            'width' => $width,
+        ];
+        return $this;
+    }
+
+    /**
+     * 选择框
+     * @param string $name
+     * @param string $field
+     * @param null $data
+     * @param null $width
+     * @return $this
+     */
+    public function select(string $name, string $field, $data = null, $width = null): self
+    {
+        $this->column[] = [
+            'name'  => $name,
+            'key'   => $field,
+            'type'  => 'select',
+            'data'  => $data,
             'width' => $width,
         ];
         return $this;
@@ -78,6 +99,22 @@ class Data extends Element implements Component
             'key' => $field,
             'type' => 'show',
             'width' => $width,
+        ];
+        return $this;
+    }
+
+    /**
+     * Html内容
+     * @param string|array $field
+     * @param $callback
+     * @return $this
+     */
+    public function html($field, $callback): self
+    {
+        $this->column[] = [
+            'key'      => $field,
+            'type'     => 'html',
+            'callback' => $callback
         ];
         return $this;
     }
@@ -132,19 +169,46 @@ class Data extends Element implements Component
     }
 
     /**
+     * 自动换行
+     * @param bool $wrap
+     * @return $this
+     */
+    public function wrap(bool $wrap = true): self
+    {
+        $this->wrap = $wrap;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function render(): array
     {
-        $url = route('service.image.placeholder', ['w' => 64, 'h' => 64, 't' => $this->attr['placeholder'] ?: '图片']);
-
         $inner = [];
         $default = [];
         foreach ($this->column as $column) {
+            if ($column['type'] === 'html') {
+                $keys = is_array($column['key']) ? $column['key'] : [$column['key']];
+                foreach ($keys as $key => $vo) {
+                    if (is_numeric($key)) {
+                        $key = $vo;
+                        $vo = '';
+                    }
+                    $default[$key] = $vo;
+                }
+                if ($column['callback'] instanceof \Closure) {
+                    $inner[] = call_user_func($column['callback']);
+                } else if (is_array($column['callback'])) {
+                    $inner[] = $column['callback'];
+                }
+                continue;
+            }
+
             $default[$column['key']] = '';
             $field = "value['{$column['key']}']";
+            $innerNode = [];
             if ($column['type'] === 'text') {
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class' => 'flex-grow',
                     'child' => [
@@ -155,7 +219,7 @@ class Data extends Element implements Component
                 ];
             }
             if ($column['type'] === 'image') {
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class' => 'flex-none',
                     'child' => [
@@ -168,12 +232,41 @@ class Data extends Element implements Component
                 ];
             }
             if ($column['type'] === 'show') {
-                $inner[] = [
+                $innerNode = [
                     'nodeName' => 'div',
                     'class' => 'flex-grow',
                     'child' => "{{ $field || '-'}}"
                 ];
             }
+            if ($column['type'] === 'select') {
+                $options = [];
+                foreach ($column['data'] as $key => $vo) {
+                    $options[] = [
+                        'label' => $vo,
+                        'value' => $key
+                    ];
+                }
+                $innerNode = [
+                    'nodeName' => 'div',
+                    'class'    => 'flex-grow',
+                    'child'    => [
+                        'nodeName'     => 'app-select',
+                        'nParams'      => [
+                            'placeholder' => '请选择' . $column['name'],
+                            'options'     => $options,
+                            'allowSearch' => true
+                        ],
+                        'vModel:value' => $field
+                    ]
+                ];
+            }
+
+            if ($column['width']) {
+                $innerNode['style'] = [
+                    'width' => $column['width']
+                ];
+            }
+            $inner[] = $innerNode;
         }
 
         $create = json_encode($default);
@@ -181,10 +274,9 @@ class Data extends Element implements Component
             'nodeName' => 'app-dynamic-data',
             'vModel:value' => $this->getModelField(),
             'vBind:on-create' => "() => { return $create }",
-            'child' => [
-                'vSlot' => '{ index, value }',
+            'renderRow: value, index' => [
                 'nodeName' => 'div',
-                'class' => 'flex flex-grow gap-4 items-center',
+                'class' => 'flex flex-grow gap-4 items-center' . ($this->wrap ? ' flex-wrap' : ''),
                 'child' => $inner
             ]
         ];
@@ -209,5 +301,4 @@ class Data extends Element implements Component
         $data = $this->getValue($data);
         return $data ?: [];
     }
-
 }
