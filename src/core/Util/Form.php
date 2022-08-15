@@ -116,7 +116,7 @@ class Form
      * 设置UI
      * @return array
      */
-    protected static function formUI(): array
+    public static function formUI(): array
     {
         return [
             'text' => [
