@@ -571,6 +571,10 @@ class Form
                 $key = $this->modelElo->getKeyName();
                 $id = $this->info->$key;
                 $params['id'] = $id;
+            }else {
+                foreach ($this->keys as $name => $value) {
+                    $params[$name] = $value;
+                }
             }
             $action = route(\Str::beforeLast(request()->route()->getName(), '.') . '.' . 'save', $params);
         }
