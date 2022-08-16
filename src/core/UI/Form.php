@@ -567,6 +567,8 @@ class Form
             $action = $this->action;
         } else {
             $params = request()->all();
+            $routeParams = request()->route()->parameters();
+            $params = array_merge($params, $routeParams);
             if ($this->modelElo) {
                 $key = $this->modelElo->getKeyName();
                 $id = $this->info->$key;
