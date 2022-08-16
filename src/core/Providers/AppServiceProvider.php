@@ -80,6 +80,9 @@ class AppServiceProvider extends ServiceProvider
         Builder::macro('findInSet', function ($field, $value) {
             return $this->whereRaw("FIND_IN_SET(?, {$field})", $value);
         });
+        Builder::macro('orFindInSet', function ($field, $value) {
+            return $this->orWhereRaw("FIND_IN_SET(?, {$field})", $value);
+        });
         Builder::macro('orderByWith', function ($relation, $column, $direction = 'asc'): Builder {
             if (is_string($relation)) {
                 $relation = $this->getRelationWithoutConstraints($relation);
