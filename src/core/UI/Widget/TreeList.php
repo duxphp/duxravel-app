@@ -21,6 +21,7 @@ class TreeList extends Widget
     private array $fieldNames = [];
     private $labelNode = [];
     protected string $bindFilter = 'data.filter';
+    protected array $params = [];
 
     /**
      * @param        $default
@@ -115,6 +116,29 @@ class TreeList extends Widget
     }
 
     /**
+     * 附加参数
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function nParams($key,$value)
+    {
+        $this->params[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 载入附加参数
+     * @param array $nParams
+     * @return $this
+     */
+    public function nParamsLoad(array $nParams)
+    {
+        $this->params = $nParams;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function render(): array
@@ -131,6 +155,7 @@ class TreeList extends Widget
             'refreshUrls' => [trim($urlPaths['path'], '/')],
             'iconColor' => ['blue', 'cyan', 'green', 'orange', 'red', 'purple'],
             'vModel:value' => "{$this->bindFilter}['{$this->field}']",
+            'vChild:nParams' => $this->params
         ];
 
         if ($this->fieldNames) {
