@@ -236,11 +236,40 @@ trait Expend
         if (!$id || !$field) {
             app_error('状态参数传递错误');
         }
-        $model = $this->model::find($id);
-        $model->{$field} = $value;
-        $model->save();
         event(new ManageStatus(get_called_class(), $id));
-        return app_success('更改状态成功');
+        DB::beginTransaction();
+        try{
+            if (method_exists($this, 'statusData')) {
+                $status = $this->statusData($id,$field,$value);
+                if (!$status) {
+                    app_error('更改状态失败');
+                }
+            }
+            $model = $this->model::find($id);
+            $model->{$field} = $value;
+            $model->save();
+
+            DB::commit();
+        }catch (\Exception $e){
+            DB::rollBack();
+            throw $e;
+        }
+
+        $form = new Form($model);
+        $form->info = $model;
+        $form->modelId = $model->getKey();
+        $data = [];
+        if (method_exists($this, 'table')) {
+            if (method_exists($this, 'saveEvent')) {
+                $data = $this->saveEvent($this->table(), $form, get_called_class(),  'edit');
+            } else {
+                $data = $form->callbackEvent($this->table(), get_called_class(),  'edit');
+            }
+        }
+
+        $action = $data ? '' : "routerPush:";
+
+        return app_success('更改状态成功', $data,$action);
     }
 
     public function data()
