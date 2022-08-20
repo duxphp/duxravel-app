@@ -30,6 +30,18 @@ class Route
         $this->class = $class;
     }
 
+    public function app(string $name): self
+    {
+        $this->app = $name;
+        return $this;
+    }
+
+    public function layout(string $name): self
+    {
+        $this->layout = $name;
+        return $this;
+    }
+
     /**
      * 指定前缀
      * @param string $name
