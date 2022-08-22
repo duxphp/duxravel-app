@@ -47,7 +47,7 @@ class Api
         });
         $secretKey = $apiInfo->secret_key;
 
-        $url = $request->getUri();
+        $url = $request->getSchemeAndHttpHost() . $_SERVER["REQUEST_URI"];
         $signStr = "url={$url}&timestamp={$time}&key={$secretKey}";
         if (strtoupper(md5($signStr)) === $sign) {
             return true;
