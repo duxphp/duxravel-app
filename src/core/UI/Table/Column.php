@@ -2,22 +2,21 @@
 
 namespace Duxravel\Core\UI\Table;
 
-use Exception;
-use Illuminate\Support\Collection;
-use Duxravel\Core\UI\Widget\Link;
 use Duxravel\Core\UI\Table;
 use Duxravel\Core\UI\Tools;
+use Duxravel\Core\UI\Widget\Link;
+use Exception;
 
 /**
  * 表格列
  * Class Column
- * @method static Column\Hidden hidden()
- * @method static Column\Progress progress(string $color = 'default')
- * @method static Column\Status status(array $map, array $color, string $type = 'badge')
- * @method static Column\Chart chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area')
- * @method static Column\Tags tags(array $map, array $color)
- * @method static Column\Toggle toggle(string $field, string $url, array $params = [])
- * @method static Column\Input input(string $field, $url, array $params = [])
+ * @method Column\Hidden hidden()
+ * @method Column\Progress progress(string $color = 'default')
+ * @method Column\Status status(array $map, array $color, string $type = 'badge')
+ * @method Column\Chart chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area')
+ * @method Column\Tags tags(array $map, array $color)
+ * @method Column\Toggle toggle(string $field, string $url, array $params = [])
+ * @method Column\Input input(string $field, $url, array $params = [])
  * @package Duxravel\Core\UI\Table
  */
 class Column
@@ -272,6 +271,25 @@ class Column
 
     /**
      * 排序条件
+     *
+     * 示例①：该列支持排序，排序字段为当前表字段（不支持虚拟列）
+     * $table->column(...)->sorter(true);
+     * <br/>
+     * 示例②：该列支持排序，排序字段为实参值（此处为id）
+     * $table->column(...)->sorter('id');
+     * <br/>
+     * 示例③：该列支持排序，排序字段为实参值（此处为id），且该列作为默认排序（默认按desc倒序）
+     * $table->column(...)->sorter('id desc');
+     * <br/>
+     * 示例④：该列支持排序，排序按闭包回调进行处理（需自行调用orderBy）
+     * $table->column(...)->sorter(function (ModelAgent $query, $value) {
+     *     $query->orderBy('id', $value == 'asc' ? 'asc' : 'desc');
+     * });
+     * <br/>
+     * 示例⑤：清除该列此前设置的排序，设置为false即可
+     * $table->column(...)->sorter(...)->sorter(false);
+     *
+     * @param  string|bool|\Closure 字段排序
      */
     public function sorter($sorter = true): self
     {
@@ -419,15 +437,35 @@ class Column
      */
     public function execute($query)
     {
+        // 列排序
         $sort = request()->get('_sort');
+        // 排序方式
         $value = $sort && $sort[$this->label] ? $sort[$this->label] : null;
-        if (!$this->sorter || $value === null) {
+        // sorter不为空表示需要字段排序
+        if (!$this->sorter) {
             return false;
         }
+        // sorter为闭包，表示已自定义处理排序
         if ($this->sorter instanceof \Closure) {
+            // 闭包自定义处理排序，需注意排序类型为NULL及非法值
             call_user_func($this->sorter, $query, $value);
-        } else if ($this->sorter !== false) {
-            $query->orderBy(is_string($this->sorter) ? $this->sorter : $this->label, $value === 'desc' ? 'desc' : 'asc');
+        }
+        // sorter为字段名，表示自定义排序字段名
+        // sorter为其他值，表示开启了排序、且用label作为排序字段
+        else {
+            $field = $this->label; // 默认为label
+            // sorter为字符串时，作为排序字段
+            if (is_string($this->sorter)) {
+                $field = $this->sorter;
+                // sorter包含排序类型（含空格）
+                if (stripos($this->sorter, ' ') !== false) {
+                    [$field, $value] = explode(' ', $this->sorter);
+                    $field = trim($field);
+                    $value = trim($value);
+                }
+            }
+            // 如果没传或排序类型不为desc，均默认为asc升序
+            $query->orderBy($field, $value === 'desc' ? 'desc' : 'asc');
         }
     }
 

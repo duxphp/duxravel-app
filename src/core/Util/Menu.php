@@ -143,6 +143,42 @@ class Menu
     }
 
     /**
+     * 获取静态资源
+     * @param string        $layout
+     * @return array
+     */
+    public function getStatic(string $layout = ''): array
+    {
+        $data = $this->getAll(strtolower($layout));
+
+        $static = [];
+        $staticType = [
+            'style' => 'string',
+            'css' => 'array',
+            'scriptString' => 'string',
+            'script' => 'array'
+        ];
+        foreach ($data as $appList) {
+            // 处理静态资源返回
+            foreach ($staticType as $key => $type) {
+                if ($appList['static'][$key]) {
+                    if (!$static[$key]) {
+                        $static[$key] = $type === 'string' ? '' : [];
+                    }
+                    if ($type === 'string') {
+                        $static[$key] .= "\n" . $appList['static'][$key];
+                    } else {
+                        $static[$key] = array_merge($static[$key], $appList['static'][$key]);
+                    }
+                }
+            }
+            
+        }
+        return $static;
+
+    }
+
+    /**
      * 获取应用菜单
      * @return array
      */
