@@ -53,7 +53,7 @@ if (!function_exists("app_error_if")) {
     function app_error_if($boolean, $msg, int $code = 500, string $url = '')
     {
         if ($boolean) {
-            app_error($code, $msg, ['x-location' => $url]);
+            app_error($msg, $code, ['x-location' => $url]);
         }
     }
 }
