@@ -585,7 +585,7 @@ class Table
      * 渲染组件
      * @return Node
      */
-    private function renderNode()
+    public function renderNode()
     {
         // 扩展节点
         $headerNode = [];
