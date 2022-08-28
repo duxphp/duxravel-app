@@ -47,6 +47,12 @@ class VisitorAfter
         if (!$hasId) {
             return false;
         }
+        // 忽略记录日志
+        // 用法：这路由定义 action 中指定 ignore_operate_log 为 TRUE
+        // Route::get('notification', ['uses' => 'Modules\System\Admin\Index@getNotify', 'ignore_operate_log' => true])->name('admin.notification');
+        if ($request->route()->getAction('ignore_operate_log')) {
+            return false;
+        }
         $model = new \Duxravel\Core\Model\VisitorOperate();
         // 清理过期日志
         $time = now()->subDays(env('VISIATOR_OPERATE_DAY'))->toDateString();
