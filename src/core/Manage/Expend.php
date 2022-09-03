@@ -37,17 +37,26 @@ trait Expend
     public string $model;
     public ?string $indexUrl = null;
 
+    /**
+     * 事件名称
+     * @return false|string
+     */
+    protected function eventName()
+    {
+        return get_called_class();
+    }
+
     public function index()
     {
         $table = $this->table();
-        event(new ManageTable(get_called_class(), $table));
+        event(new ManageTable($this->eventName(), $table));
         return $table->render();
     }
 
     public function ajax()
     {
         $table = $this->table();
-        event(new ManageTable(get_called_class(), $table));
+        event(new ManageTable($this->eventName(), $table));
         return $table->renderAjax();
     }
 
@@ -62,7 +71,7 @@ trait Expend
         if ($id && $form->modelElo()) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
-        event(new ManageForm(get_called_class(), $form));
+        event(new ManageForm($this->eventName(), $form));
         return $form->render();
     }
 
@@ -77,7 +86,7 @@ trait Expend
         if ($id && $form->modelElo) {
             $form->setKey($form->modelElo()->getKeyName(), $id);
         }
-        event(new ManageForm(get_called_class(), $form));
+        event(new ManageForm($this->eventName(), $form));
         $data = $form->save();
         if ($data instanceof Collection && method_exists($this, 'storeData')) {
             $data = $this->storeData($data, $id);
@@ -86,9 +95,9 @@ trait Expend
         $data = [];
         if (method_exists($this, 'table')) {
             if (method_exists($this, 'saveEvent')) {
-                $data = $this->saveEvent($this->table(), $form, get_called_class(), $id ? 'edit' : 'add');
+                $data = $this->saveEvent($this->table(), $form, $this->eventName(), $id ? 'edit' : 'add');
             } else {
-                $data = $form->callbackEvent($this->table(), get_called_class(), $id ? 'edit' : 'add');
+                $data = $form->callbackEvent($this->table(), $this->eventName(), $id ? 'edit' : 'add');
             }
         }
 
@@ -122,7 +131,7 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
-        event(new ManageDel(get_called_class(), $id));
+        event(new ManageDel($this->eventName(), $id));
         if ($this->model) {
             $status = $this->model::destroy($id);
         }
@@ -135,7 +144,7 @@ trait Expend
         $action = '';
         //$action = "routerPush:";
 
-        return app_success('删除记录成功', (new Event(get_called_class()))->add('del', $id)->render(), $action);
+        return app_success('删除记录成功', (new Event($this->eventName()))->add('del', $id)->render(), $action);
     }
 
     public function batchDel($ids = 0){
@@ -174,7 +183,7 @@ trait Expend
     public function export()
     {
         $table = $this->table();
-        event(new ManageExport(get_called_class(), $table));
+        event(new ManageExport($this->eventName(), $table));
         if (!method_exists($this, 'exportData')) {
             app_error('', 404);
         }
@@ -191,7 +200,7 @@ trait Expend
         if (!$id) {
             app_error('参数错误');
         }
-        event(new ManageRecovery(get_called_class(), $id));
+        event(new ManageRecovery($this->eventName(), $id));
         if ($this->model) {
             $this->model::withTrashed()->find($id)->restore();
         }
@@ -215,7 +224,7 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
-        event(new ManageClear(get_called_class(), $id));
+        event(new ManageClear($this->eventName(), $id));
         if ($this->model) {
             $info->forceDelete();
         }
@@ -236,7 +245,7 @@ trait Expend
         if (!$id || !$field) {
             app_error('状态参数传递错误');
         }
-        event(new ManageStatus(get_called_class(), $id));
+        event(new ManageStatus($this->eventName(), $id));
         DB::beginTransaction();
         try{
             if (method_exists($this, 'statusData')) {
@@ -261,9 +270,9 @@ trait Expend
         $data = [];
         if (method_exists($this, 'table')) {
             if (method_exists($this, 'saveEvent')) {
-                $data = $this->saveEvent($this->table(), $form, get_called_class(),  'edit');
+                $data = $this->saveEvent($this->table(), $form, $this->eventName(),  'edit');
             } else {
-                $data = $form->callbackEvent($this->table(), get_called_class(),  'edit');
+                $data = $form->callbackEvent($this->table(), $this->eventName(),  'edit');
             }
         }
 
