@@ -500,7 +500,7 @@ class Node
                     ]
                 ],
             ],
-            'setupScript' => implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}',
+            'setupScript' => $this->renderScript(),
             'static' => $this->renderStatics()
         ];
     }
@@ -555,6 +555,15 @@ class Node
                 ]
             ]
         ];
+    }
+
+    /**
+     * 渲染表单js
+     * @return string
+     */
+    public function renderScript()
+    {
+        return implode("\n", $this->script) . "\n" . ' return {' . implode(",", $this->scriptReturn) . '}';
     }
 
     /**
