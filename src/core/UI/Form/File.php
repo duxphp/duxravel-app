@@ -90,8 +90,8 @@ class File extends Element implements Component
         if ($this->model) {
             $data['vModel:value'] = $this->getModelField();
         }
-        if($this->challback){
-            $data['vOn:upload'] = $this->challback;
+        if($this->callback){
+            $data['vOn:upload'] = $this->callback;
         }
         return $data;
     }
