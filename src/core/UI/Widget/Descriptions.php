@@ -91,7 +91,7 @@ class Descriptions extends Widget
      * @param  string $title
      * @return $this
      */
-    public function setTitle(string $title)
+    public function title(string $title)
     {
         $this->title = $title;
         return $this;
@@ -101,7 +101,7 @@ class Descriptions extends Widget
      * @param  string $column
      * @return $this
      */
-    public function setColumn(string $column)
+    public function column(string $column)
     {
         $this->column = $column;
         return $this;
@@ -111,7 +111,7 @@ class Descriptions extends Widget
      * @param  string $layout
      * @return $this
      */
-    public function setLayout(string $layout)
+    public function layout(string $layout)
     {
         $this->layout = $layout;
         return $this;
@@ -121,7 +121,7 @@ class Descriptions extends Widget
      * @param  string $align
      * @return $this
      */
-    public function setAlign(string $align)
+    public function align(string $align)
     {
         $this->align = $align;
         return $this;
@@ -131,7 +131,7 @@ class Descriptions extends Widget
      * @param  string $size
      * @return $this
      */
-    public function setSize(string $size)
+    public function size(string $size)
     {
         $this->size = $size;
         return $this;
@@ -141,7 +141,7 @@ class Descriptions extends Widget
      * @param  bool $bordered
      * @return $this
      */
-    public function setBordered(?bool $bordered)
+    public function bordered(?bool $bordered)
     {
         $this->bordered = $bordered;
         return $this;
