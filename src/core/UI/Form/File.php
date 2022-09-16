@@ -11,6 +11,7 @@ class File extends Element implements Component
     protected string $type = 'upload';
     protected string $url = '';
     protected string $fileUrl = '';
+    protected string $callback = '';
 
     /**
      * File constructor.
@@ -59,6 +60,17 @@ class File extends Element implements Component
     }
 
     /**
+     * 回调
+     * @param string $callback
+     * @return $this
+     */
+    public function callback(string $callback): self
+    {
+        $this->callback = $callback;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function render(): array
@@ -77,6 +89,9 @@ class File extends Element implements Component
         }
         if ($this->model) {
             $data['vModel:value'] = $this->getModelField();
+        }
+        if($this->challback){
+            $data['vOn:upload'] = $this->challback;
         }
         return $data;
     }
