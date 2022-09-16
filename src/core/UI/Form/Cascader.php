@@ -15,6 +15,7 @@ class Cascader extends Element implements Component
     protected bool $treeData = false;
     protected string $url = '';
     protected string $route = '';
+    protected bool $vChild = false;
     protected $data;
 
     /**
@@ -117,8 +118,20 @@ class Cascader extends Element implements Component
      * @param $value
      * @return $this
      */
-    public function nParams($key,$value){
+    public function nParams($key,$value): self
+    {
         $this->params[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 获取上级参数标识
+     * @param bool $vChild
+     * @return $this
+     */
+    public function vChild(bool $vChild = true): self
+    {
+        $this->vChild = $vChild;
         return $this;
     }
 
@@ -153,10 +166,10 @@ class Cascader extends Element implements Component
             $options = $data;
         }
 
-
+        $nParamsName = $this->vChild ? 'vChild:nParams' : 'nParams';
         $data = [
             'nodeName' => 'app-cascader',
-            'nParams'  => array_merge($this->params, [
+            $nParamsName => array_merge($this->params, [
                 'check-strictly' => !$this->leaf,
                 'multiple'       => $this->multi,
                 'options'        => $options,

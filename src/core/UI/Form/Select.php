@@ -16,6 +16,7 @@ class Select extends Element implements Component
     protected bool $search = false;
     protected bool $multi = false;
     protected array $optionRender = [];
+    protected bool $vChild = false;
     protected $data;
 
     /**
@@ -115,6 +116,17 @@ class Select extends Element implements Component
     }
 
     /**
+     * 获取上级参数标识
+     * @param bool $vChild
+     * @return $this
+     */
+    public function vChild(bool $vChild = true): self
+    {
+        $this->vChild = $vChild;
+        return $this;
+    }
+
+    /**
      * 选项渲染
      * @param  array $data JS Node
      * @return $this
@@ -146,24 +158,26 @@ class Select extends Element implements Component
             ];
         }
 
+        $nParamsName = $this->vChild ? 'vChild:nParams' : 'nParams';
+        $params = array_merge($this->params, [
+            'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
+            'options'     => $options
+        ]);
+
         $object = [
-            'nodeName' => 'app-select',
-            'nParams'  => array_merge($this->params, [
-                'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
-                'options' => $options
-            ])
+            'nodeName' => 'app-select'
         ];
 
         if ($this->model) {
             $object['vModel:value'] = $this->getModelField();
         }
-        $object['nParams']['allowClear'] = true;
+        $params['allowClear'] = true;
         if ($this->multi) {
-            $object['nParams']['multiple'] = true;
+            $params['multiple'] = true;
         }
         if ($this->url) {
-            $object['nParams']['allowSearch'] = true;
-            $object['nParams']['filterOption'] = false;
+            $params['allowSearch'] = true;
+            $params['filterOption'] = false;
             if ($this->route) {
                 $object['vBind:dataUrl'] = $this->url;
             } else {
@@ -171,14 +185,16 @@ class Select extends Element implements Component
             }
         }
         if ($this->search) {
-            $object['nParams']['allowSearch'] = true;
+            $params['allowSearch'] = true;
         }
         if ($this->tagCount) {
-            $object['nParams']['maxTagCount'] = $this->tagCount;
+            $params['maxTagCount'] = $this->tagCount;
         }
         if ($this->optionRender) {
             $object['vRender:optionRender:item'] = $this->optionRender;
         }
+
+        $object[$nParamsName] = $params;
 
         return $object;
     }
