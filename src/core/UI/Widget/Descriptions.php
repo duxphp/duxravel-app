@@ -2,6 +2,8 @@
 
 namespace Duxravel\Core\UI\Widget;
 
+use Duxravel\Core\UI\Widget;
+
 /**
  * 描述列表 Descriptions
  *
@@ -49,8 +51,13 @@ class Descriptions extends Widget
     private ?bool $bordered = false;
 
     /**
-     * @var array 数据, 一项包含label和value两个字段
-     *            格式: [{"label":"Name","value":"Socrates"}]
+     * @var array 数据, 每项都包含label和value两个字段
+     * 格式:
+     * [
+     *     ['label' => 'Text', 'value' => 'desc...'],
+     *     ['label' => 'Icon', 'value' => Widget::icon('archive')],
+     *     ['label' => 'Bind', 'value' => '{{rowData.id}}'],
+     * ]
      */
     private array $data = [];
 
@@ -67,7 +74,7 @@ class Descriptions extends Widget
     /**
      * 添加数据项
      *
-     * @param  array ...$data 一条或多条数据
+     * @param  array ...$data 一条或多条数据，格式见 $this->data 注释
      * @return $this
      */
     public function add(array ...$data)
@@ -150,7 +157,6 @@ class Descriptions extends Widget
 
         $node = [
             'nodeName' => 'a-descriptions',
-            'data'     => $this->data,
         ];
         $this->title && $node['title'] = $this->title;
         $this->column && $node['column'] = $this->column;
@@ -164,6 +170,15 @@ class Descriptions extends Widget
             } else {
                 $node['vBind:align'] = $this->align;
             }
+        }
+
+        // 不以data的方式传入，而以child方式传入数据项，这样value就支持Node节点、且支持行数据字段绑定{{rowData.id}}
+        foreach ($this->data as $item) {
+            $node['child'][] = [
+                'nodeName' => 'a-descriptions-item',
+                'label'    => $item['label'],
+                'child'    => $item['value'],
+            ];
         }
 
         return $node;
