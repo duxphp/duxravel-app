@@ -9,14 +9,15 @@ use Exception;
 
 /**
  * 表格列
- * Class Column
- * @method Column\Hidden hidden()
- * @method Column\Progress progress(string $color = 'default')
- * @method Column\Status status(array $map, array $color, string $type = 'badge')
- * @method Column\Chart chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area')
- * @method Column\Tags tags(array $map, array $color)
- * @method Column\Toggle toggle(string $field, string $url, array $params = [])
- * @method Column\Input input(string $field, $url, array $params = [])
+ * 以下Method返回$this是与__call()返回的值保持一致，方便IDE识别
+ * @method $this hidden() Column\Hidden
+ * @method $this progress(string $color = 'default') Column\Progress
+ * @method $this status(array $map, array $color, string $type = 'badge') Column\Status
+ * @method $this chart(int $day = 7, string $has = 'viewsData', string $key = 'pv', string $name = '访问量', string $type = 'area') Column\Chart
+ * @method $this tags(array $map, array $color) Column\Tags
+ * @method $this toggle(string $field, string $url, array $params = []) Column\Toggle
+ * @method $this input(string $field, $url, array $params = []) Column\Input
+ *
  * @package Duxravel\Core\UI\Table
  */
 class Column
@@ -500,6 +501,7 @@ class Column
             $object->fields($this->layout->fields);
         }
         $this->element = $object;
+        // 此处返回了Column自身，那么对组件的调用就需要 ->element(callback)
         return $this;
     }
 
