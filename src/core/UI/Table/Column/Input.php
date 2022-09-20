@@ -3,7 +3,7 @@
 namespace Duxravel\Core\UI\Table\Column;
 
 /**
- * 表格行数输入框（实时编辑）
+ * 表格编辑-输入框（实时编辑）
  */
 class Input implements Component
 {
