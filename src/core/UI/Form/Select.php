@@ -160,9 +160,12 @@ class Select extends Element implements Component
 
         $nParamsName = $this->vChild ? 'vChild:nParams' : 'nParams';
         $params = array_merge($this->params, [
-            'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
-            'options'     => $options
+            'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name
         ]);
+
+        if(!empty($options)){
+            $params['options'] = $options;
+        }
 
         $object = [
             'nodeName' => 'app-select'
