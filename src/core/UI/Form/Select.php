@@ -159,9 +159,9 @@ class Select extends Element implements Component
         }
 
         $nParamsName = $this->vChild ? 'vChild:nParams' : 'nParams';
-        $params = array_merge($this->params, [
+        $params = array_merge([
             'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name
-        ]);
+        ],$this->params);
 
         if(!empty($options)){
             $params['options'] = $options;

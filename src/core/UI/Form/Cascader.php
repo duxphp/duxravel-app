@@ -167,15 +167,19 @@ class Cascader extends Element implements Component
         }
 
         $nParamsName = $this->vChild ? 'vChild:nParams' : 'nParams';
+        $params = array_merge([
+            'check-strictly' => !$this->leaf,
+            'multiple'       => $this->multi,
+            'placeholder'    => $this->attr['placeholder'] ?: '请选择' . $this->name,
+        ],$this->params);
+
         $data = [
-            'nodeName' => 'app-cascader',
-            $nParamsName => array_merge($this->params, [
-                'check-strictly' => !$this->leaf,
-                'multiple'       => $this->multi,
-                'options'        => $options,
-                'placeholder'    => $this->attr['placeholder'] ?: '请选择' . $this->name,
-            ])
+            'nodeName' => 'app-cascader'
         ];
+
+        if(!empty($options)){
+            $params['options'] = $options;
+        }
 
         if ($this->route) {
             $data['vBind:dataUrl'] = $this->url;
@@ -186,6 +190,8 @@ class Cascader extends Element implements Component
         if ($this->model) {
             $data['vModel:value'] = $this->getModelField();
         }
+
+        $data[$nParamsName] = $params;
 
         return $data;
     }
