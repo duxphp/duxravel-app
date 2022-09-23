@@ -56,6 +56,7 @@ class Table
     protected ?\Closure $dataCallback = null;
     protected $data;
     protected array $bindFilter = [];
+    protected array $columnsData = [];
     protected array $statics = [];
 
     /**
@@ -354,6 +355,17 @@ class Table
     }
 
     /**
+     * 绑定数据
+     * @param string $dataName
+     * @return $this
+     */
+    public function columnsData(string $dataName): self
+    {
+        $this->columnsData[] = $dataName;
+        return $this;
+    }
+
+    /**
      * 设置动作
      * @return Action
      */
@@ -636,6 +648,7 @@ class Table
             $node->data($this->formatData($this->data, $this->columns ?? [],$this->tree),'data');
         }
         $node->bindFilter($this->bindFilter);
+        $node->columnsData($this->columnsData);
         $node->columns($columnNode);
         $node->expand($this->expand);
         $node->eventName($this->eventName);

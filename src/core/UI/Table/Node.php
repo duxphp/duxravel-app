@@ -37,6 +37,7 @@ class Node
     private array $scriptData = [];
     private ?string $eventName = null;
     private array $bindFilter = [];
+    private array $columnsData = [];
     private array $statics = [];
     private ?int $limit = null;
 
@@ -261,6 +262,17 @@ class Node
     }
 
     /**
+     * 绑定数据
+     * @param array $columnsData
+     * @return $this
+     */
+    public function columnsData(array $columnsData): self
+    {
+        $this->columnsData = $columnsData;
+        return $this;
+    }
+
+    /**
      * 分页数量
      * @param int $num
      * @return $this
@@ -388,6 +400,7 @@ class Node
             'urlBind' => $this->urlBind,
             'n-params' => array_merge(app('config')->get('table.default.nParams',[]),$this->params),
             'columns' => $this->columns,
+            'vBind:columnsData' => 'dux.util.watchAssignObject('. implode(',',$this->columnsData) .')',
             'vBind:filter' => empty($this->bindFilter) ? 'data.filter' : 'dux.util.watchAssignObject('. implode(',',$this->bindFilter) .',data.filter)',
             'select' => (bool)$this->bath,
             'table-layout-fixed' => true,
