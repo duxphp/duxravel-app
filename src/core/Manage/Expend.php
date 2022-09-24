@@ -46,6 +46,27 @@ trait Expend
         return get_called_class();
     }
 
+    /**
+     * table刷新事件
+     * @return array
+     */
+    protected function tableReload()
+    {
+        $eventName = md5($this->eventName());
+        return (new \Duxravel\Core\UI\Script())->add("dux.event.event.emit('table-action-{$eventName}', 'reload')")->render();
+    }
+
+    /**
+     * table调到指定页
+     * @param $page
+     * @return array
+     */
+    protected function tableToPage($page = 1)
+    {
+        $eventName = md5($this->eventName());
+        return (new \Duxravel\Core\UI\Script())->add("dux.event.event.emit('table-action-{$eventName}', 'to-page',{$page})")->render();
+    }
+
     public function index()
     {
         $table = $this->table();
@@ -122,6 +143,7 @@ trait Expend
         if (!$id) {
             app_error('删除参数错误');
         }
+
         DB::beginTransaction();
         $status = false;
         if (method_exists($this, 'delData')) {
@@ -131,9 +153,14 @@ trait Expend
                 app_error('删除记录失败');
             }
         }
+
         event(new ManageDel($this->eventName(), $id));
         if ($this->model) {
-            $status = $this->model::destroy($id);
+            $info = $this->model::find($id);
+            if(empty($info)){
+                app_error('无效的数据');
+            }
+            $status = $info->delete();
         }
         if (!$status) {
             DB::rollBack();
@@ -141,10 +168,14 @@ trait Expend
         }
         DB::commit();
 
-        $action = '';
-        //$action = "routerPush:";
+        $data = [];
+        if (method_exists($this, 'delEvent')) {
+            $data = $this->delEvent($this->model ? $info : $id, $this->eventName());
+        } else {
+            $data = (new Event($this->eventName()))->add('del', $id)->render();
+        }
 
-        return app_success('删除记录成功', (new Event($this->eventName()))->add('del', $id)->render(), $action);
+        return app_success('删除记录成功', $data);
     }
 
     public function batchDel($ids = 0){
@@ -177,7 +208,7 @@ trait Expend
         }
         DB::commit();
 
-        return app_success('删除记录成功');
+        return app_success('删除记录成功',$this->tableReload());
     }
 
     public function export()
