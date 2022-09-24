@@ -73,6 +73,7 @@ class Form
     public Collection $element;
     private ?array $bottom = null;
     protected array $statics = [];
+    protected bool $debug = false;
 
     /**
      * Form constructor.
@@ -534,6 +535,17 @@ class Form
     }
 
     /**
+     * 调试
+     * @param bool $debug
+     * @return $this
+     */
+    public function debug(bool $debug = true): self
+    {
+        $this->debug = $debug;
+        return $this;
+    }
+
+    /**
      * 渲染表单
      * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
@@ -589,6 +601,7 @@ class Form
 
         $node = new Node($action, $this->method, $this->title);
         $node->dialog($this->dialog);
+        $node->debug($this->debug);
         $node->vertical($this->vertical);
         $node->back($this->back);
 

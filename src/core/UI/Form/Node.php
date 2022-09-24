@@ -23,6 +23,7 @@ class Node
     private string $layout = 'app-layout';
     private ?array $bottom = null;
     private array $statics = [];
+    private bool $debug = false;
 
     /**
      * Node constructor.
@@ -69,6 +70,17 @@ class Node
     {
         $this->dialog = $bool;
         $this->vertical = true;
+        return $this;
+    }
+
+    /**
+     * 调试
+     * @param bool $debug
+     * @return $this
+     */
+    public function debug(bool $debug = true): self
+    {
+        $this->debug = $debug;
         return $this;
     }
 
@@ -277,11 +289,15 @@ class Node
      */
     public function render(): array
     {
-        return [
+        $render = [
             'node' => $this->renderFormCore(),
             'setupScript' => $this->renderScript(),
             'static' => $this->renderStatics()
         ];
+        if($this->debug){
+            $render['debug'] = $this->debug;
+        }
+        return $render;
     }
 
     /**

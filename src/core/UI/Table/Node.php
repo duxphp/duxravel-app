@@ -40,6 +40,7 @@ class Node
     private array $columnsData = [];
     private array $statics = [];
     private ?int $limit = null;
+    private bool $debug = false;
 
     /**
      * Node constructor.
@@ -304,6 +305,17 @@ class Node
     }
 
     /**
+     * 调试
+     * @param bool $debug
+     * @return $this
+     */
+    public function debug(bool $debug = true): self
+    {
+        $this->debug = $debug;
+        return $this;
+    }
+
+    /**
      * @return array[]
      */
     private function headNode(): array
@@ -446,7 +458,7 @@ class Node
 
         $headNode = $this->headNode();
 
-        return [
+        $render = [
             'node' => [
                 'nodeName' => 'app-form',
                 'value' => $value,
@@ -516,6 +528,12 @@ class Node
             'setupScript' => $this->renderScript(),
             'static' => $this->renderStatics()
         ];
+
+        if($this->debug){
+            $render['debug'] = $this->debug;
+        }
+
+        return $render;
     }
 
     /**

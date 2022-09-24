@@ -58,6 +58,7 @@ class Table
     protected array $bindFilter = [];
     protected array $columnsData = [];
     protected array $statics = [];
+    protected bool $debug = false;
 
     /**
      * Table constructor.
@@ -536,6 +537,17 @@ class Table
     }
 
     /**
+     * 调试
+     * @param bool $debug
+     * @return $this
+     */
+    public function debug(bool $debug = true): self
+    {
+        $this->debug = $debug;
+        return $this;
+    }
+
+    /**
      * @param $data
      * @return $this
      */
@@ -643,6 +655,7 @@ class Table
         $node->urlBind($this->urlBind);
         $node->class(implode(' ', $this->class));
         $node->params($this->attr);
+        $node->debug($this->debug);
         $node->data($this->filterParams);
         if(isset($this->data)){
             $node->data($this->formatData($this->data, $this->columns ?? [],$this->tree),'data');
