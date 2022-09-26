@@ -66,7 +66,7 @@ class Tools
 
     /**
      * UI debug调试
-     * @param $node
+     * @param array|callable $node
      * @return array|mixed
      */
     public static function debug($node)
