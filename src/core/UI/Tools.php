@@ -64,4 +64,24 @@ class Tools
         return str_replace(['.', '->'], '_', $relation ? $relation . '_' . $label : $label);
     }
 
+    /**
+     * UI debug调试
+     * @param $node
+     * @return array|mixed
+     */
+    public static function debug($node)
+    {
+        if(is_callable($node)){
+            $node = $node();
+        }
+        if(!isset($node['node'])){
+            $node = [
+                'node'  => $node
+            ];
+        }
+
+        $node['debug'] = true;
+        return $node;
+    }
+
 }
