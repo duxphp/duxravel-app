@@ -19,5 +19,5 @@ return [
             'data_field' => 'data',
         ],
     ],
-    'enum' => '', // \Jiannei\Enum\Laravel\Repositories\Enums\HttpStatusCodeEnum::class
+    'enum' => '',
 ];
