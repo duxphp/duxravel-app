@@ -86,11 +86,13 @@ class Location extends Element implements Component
     public function dataValue($data): ?array
     {
         $data = $this->getValue($data);
-        if( empty($data) ){
+        if (empty($data)) {
             return [];
-        }else{
-            return json_decode($data,true);
+        } else {
+            if (is_array($data)) {
+                return $data;
+            }
+            return json_decode($data, true);
         }
-
     }
 }
