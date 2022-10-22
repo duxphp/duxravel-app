@@ -48,11 +48,9 @@ class Area extends Element implements Component
         $data = [
             'nodeName' => 'app-cascader',
             'nParams' => [
-                'cascade' => true,
-                'show-path' => true,
-                'filterable' => false,
+                'path-mode' => true,
                 'clearable' => true,
-                'leaf-only' => true,
+                'allow-search' => true,
                 'multiple' => $this->multi,
                 'placeholder' => $this->attr['placeholder'] ?: '请选择' . $this->name,
             ],
