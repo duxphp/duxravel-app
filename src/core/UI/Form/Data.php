@@ -11,6 +11,7 @@ use Duxravel\Core\UI\Widget\Icon;
 class Data extends Element implements Component
 {
     protected array $column = [];
+    protected array $package = [];
     protected bool $option = true;
     protected ?int $numberMax = null;
     protected ?int $numberMin = null;
@@ -116,6 +117,17 @@ class Data extends Element implements Component
             'type'     => 'html',
             'callback' => $callback
         ];
+        return $this;
+    }
+
+    /**
+     * 自定义表单元素
+     * @param Component $package
+     * @return $this
+     */
+    public function form(Component $package ): self
+    {
+        $this->package[] = $package;
         return $this;
     }
 
@@ -267,6 +279,12 @@ class Data extends Element implements Component
                 ];
             }
             $inner[] = $innerNode;
+        }
+
+        foreach ($this->package as $vo) {
+            $vo = $vo->model("value.");
+            $default[$vo->getField()] = $vo->getValue();
+            $inner[] = $vo->render();
         }
 
         $create = json_encode($default);
