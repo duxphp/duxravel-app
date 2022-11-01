@@ -15,8 +15,7 @@ use Duxravel\Core\UI\Table;
  * Class Column
  * @package Duxravel\Core\UI\Filter
  */
-class Filter
-{
+class Filter {
 
     protected string $name;
     protected string $field;
@@ -31,6 +30,7 @@ class Filter
     protected $data;
     protected $model;
     protected $value;
+    protected $width = 40;
 
     /**
      * Filter constructor.
@@ -39,8 +39,7 @@ class Filter
      * @param bool $where
      * @param null $default
      */
-    public function __construct(string $name, string $field, $where = true, $default = null)
-    {
+    public function __construct(string $name, string $field, $where = true, $default = null) {
         $this->name = $name;
         $this->field = $field;
         $this->where = $where;
@@ -52,10 +51,18 @@ class Filter
      * 设置父级对象
      * @param Table $layout
      */
-    public function setLayout(Table $layout): void
-    {
+    public function setLayout(Table $layout): void {
         $this->layout = $layout;
         $this->model = $layout->model();
+    }
+
+    /**
+     * 设置宽度
+     * @return $this
+     */
+    public function width($width = 40): self {
+        $this->width = $width;
+        return $this;
     }
 
     /**
@@ -64,8 +71,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function cascader($data = [], callable $callback = NULL): self
-    {
+    public function cascader($data = [], callable $callback = NULL): self {
         $this->data = $data;
         $this->type = 'cascader';
         $this->callback = $callback;
@@ -78,8 +84,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function select($data = [], callable $callback = NULL): self
-    {
+    public function select($data = [], callable $callback = NULL): self {
         $this->data = $data;
         $this->type = 'select';
         $this->callback = $callback;
@@ -92,8 +97,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function text(string $placeholder = '', callable $callback = NULL): self
-    {
+    public function text(string $placeholder = '', callable $callback = NULL): self {
         $this->placeholder = $placeholder;
         $this->type = 'text';
         $this->callback = $callback;
@@ -106,8 +110,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function date(string $placeholder = '', callable $callback = NULL): self
-    {
+    public function date(string $placeholder = '', callable $callback = NULL): self {
         $this->placeholder = $placeholder;
         $this->type = 'date';
         $this->callback = $callback;
@@ -120,8 +123,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function datetime(string $placeholder = '', callable $callback = NULL): self
-    {
+    public function datetime(string $placeholder = '', callable $callback = NULL): self {
         $this->placeholder = $placeholder;
         $this->type = 'datetime';
         $this->callback = $callback;
@@ -134,8 +136,7 @@ class Filter
      * @param callable|null $callback
      * @return $this
      */
-    public function daterange(string $placeholder = '', callable $callback = NULL): self
-    {
+    public function daterange(string $placeholder = '', callable $callback = NULL): self {
         $this->placeholder = $placeholder;
         $this->type = 'daterange';
         $this->callback = $callback;
@@ -146,8 +147,7 @@ class Filter
      * 快捷筛选
      * @return $this
      */
-    public function quick(): self
-    {
+    public function quick(): self {
         $this->quick = true;
         return $this;
     }
@@ -157,8 +157,7 @@ class Filter
      * @param $type
      * @return $this
      */
-    public function condition($type): self
-    {
+    public function condition($type): self {
         $this->condition = $type;
         return $this;
     }
@@ -169,8 +168,7 @@ class Filter
      * @param $query
      * @return false
      */
-    public function execute($query): bool
-    {
+    public function execute($query): bool {
         if ($this->value === null) {
             return false;
         }
@@ -199,8 +197,7 @@ class Filter
      * 渲染组件
      * @return array
      */
-    public function render(): array
-    {
+    public function render(): array {
         if (!$this->type) {
             $this->layout->filterParams($this->field, $this->value);
             return [];
@@ -249,7 +246,7 @@ class Filter
         if ($this->quick) {
             $data['render'] = [
                 'nodeName' => 'div',
-                'class' => 'lg:w-40',
+                'class' => 'lg:w-' . $this->width,
                 'child' => $object->placeholder($this->placeholder)->getRender()
             ];
         } else {
