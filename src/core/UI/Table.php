@@ -657,6 +657,7 @@ class Table
         $node->params($this->attr);
         $node->debug($this->debug);
         $node->data($this->filterParams);
+        $node->tree($this->tree);
         if(isset($this->data)){
             $node->data($this->formatData($this->data, $this->columns ?? [],$this->tree),'data');
         }

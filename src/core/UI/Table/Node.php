@@ -86,18 +86,18 @@ class Node
     }
 
     /**
-     * 附加参数
-     * @param $key
-     * @param $value
+     * @param $status
      * @return $this
      */
-    public function nParams($key,$value){
-        $this->params[$key] = $value;
+    public function tree($status): self
+    {
+        $this->tree = $status;
         return $this;
     }
 
     /**
      * @param array $filter
+     * @param string $type
      * @return $this
      */
     public function data(array $filter,string $type = 'filter'): self
@@ -129,16 +129,6 @@ class Node
     public function scriptData($data): self
     {
         $this->scriptData = array_merge($this->scriptData, $data);
-        return $this;
-    }
-
-    /**
-     * @param $config
-     * @return $this
-     */
-    public function tree($config): self
-    {
-        $this->tree = $config;
         return $this;
     }
 
@@ -424,7 +414,8 @@ class Node
             ],
             'nowrap' => app('config')->get('table.default.nowrap',false),
             'vBind:defaultData' => isset($this->data['data']) ? 'data.data' : false,
-            'limit' => $this->limit
+            'limit' => $this->limit,
+            'defaultExpand' => $this->tree,
         ];
     }
 
