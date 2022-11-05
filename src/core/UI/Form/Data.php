@@ -292,6 +292,7 @@ class Data extends Element implements Component
             'nodeName' => 'app-dynamic-data',
             'vModel:value' => $this->getModelField(),
             'vBind:on-create' => "() => { return $create }",
+            'key' => $this->getModelField(),
             'renderRow: value, index' => [
                 'nodeName' => 'div',
                 'class' => 'flex flex-grow gap-4 items-center' . ($this->wrap ? ' flex-wrap' : ''),
