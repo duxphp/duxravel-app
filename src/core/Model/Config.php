@@ -17,7 +17,9 @@ class Config extends \Duxravel\Core\Model\Base
 
     public $timestamps = false;
 
-    protected $fillable = ['data'];
+    protected $fillable = [];
+    protected $guarded = [];
+
 
     protected $casts = [
         'data' => 'array',
