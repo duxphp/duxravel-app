@@ -18,6 +18,7 @@ class TreeList extends Widget
     private bool $search = true;
     private array $keyword = [];
     private array $menu = [];
+    private array $blankMenu = [];
     private array $fieldNames = [];
     private $labelNode = [];
     protected string $bindFilter = 'data.filter';
@@ -54,6 +55,17 @@ class TreeList extends Widget
     public function menu(array $data = []): self
     {
         $this->menu = $data;
+        return $this;
+    }
+
+    /**
+     * 空白处菜单
+     * @param array $data
+     * @return $this
+     */
+    public function blankMenu(array $data = []): self
+    {
+        $this->blankMenu = $data;
         return $this;
     }
 
@@ -170,34 +182,49 @@ class TreeList extends Widget
             ];
         }
 
-        $menu = [];
         if ($this->menu) {
-            foreach ($this->menu as $key => $vo) {
-                $url = $vo['url'];
-                $event = $vo['event'];
-                $tmp = [
-                    'text' => $vo['name'],
-                ];
-                $tmp['key'] = $key;
-                if ($event) {
-                    $tmp['event'] = $event;
-                } else {
-                    switch ($vo['type']) {
-                        case 'dialog':
-                            $tmp['event'] = $url ? "window.router.dialog($url)" : "window.dialog.alert({content: '未定义链接数据'})";
-                            break;
-                        case 'ajax':
-                            $tmp['event'] = $url ? "window.router.ajax($url, {_method: 'POST', _title: '确认进行{$vo['name']}操作？'})" : "window.dialog.alert({content: '未定义链接数据'})";
-                            break;
-                        default:
-                            $tmp['event'] = $url ? "window.router.push($url)" : "window.dialog.alert({content: '未定义链接数据'})";
-                    }
-                }
-                $menu[] = $tmp;
-            }
-            $tree['contextMenus'] = $menu;
+            $tree['contextMenus'] = $this->menuGenerate($this->menu);
+        }
+
+        if($this->blankMenu){
+            $tree['blankContextMenus'] = $this->menuGenerate($this->blankMenu);
         }
 
         return $tree;
     }
+
+    /**
+     * 菜单生成
+     * @param $menuData
+     * @return array
+     */
+    private function menuGenerate($menuData)
+    {
+        $menu = [];
+        foreach ($menuData as $key => $vo) {
+            $url = $vo['url'];
+            $event = $vo['event'];
+            $tmp = [
+                'text' => $vo['name'],
+            ];
+            $tmp['key'] = $key;
+            if ($event) {
+                $tmp['event'] = $event;
+            } else {
+                switch ($vo['type']) {
+                    case 'dialog':
+                        $tmp['event'] = $url ? "window.router.dialog($url)" : "window.dialog.alert({content: '未定义链接数据'})";
+                        break;
+                    case 'ajax':
+                        $tmp['event'] = $url ? "window.router.ajax($url, {_method: 'POST', _title: '确认进行{$vo['name']}操作？'})" : "window.dialog.alert({content: '未定义链接数据'})";
+                        break;
+                    default:
+                        $tmp['event'] = $url ? "window.router.push($url)" : "window.dialog.alert({content: '未定义链接数据'})";
+                }
+            }
+            $menu[] = $tmp;
+        }
+        return $menu;
+    }
+
 }
