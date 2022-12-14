@@ -18,6 +18,7 @@ class Role extends \Duxravel\Core\Model\Base
     ];
 
     protected $fillable = [];
+    protected $guarded = [];
 
     public static function create(array $attributes = [])
     {
