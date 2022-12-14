@@ -17,7 +17,7 @@ class Role extends \Duxravel\Core\Model\Base
         'purview' => 'array',
     ];
 
-    protected $fillable = ['guard', 'name', 'purview'];
+    protected $fillable = [];
 
     public static function create(array $attributes = [])
     {
