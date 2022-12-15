@@ -13,5 +13,5 @@ class RoleHas extends \Duxravel\Core\Model\Base
 
     protected $primaryKey = 'role_id';
 
-
+    public $timestamps = false;
 }
