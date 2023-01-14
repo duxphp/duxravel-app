@@ -50,6 +50,9 @@ class Link implements Component
         foreach ($this->link as $class) {
             $type = $class->getType();
             $data = $class->render();
+            if(empty($data)){
+                continue;
+            }
 
             if (($type === 'ajax' || $type === 'dialog') && (!$data['vBind:before'] || !$data['before'])) {
                 $data['vBind:before'] = "() => rowData.record.__loading = true";
