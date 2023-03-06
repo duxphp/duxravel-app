@@ -127,6 +127,9 @@ class TreeSelect extends Element implements Component
                     'pid' => $vo['pid'],
                     'value' => $vo['id'],
                     'label' => $vo['name'],
+                    // 可选参数：专门用于搜索，自行组装并通过data传入该值即可
+                    // 使用场景：展示value(title)，但搜索却需要包括简介、ID、标识等
+                    'search' => $vo['search'] ?? $vo['name'],
                 ];
             }
             $options = \Duxravel\Core\Util\Tree::arr2tree($options, 'id', 'pid', 'children');
