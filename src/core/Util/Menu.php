@@ -20,7 +20,7 @@ class Menu
         $serviceList = app(Build::class)->getData('menu.' . $layout);
         $vendor = base_path();
         foreach ($serviceList as $key => $vo) {
-            require $vendor . '/' . $vo;
+            require_once $vendor . '/' . $vo;
         }
         return \Duxravel\Core\Facades\Menu::getData();
     }
