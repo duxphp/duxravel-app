@@ -23,7 +23,6 @@ class Config extends \Duxravel\Core\Model\Base
      */
     protected $guarded = [];
 
-
     protected $casts = [
         'data' => 'array',
     ];
