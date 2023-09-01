@@ -17,7 +17,10 @@ class Config extends \Duxravel\Core\Model\Base
 
     public $timestamps = false;
 
-    protected $fillable = [];
+    /**
+     * 不能被分配的模型
+     * @var array
+     */
     protected $guarded = [];
 
 
