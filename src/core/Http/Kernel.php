@@ -14,7 +14,7 @@ class Kernel extends \Illuminate\Foundation\Http\Kernel
      */
     protected $middleware = [
         \Duxravel\Core\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
 
         \Duxravel\Core\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
